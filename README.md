@@ -17,7 +17,7 @@
  * Add the dependency 
   ```bash
 	dependencies {
-	        implementation 'com.github.UsePace:android-message-center:1.0'
+	        implementation 'com.github.UsePace:android-message-center:{latest-version}'
 	}
   ```
   
