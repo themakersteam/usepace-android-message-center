@@ -26,7 +26,7 @@ repositories {
 }
 
 ext {
-    mSupportLibVersion = '27.1.1'
+    mSupportLibVersion = '27.1.0'
     swagger_annotations_version = "1.5.0"
     firebase_services_version = "11.8.0"
 }
