@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- Global colors -->
+    <color name="message_center_primary">#774df2</color>
+    <color name="message_center_primary_dark">#512DA8</color>
+    <color name="message_center_primary_accent">#1fcc94</color>
+
+    <!-- Group Chat -->
+    <color name="groupChatBubbleMe">#774df2</color>
+    <color name="groupChatTextMe">#ffffff</color>
+    <color name="groupChatBubbleOther">#eef1f6</color>
+    <color name="groupChatTextOther">#000000</color>
+    <color name="groupChatAdminBackground">#e0fcff</color>
+    <color name="groupChatDateText">#ffffff</color>
+    <color name="groupChatDateBackground">#C0C0C0</color>
+    <color name="btn_edit">#ffffff</color>
+    <color name="btn_edit_disabled">#8e8e8e</color>
+    <color name="btn_send">#774df2</color>
+    <color name="btn_send_disabled">#8e8e8e</color>
+
+
+</resources>
