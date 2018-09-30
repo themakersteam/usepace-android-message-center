@@ -1,5 +1,7 @@
 apply plugin: 'com.android.library'
-apply plugin: 'maven'
+apply plugin: 'com.github.dcendents.android-maven'
+
+group='com.github.usepace'
 
 android {
     compileSdkVersion 27
@@ -20,15 +22,6 @@ android {
 
 repositories {
     maven { url "https://raw.githubusercontent.com/smilefam/SendBird-SDK-Android/master/" }
-}
-
-uploadArchives {
-    repositories.mavenDeployer {
-        pom.groupId = 'com.usepace.android'
-        pom.artifactId = 'messagingcenter'
-        pom.version = android.defaultConfig.versionName
-        repository(url: "file:./releases/")
-    }
 }
 
 ext {
