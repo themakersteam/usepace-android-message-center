@@ -2,7 +2,6 @@ apply plugin: 'com.android.library'
 apply plugin: 'com.github.dcendents.android-maven'
 
 group='com.github.usepace'
-version='1.0'
 
 android {
     compileSdkVersion 27
@@ -26,9 +25,7 @@ repositories {
 }
 
 ext {
-    mSupportLibVersion = '27.1.0'
-    swagger_annotations_version = "1.5.0"
-    firebase_services_version = "11.8.0"
+    mSupportLibVersion = '27.0.2'
 }
 
 dependencies {
