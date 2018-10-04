@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     package="com.usepace.android.messagingcenter">
 
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
@@ -13,14 +14,12 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme">
-        <activity android:name=".screens.sendbird.SendBirdChatActivity">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
+        tools:replace="android:theme">
 
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
+        <activity android:name=".screens.sendbird.SendBirdChatActivity"
+            android:configChanges="screenSize|keyboardHidden|screenLayout"
+            android:exported="true"
+            />
 
         <activity
             android:name=".screens.photoviewer.PhotoViewerActivity"

@@ -30,6 +30,20 @@
   
 ### 3. Usage
 
+#### 3.0 Design
+ * For toolbar title override the following string to strings.xml - strings-ar.xml
+ 
+    ```bash
+     <string name="message_center_toolbar_title">Title</string>
+    ```
+ * For colors styling override to colors.xml 
+ 
+     ```bash
+     <color name="message_center_primary">{color}</color>
+     <color name="message_center_primary_dark">{color}</color>
+     <color name="message_center_primary_accent">{color}</color>
+     ```
+
 #### 3.1 connect()
 
  * First Step for integrating the app is to connect on the start of the application  
