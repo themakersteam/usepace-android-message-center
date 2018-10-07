@@ -14,15 +14,18 @@
 
         <activity android:name="com.usepace.android.messagingcenter.screens.sendbird.SendBirdChatActivity"
             android:configChanges="screenSize|keyboardHidden|screenLayout"
+            android:theme="@style/Theme.AppCompat.Light.DarkActionBar"
             />
 
         <activity
             android:name="com.usepace.android.messagingcenter.screens.photoviewer.PhotoViewerActivity"
-            android:configChanges="orientation|screenSize|keyboardHidden|screenLayout" />
+            android:configChanges="orientation|screenSize|keyboardHidden|screenLayout"
+            android:theme="@style/Theme.AppCompat.Light.DarkActionBar"/>
 
         <activity
             android:name="com.usepace.android.messagingcenter.screens.mediaplayer.MediaPlayerActivity"
-            android:configChanges="orientation|screenSize|keyboardHidden|screenLayout" />
+            android:configChanges="orientation|screenSize|keyboardHidden|screenLayout"
+            android:theme="@style/Theme.AppCompat.Light.DarkActionBar"/>
 
     </application>
 
