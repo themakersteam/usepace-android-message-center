@@ -7,7 +7,7 @@
     <color name="message_center_primary_accent">#1fcc94</color>
 
     <!-- Group Chat -->
-    <color name="groupChatBubbleMe">#774df2</color>
+    <color name="groupChatBubbleMe">@color/message_center_primary</color>
     <color name="groupChatTextMe">#ffffff</color>
     <color name="groupChatBubbleOther">#eef1f6</color>
     <color name="groupChatTextOther">#000000</color>
@@ -16,7 +16,7 @@
     <color name="groupChatDateBackground">#C0C0C0</color>
     <color name="btn_edit">#ffffff</color>
     <color name="btn_edit_disabled">#8e8e8e</color>
-    <color name="btn_send">#774df2</color>
+    <color name="btn_send">@color/message_center_primary</color>
     <color name="btn_send_disabled">#8e8e8e</color>
 
 
