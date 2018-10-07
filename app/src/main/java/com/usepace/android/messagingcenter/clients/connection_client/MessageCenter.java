@@ -1,9 +1,12 @@
 package com.usepace.android.messagingcenter.clients.connection_client;
 
 import android.content.Context;
+import com.google.firebase.messaging.RemoteMessage;
 import com.usepace.android.messagingcenter.interfaces.ConnectionInterface;
 import com.usepace.android.messagingcenter.interfaces.DisconnectInterface;
 import com.usepace.android.messagingcenter.model.ConnectionRequest;
+import java.util.ArrayList;
+import java.util.List;
 
 public class MessageCenter {
 
@@ -11,6 +14,7 @@ public class MessageCenter {
 
     private static Client client;
     private static String LAST_CLIENT = CLIENT_SENDBIRD;
+    private static List<String> notificationInboxMessages;
 
     /**
      *
@@ -37,6 +41,26 @@ public class MessageCenter {
      */
     public static void disconnect(DisconnectInterface disconnectInterface) {
         client().getClient(LAST_CLIENT).disconnect( disconnectInterface);
+    }
+
+    /**
+     *
+     */
+    public static void handleNotification(Context context, int icon, String title, RemoteMessage remoteMessage) {
+//        if (notificationInboxMessages == null)
+//            notificationInboxMessages = new ArrayList<>();
+        //Todo: Make sure its a Sendbird notification and call client
+        //notificationInboxMessages.add(remoteMessage.getNotification().getBody());
+        //client().getClient(LAST_CLIENT).handleNotification(context, icon, title, remoteMessage, notificationInboxMessages);
+    }
+
+    /**
+     * Clears Notification Inbox Messages
+     */
+    public static void clearNotificationInboxMessages() {
+        if (notificationInboxMessages != null) {
+            notificationInboxMessages.clear();
+        }
     }
 
     /**

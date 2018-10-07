@@ -7,6 +7,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
 import com.usepace.android.messagingcenter.R;
+import com.usepace.android.messagingcenter.clients.connection_client.MessageCenter;
 
 
 public class SendBirdChatActivity extends AppCompatActivity{
@@ -19,6 +20,7 @@ public class SendBirdChatActivity extends AppCompatActivity{
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_group_channel);
+        MessageCenter.clearNotificationInboxMessages();
         init();
     }
 

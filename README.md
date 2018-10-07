@@ -23,6 +23,11 @@
 	}
     ```
   
+  * Add The following permission to Manifest.xml file 
+    ```bash
+        <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" tools:node="replace"/>
+    ```
+  
   * In case of Manifest Failure, Add this under Application Tag 
     ```bash
      tools:replace="android:theme"
@@ -89,7 +94,15 @@
     ```
  * Executing this code will open the chatting window 
 
-#### 3.3 disconnect()
+#### 3.3 handleNotification()
+ * Handles only the related to MessageCenter Notifications 
+ 
+ * Sample code for Handling MessageCenter Notification 
+    ```bash
+    MessageCenter.handleNotification(context: context, icon: R.mipmap.notifcation, title: "Message App", remotemessage: remoteMessage); 
+    ```
+ 
+#### 3.4 disconnect()
 
  * Disconnects the chat services and stop receiving notifications for chat, can be used on the destroy of the app if necessary 
  
