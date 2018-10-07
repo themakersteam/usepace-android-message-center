@@ -2,6 +2,7 @@ package com.usepace.android.messagingcenter.clients.connection_client;
 
 import android.content.Context;
 import android.content.Intent;
+import com.google.firebase.messaging.RemoteMessage;
 import com.sendbird.android.SendBird;
 import com.sendbird.android.SendBirdException;
 import com.sendbird.android.User;
@@ -9,6 +10,8 @@ import com.usepace.android.messagingcenter.interfaces.ConnectionInterface;
 import com.usepace.android.messagingcenter.interfaces.DisconnectInterface;
 import com.usepace.android.messagingcenter.model.ConnectionRequest;
 import com.usepace.android.messagingcenter.screens.sendbird.SendBirdChatActivity;
+import com.usepace.android.messagingcenter.utils.NotificationUtil;
+import java.util.List;
 
 class SendBirdClient extends ClientInterface {
 
@@ -55,6 +58,13 @@ class SendBirdClient extends ClientInterface {
                     disconnectInterface.onMessageCenterDisconnected();
             }
         });
+    }
+
+    @Override
+    public void handleNotification(Context context, int icon, String title, RemoteMessage remoteMessage, List<String> messages) {
+        Intent pendingIntent = new Intent(context, SendBirdChatActivity.class);
+        //Todo: process remote message to only generate notification for SendBird
+        new NotificationUtil().generateOne(context, pendingIntent, icon, title, "", messages);
     }
 
     /**
