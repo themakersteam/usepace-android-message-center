@@ -227,6 +227,7 @@ public class SendBirdChatFragment extends Fragment {
                     }
 
                     mChannel = groupChannel;
+                    mChannel.setPushPreference(true, null);
                     mChatAdapter.setChannel(mChannel);
                     mChatAdapter.loadLatestMessages(CHANNEL_LIST_LIMIT, new BaseChannel.GetMessagesHandler() {
                         @Override
