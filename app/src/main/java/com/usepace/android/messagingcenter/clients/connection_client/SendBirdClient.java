@@ -27,14 +27,16 @@ class SendBirdClient extends ClientInterface {
                     if (e != null) {
                         connectionInterface.onMessageCenterConnectionError(e.getCode(), e.getMessage());
                     } else {
-                        connectionInterface.onMessageCenterConnected();
                         if (connectionRequest.getFcmToken() == null) return;
                         SendBird.registerPushTokenForCurrentUser(connectionRequest.getFcmToken(),
                                 new SendBird.RegisterPushTokenWithStatusHandler() {
                                     @Override
                                     public void onRegistered(SendBird.PushTokenRegistrationStatus status, SendBirdException e) {
                                         if (e != null) {    // Error.
-                                            return;
+                                            connectionInterface.onMessageCenterConnectionError(e.getCode(), e.getMessage());
+                                        }
+                                        else {
+                                            connectionInterface.onMessageCenterConnected();
                                         }
                                     }
                                 });
