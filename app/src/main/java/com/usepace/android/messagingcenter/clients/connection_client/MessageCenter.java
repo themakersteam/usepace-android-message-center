@@ -47,11 +47,9 @@ public class MessageCenter {
      *
      */
     public static void handleNotification(Context context, int icon, String title, RemoteMessage remoteMessage) {
-//        if (notificationInboxMessages == null)
-//            notificationInboxMessages = new ArrayList<>();
-        //Todo: Make sure its a Sendbird notification and call client
-        //notificationInboxMessages.add(remoteMessage.getNotification().getBody());
-        //client().getClient(LAST_CLIENT).handleNotification(context, icon, title, remoteMessage, notificationInboxMessages);
+        if (notificationInboxMessages == null)
+            notificationInboxMessages = new ArrayList<>();
+        client().getClient(LAST_CLIENT).handleNotification(context, icon, title, remoteMessage, notificationInboxMessages);
     }
 
     /**
