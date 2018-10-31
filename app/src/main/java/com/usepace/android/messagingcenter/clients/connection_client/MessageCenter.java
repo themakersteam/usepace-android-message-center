@@ -46,10 +46,10 @@ public class MessageCenter {
     /**
      *
      */
-    public static void handleNotification(Context context, int icon, String title, RemoteMessage remoteMessage) {
+    public static void handleNotification(Context context, Class next, int icon, String title, RemoteMessage remoteMessage) {
         if (notificationInboxMessages == null)
             notificationInboxMessages = new ArrayList<>();
-        client().getClient(LAST_CLIENT).handleNotification(context, icon, title, remoteMessage, notificationInboxMessages);
+        client().getClient(LAST_CLIENT).handleNotification(context, next, icon, title, remoteMessage, notificationInboxMessages);
     }
 
     /**
