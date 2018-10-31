@@ -69,12 +69,17 @@ class SendBirdClient extends ClientInterface {
             try {
                 JSONObject jsonObject = new JSONObject(remoteMessage.getData().get("sendbird"));
                 String message = jsonObject.getString("message");
-                messages.add(remoteMessage.getNotification().getBody());
+                messages.add(message);
                 Intent pendingIntent = new Intent(context, SendBirdChatActivity.class);
                 pendingIntent.putExtra("CHANNEL_URL", jsonObject.getJSONObject("channel").getString("channel_url"));
                 new NotificationUtil().generateOne(context, pendingIntent, icon, title, message, messages);
             }
-            catch (Exception e){}
+            catch (Exception e){
+                new NotificationUtil().generateOne(context, null, icon, title, e.getMessage().toString(), messages);
+            }
+        }
+        else {
+            new NotificationUtil().generateOne(context, null, icon, title, "Send bird not contained", messages);
         }
     }
 
