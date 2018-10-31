@@ -6,6 +6,8 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
+
+import com.sendbird.android.SendBird;
 import com.usepace.android.messagingcenter.R;
 import com.usepace.android.messagingcenter.clients.connection_client.MessageCenter;
 
@@ -56,6 +58,17 @@ public class SendBirdChatActivity extends AppCompatActivity{
             return;
         }
         super.onBackPressed();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        SendBird.disconnect(new SendBird.DisconnectHandler() {
+            @Override
+            public void onDisconnected() {
+
+            }
+        });
     }
 
     @Override

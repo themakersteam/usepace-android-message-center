@@ -11,6 +11,7 @@ import com.usepace.android.messagingcenter.interfaces.DisconnectInterface;
 import com.usepace.android.messagingcenter.model.ConnectionRequest;
 import com.usepace.android.messagingcenter.screens.sendbird.SendBirdChatActivity;
 import com.usepace.android.messagingcenter.utils.NotificationUtil;
+import org.json.JSONObject;
 import java.util.List;
 
 class SendBirdClient extends ClientInterface {
@@ -64,9 +65,17 @@ class SendBirdClient extends ClientInterface {
 
     @Override
     public void handleNotification(Context context, int icon, String title, RemoteMessage remoteMessage, List<String> messages) {
-        Intent pendingIntent = new Intent(context, SendBirdChatActivity.class);
-        //Todo: process remote message to only generate notification for SendBird
-        new NotificationUtil().generateOne(context, pendingIntent, icon, title, "", messages);
+        if (remoteMessage.getData().containsKey("sendbird")) {
+            try {
+                JSONObject jsonObject = new JSONObject(remoteMessage.getData().get("sendbird"));
+                String message = jsonObject.getString("message");
+                messages.add(remoteMessage.getNotification().getBody());
+                Intent pendingIntent = new Intent(context, SendBirdChatActivity.class);
+                pendingIntent.putExtra("CHANNEL_URL", jsonObject.getJSONObject("channel").getString("channel_url"));
+                new NotificationUtil().generateOne(context, pendingIntent, icon, title, message, messages);
+            }
+            catch (Exception e){}
+        }
     }
 
     /**
