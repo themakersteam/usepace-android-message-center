@@ -99,8 +99,11 @@
  
  * Sample code for Handling MessageCenter Notification 
     ```bash
-    MessageCenter.handleNotification(context: context, icon: R.mipmap.notifcation, title: "Message App", remotemessage: remoteMessage); 
+    MessageCenter.handleNotification(context: context,class: Class next, icon: R.mipmap.notifcation, title: "Message App", remotemessage: remoteMessage); 
     ```
+ * if app was opened from notification you will get 2 extra fields with the intent 
+    * CHANNEL_URL : a string url of the channel a message sent to 
+    * FROM_NOTIFICATION : a boolean field defining if message came from notification
  
 #### 3.4 disconnect()
 

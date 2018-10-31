@@ -28,7 +28,7 @@ public class NotificationUtil {
     public void generateOne(Context context, Intent intent, int icon, String title, String message, List<String> messages) {
         registerChannel(context);
         intent.addFlags(Intent.FLAG_ACTIVITY_BROUGHT_TO_FRONT);
-        PendingIntent pendingIntent = PendingIntent.getActivity(context, 0 /* Request code */, intent, PendingIntent.FLAG_ONE_SHOT);
+        PendingIntent pendingIntent = PendingIntent.getActivity(context, 0 /* Request code */, intent, PendingIntent.FLAG_UPDATE_CURRENT);
 
 
         Notification notification = new NotificationCompat.Builder(context, channel_id)
