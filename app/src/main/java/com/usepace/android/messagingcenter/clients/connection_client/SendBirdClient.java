@@ -75,11 +75,7 @@ class SendBirdClient extends ClientInterface {
                 new NotificationUtil().generateOne(context, pendingIntent, icon, title, message, messages);
             }
             catch (Exception e){
-                new NotificationUtil().generateOne(context, null, icon, title, e.getMessage().toString(), messages);
             }
-        }
-        else {
-            new NotificationUtil().generateOne(context, null, icon, title, "Send bird not contained", messages);
         }
     }
 
