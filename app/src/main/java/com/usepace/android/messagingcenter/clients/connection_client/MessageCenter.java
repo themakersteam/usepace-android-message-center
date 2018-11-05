@@ -30,8 +30,8 @@ public class MessageCenter {
     /**
      *
      */
-    public static void isConnected() {
-        client().getClient(LAST_CLIENT).isConnected();
+    public static boolean isConnected() {
+        return client().getClient(LAST_CLIENT).isConnected();
     }
 
     /**
