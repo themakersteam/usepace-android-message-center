@@ -15,6 +15,8 @@
         <activity android:name="com.usepace.android.messagingcenter.screens.sendbird.SendBirdChatActivity"
             android:configChanges="screenSize|keyboardHidden|screenLayout"
             android:theme="@style/ChatTheme"
+            android:windowSoftInputMode="stateHidden"
+            android:launchMode="singleTask"
             android:screenOrientation="portrait"
             />
 
