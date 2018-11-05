@@ -87,7 +87,7 @@
 
 #### 3.2 join()
  * Joining the chat by url(id) provided from back-end
- 
+ * To prevent connection errors, always call join inside onMessageCenterConnected callback
  * Sample code for joining a conversation
     ```bash
     MessageCenter.join(context: this, chat_id: "sample_chat_id"); 

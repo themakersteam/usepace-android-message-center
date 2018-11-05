@@ -119,9 +119,6 @@ public class SendBirdChatFragment extends Fragment {
 
         // Load messages from cache.
         mChatAdapter.load(mChannelUrl);
-        if (mChannel == null) {
-            refresh();
-        }
     }
 
     @Nullable
