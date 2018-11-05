@@ -48,6 +48,11 @@ class SendBirdClient extends ClientInterface {
     }
 
     @Override
+    public boolean isConnected() {
+        return SendBird.getConnectionState().equals(SendBird.ConnectionState.OPEN);
+    }
+
+    @Override
     public void join(Context context, final String chat_id) {
         context.startActivity(new Intent(context, SendBirdChatActivity.class)
                 .putExtra("CHANNEL_URL", chat_id));
