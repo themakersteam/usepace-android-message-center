@@ -10,6 +10,7 @@ import android.view.MenuItem;
 import com.sendbird.android.SendBird;
 import com.usepace.android.messagingcenter.R;
 import com.usepace.android.messagingcenter.clients.connection_client.MessageCenter;
+import com.usepace.android.messagingcenter.utils.PreferenceUtils;
 
 
 public class SendBirdChatActivity extends AppCompatActivity{
@@ -27,6 +28,7 @@ public class SendBirdChatActivity extends AppCompatActivity{
     }
 
     private void init() {
+        PreferenceUtils.init(this);
         if (getSupportActionBar() != null) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
             getSupportActionBar().setTitle(getString(R.string.message_center_toolbar_title));
@@ -50,6 +52,12 @@ public class SendBirdChatActivity extends AppCompatActivity{
 
     public void setOnBackPressedListener(onBackPressedListener listener) {
         mOnBackPressedListener = listener;
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        PreferenceUtils.init(this);
     }
 
     @Override
