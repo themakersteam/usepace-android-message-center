@@ -50,7 +50,6 @@ class SendBirdClient extends ClientInterface {
     @Override
     public void join(Context context, final String chat_id) {
         context.startActivity(new Intent(context, SendBirdChatActivity.class)
-                .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK)
                 .putExtra("CHANNEL_URL", chat_id));
     }
 
