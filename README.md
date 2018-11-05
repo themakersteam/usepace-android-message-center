@@ -104,8 +104,17 @@
  * if app was opened from notification you will get 2 extra fields with the intent 
     * CHANNEL_URL : a string url of the channel a message sent to 
     * FROM_NOTIFICATION : a boolean field defining if message came from notification
+
+#### 3.4 isConnected()
+
+ * returns true if Message Center is connected 
  
-#### 3.4 disconnect()
+ * Sample code for checking connection
+    ```bash
+    MessageCenter.isConnected();
+    ```
+ 
+#### 3.5 disconnect()
 
  * Disconnects the chat services and stop receiving notifications for chat, can be used on the destroy of the app if necessary 
  

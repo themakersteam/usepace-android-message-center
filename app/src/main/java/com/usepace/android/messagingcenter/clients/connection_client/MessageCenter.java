@@ -29,6 +29,13 @@ public class MessageCenter {
 
     /**
      *
+     */
+    public static void isConnected() {
+        client().getClient(LAST_CLIENT).isConnected();
+    }
+
+    /**
+     *
      * @param chat_id
      */
     public static void join(Context context, String chat_id) {
