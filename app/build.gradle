@@ -29,12 +29,6 @@ ext {
     firebase_services_version = "11.8.0"
 }
 
-configurations.all {
-    resolutionStrategy {
-        force 'com.github.bumptech.glide:glide:4.6.1'
-    }
-}
-
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
 
