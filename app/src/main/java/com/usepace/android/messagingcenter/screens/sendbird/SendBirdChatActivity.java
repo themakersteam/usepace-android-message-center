@@ -1,5 +1,6 @@
 package com.usepace.android.messagingcenter.screens.sendbird;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -28,10 +29,11 @@ public class SendBirdChatActivity extends AppCompatActivity{
     }
 
     private void init() {
+        SendBird.setAutoBackgroundDetection(true);
         PreferenceUtils.init(this);
         if (getSupportActionBar() != null) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-            getSupportActionBar().setTitle(getString(R.string.message_center_toolbar_title));
+            getSupportActionBar().setTitle(getIntent().hasExtra("TITLE") ? getIntent().getStringExtra("TITLE") : getString(R.string.message_center_toolbar_title));
         }
         String channelUrl = getIntent().getStringExtra("CHANNEL_URL");
 
@@ -55,6 +57,14 @@ public class SendBirdChatActivity extends AppCompatActivity{
     }
 
     @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        if (intent != null && intent.hasExtra("close") && intent.getBooleanExtra("close", false)) {
+            finish();
+        }
+    }
+
+    @Override
     protected void onResume() {
         super.onResume();
         PreferenceUtils.init(this);
@@ -71,12 +81,7 @@ public class SendBirdChatActivity extends AppCompatActivity{
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        SendBird.disconnect(new SendBird.DisconnectHandler() {
-            @Override
-            public void onDisconnected() {
-
-            }
-        });
+        SendBird.setAutoBackgroundDetection(false);
     }
 
     @Override
