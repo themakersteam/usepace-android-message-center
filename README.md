@@ -64,6 +64,7 @@
     *    String access_token; //Access Token for Security (provided from back-end)
     *    String client; //Message Center is a Client Base Service, The only Client for now is   `MessageCenter.CLIENT_SENDBIRD`
     *    String fcm_token; //The FCM token for notification
+    *    String apn_token; //for ios only
     
  * Connection Request Constructors 
     - public ConnectionRequest()
@@ -79,7 +80,7 @@
                       }
       
                       @Override
-                      public void onMessageCenterConnectionError(int i, String s) {
+                      public void onMessageCenterConnectionError(int error_code, MessageCenterException mce) {
       
                       }
                   });

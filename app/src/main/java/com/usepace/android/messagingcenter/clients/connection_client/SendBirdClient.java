@@ -6,6 +6,7 @@ import com.google.firebase.messaging.RemoteMessage;
 import com.sendbird.android.SendBird;
 import com.sendbird.android.SendBirdException;
 import com.sendbird.android.User;
+import com.usepace.android.messagingcenter.exceptions.MessageCenterException;
 import com.usepace.android.messagingcenter.interfaces.ConnectionInterface;
 import com.usepace.android.messagingcenter.interfaces.DisconnectInterface;
 import com.usepace.android.messagingcenter.model.ConnectionRequest;
@@ -26,7 +27,7 @@ class SendBirdClient extends ClientInterface {
             public void onConnected(User user, SendBirdException e) {
                 if (connectionInterface != null) {
                     if (e != null) {
-                        connectionInterface.onMessageCenterConnectionError(e.getCode(), e.getMessage());
+                        connectionInterface.onMessageCenterConnectionError(e.getCode(), new MessageCenterException(e.getMessage()));
                     } else {
                         if (connectionRequest.getFcmToken() == null) return;
                         SendBird.registerPushTokenForCurrentUser(connectionRequest.getFcmToken(),
@@ -34,7 +35,7 @@ class SendBirdClient extends ClientInterface {
                                     @Override
                                     public void onRegistered(SendBird.PushTokenRegistrationStatus status, SendBirdException e) {
                                         if (e != null) {    // Error.
-                                            connectionInterface.onMessageCenterConnectionError(e.getCode(), e.getMessage());
+                                            connectionInterface.onMessageCenterConnectionError(e.getCode(), new MessageCenterException(e.getMessage()));
                                         }
                                         else {
                                             connectionInterface.onMessageCenterConnected();
