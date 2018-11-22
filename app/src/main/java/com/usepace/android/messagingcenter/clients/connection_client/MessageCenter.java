@@ -24,18 +24,25 @@ public class MessageCenter {
      * @param connectionInterface
      */
     public static void connect(Context context, ConnectionRequest connectionRequest, ConnectionInterface connectionInterface) {
-        if (connectionRequest.getClient() == null) {
-            connectionInterface.onMessageCenterConnectionError(500, new MessageCenterException("Client Must be provided"));
-        }
         LAST_CLIENT = connectionRequest.getClient();
-        client().getClient(connectionRequest.getClient()).connect(context, connectionRequest, connectionInterface);
+        try {
+            client().getClient(connectionRequest.getClient()).connect(context, connectionRequest, connectionInterface);
+        }
+        catch (MessageCenterException e) {
+            connectionInterface.onMessageCenterConnectionError(e.getCode(), e);
+        }
     }
 
     /**
      *
      */
     public static boolean isConnected() {
-        return client().getClient(LAST_CLIENT).isConnected();
+        try {
+            return client().getClient(LAST_CLIENT).isConnected();
+        }
+        catch (MessageCenterException e) {
+            return false;
+        }
     }
 
     /**
@@ -43,7 +50,12 @@ public class MessageCenter {
      * @param chat_id
      */
     public static void join(Context context, String chat_id) {
-        client().getClient(LAST_CLIENT).join(context, chat_id);
+        try {
+            client().getClient(LAST_CLIENT).join(context, chat_id);
+        }
+        catch (MessageCenterException e) {
+
+        }
     }
 
     /**
@@ -51,16 +63,25 @@ public class MessageCenter {
      * @param disconnectInterface
      */
     public static void disconnect(DisconnectInterface disconnectInterface) {
-        client().getClient(LAST_CLIENT).disconnect( disconnectInterface);
+        try {
+            client().getClient(LAST_CLIENT).disconnect(disconnectInterface);
+        }
+        catch (MessageCenterException e) {
+        }
     }
 
     /**
      *
      */
     public static void handleNotification(Context context, Class next, int icon, String title, RemoteMessage remoteMessage) {
-        if (notificationInboxMessages == null)
-            notificationInboxMessages = new ArrayList<>();
-        client().getClient(LAST_CLIENT).handleNotification(context, next, icon, title, remoteMessage, notificationInboxMessages);
+        try {
+            if (notificationInboxMessages == null)
+                notificationInboxMessages = new ArrayList<>();
+            client().getClient(LAST_CLIENT).handleNotification(context, next, icon, title, remoteMessage, notificationInboxMessages);
+        }
+        catch (MessageCenterException e) {
+
+        }
     }
 
     /**
