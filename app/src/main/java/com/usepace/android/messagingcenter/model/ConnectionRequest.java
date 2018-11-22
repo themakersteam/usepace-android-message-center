@@ -7,6 +7,7 @@ public class ConnectionRequest {
     private String access_token;
     private String client;
     private String fcm_token;
+    private String apns_token; // for ios only
 
     public ConnectionRequest() {
     }

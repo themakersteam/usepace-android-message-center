@@ -2,6 +2,7 @@ package com.usepace.android.messagingcenter.clients.connection_client;
 
 import android.content.Context;
 import com.google.firebase.messaging.RemoteMessage;
+import com.usepace.android.messagingcenter.exceptions.MessageCenterException;
 import com.usepace.android.messagingcenter.interfaces.ConnectionInterface;
 import com.usepace.android.messagingcenter.interfaces.DisconnectInterface;
 import com.usepace.android.messagingcenter.model.ConnectionRequest;
@@ -23,6 +24,9 @@ public class MessageCenter {
      * @param connectionInterface
      */
     public static void connect(Context context, ConnectionRequest connectionRequest, ConnectionInterface connectionInterface) {
+        if (connectionRequest.getClient() == null) {
+            connectionInterface.onMessageCenterConnectionError(500, new MessageCenterException("Client Must be provided"));
+        }
         LAST_CLIENT = connectionRequest.getClient();
         client().getClient(connectionRequest.getClient()).connect(context, connectionRequest, connectionInterface);
     }
