@@ -3,12 +3,14 @@ package com.usepace.android.messagingcenter.clients.connection_client;
 import android.content.Context;
 import android.content.Intent;
 import com.google.firebase.messaging.RemoteMessage;
+import com.sendbird.android.GroupChannel;
 import com.sendbird.android.SendBird;
 import com.sendbird.android.SendBirdException;
 import com.sendbird.android.User;
 import com.usepace.android.messagingcenter.exceptions.MessageCenterException;
 import com.usepace.android.messagingcenter.interfaces.ConnectionInterface;
 import com.usepace.android.messagingcenter.interfaces.DisconnectInterface;
+import com.usepace.android.messagingcenter.interfaces.UnReadMessagesInterface;
 import com.usepace.android.messagingcenter.model.ConnectionRequest;
 import com.usepace.android.messagingcenter.screens.sendbird.SendBirdChatActivity;
 import com.usepace.android.messagingcenter.utils.NotificationUtil;
@@ -50,7 +52,40 @@ class SendBirdClient extends ClientInterface {
 
     @Override
     public boolean isConnected() {
-        return SendBird.getConnectionState().equals(SendBird.ConnectionState.OPEN);
+        if (SendBird.getConnectionState() != null) {
+            return SendBird.getConnectionState().equals(SendBird.ConnectionState.OPEN);
+        }
+        return false;
+    }
+
+    @Override
+    public void getUnReadMessagesCount(String chat_id, final UnReadMessagesInterface unReadMessagesInterface) {
+        if (chat_id == null) {
+            SendBird.getTotalUnreadMessageCount(new GroupChannel.GroupChannelTotalUnreadMessageCountHandler() {
+                @Override
+                public void onResult(int i, SendBirdException e) {
+                    if (e != null) {
+                        unReadMessagesInterface.onErrorRetrievingMessages(new MessageCenterException(e.getMessage()));
+                    }
+                    else {
+                        unReadMessagesInterface.onUnreadMessages(i);
+                    }
+                }
+            });
+        }
+        else {
+            GroupChannel.getChannel(chat_id, new GroupChannel.GroupChannelGetHandler() {
+                @Override
+                public void onResult(GroupChannel groupChannel, SendBirdException e) {
+                    if (e != null) {
+                        unReadMessagesInterface.onErrorRetrievingMessages(new MessageCenterException(e.getMessage()));
+                    }
+                    else {
+                        unReadMessagesInterface.onUnreadMessages(groupChannel.getUnreadMessageCount());
+                    }
+                }
+            });
+        }
     }
 
     @Override
