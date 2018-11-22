@@ -113,7 +113,7 @@
  * Joining the chat by url(id) provided
  * Sample code for joining a conversation
     ```bash
-    MessageCenter.join(context: this, chat_id: "sample_chat_id", theme: new Theme(toolbar: "title")); 
+    MessageCenter.openChatView(context: this, chat_id: "sample_chat_id", theme: new Theme(toolbar: "title")); 
     ```
  * if Theme object is not provided, the app will take the defaults 
  * Theme Object now have (toolbar_title), and for IOS (toolbar_title, color primary, color secondary)
