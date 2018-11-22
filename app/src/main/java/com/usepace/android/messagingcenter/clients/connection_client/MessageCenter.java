@@ -3,10 +3,12 @@ package com.usepace.android.messagingcenter.clients.connection_client;
 import android.content.Context;
 import com.google.firebase.messaging.RemoteMessage;
 import com.usepace.android.messagingcenter.exceptions.MessageCenterException;
+import com.usepace.android.messagingcenter.interfaces.CloseChatViewInterface;
 import com.usepace.android.messagingcenter.interfaces.ConnectionInterface;
 import com.usepace.android.messagingcenter.interfaces.DisconnectInterface;
 import com.usepace.android.messagingcenter.interfaces.UnReadMessagesInterface;
 import com.usepace.android.messagingcenter.model.ConnectionRequest;
+import com.usepace.android.messagingcenter.model.Theme;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -65,9 +67,22 @@ public class MessageCenter {
      *
      * @param chat_id
      */
-    public static void join(Context context, String chat_id) {
+    public static void openChatView(Context context, String chat_id, Theme theme) {
         try {
-            client().getClient(LAST_CLIENT).join(context, chat_id);
+            client().getClient(LAST_CLIENT).openChatView(context, chat_id, theme);
+        }
+        catch (MessageCenterException e) {
+        }
+    }
+
+
+    /**
+     *
+     * @param context
+     */
+    public static void closeChatView(Context context, CloseChatViewInterface closeChatViewInterface) {
+        try {
+            client().getClient(LAST_CLIENT).closeChatView(context, closeChatViewInterface);
         }
         catch (MessageCenterException e) {
         }

@@ -8,10 +8,12 @@ import com.sendbird.android.SendBird;
 import com.sendbird.android.SendBirdException;
 import com.sendbird.android.User;
 import com.usepace.android.messagingcenter.exceptions.MessageCenterException;
+import com.usepace.android.messagingcenter.interfaces.CloseChatViewInterface;
 import com.usepace.android.messagingcenter.interfaces.ConnectionInterface;
 import com.usepace.android.messagingcenter.interfaces.DisconnectInterface;
 import com.usepace.android.messagingcenter.interfaces.UnReadMessagesInterface;
 import com.usepace.android.messagingcenter.model.ConnectionRequest;
+import com.usepace.android.messagingcenter.model.Theme;
 import com.usepace.android.messagingcenter.screens.sendbird.SendBirdChatActivity;
 import com.usepace.android.messagingcenter.utils.NotificationUtil;
 import org.json.JSONObject;
@@ -60,6 +62,8 @@ class SendBirdClient extends ClientInterface {
 
     @Override
     public void getUnReadMessagesCount(String chat_id, final UnReadMessagesInterface unReadMessagesInterface) {
+        if (unReadMessagesInterface == null)
+            return;
         if (chat_id == null) {
             SendBird.getTotalUnreadMessageCount(new GroupChannel.GroupChannelTotalUnreadMessageCountHandler() {
                 @Override
@@ -89,9 +93,23 @@ class SendBirdClient extends ClientInterface {
     }
 
     @Override
-    public void join(Context context, final String chat_id) {
-        context.startActivity(new Intent(context, SendBirdChatActivity.class)
-                .putExtra("CHANNEL_URL", chat_id));
+    public void openChatView(Context context, String chat_id, Theme theme) {
+        Intent a1 = new Intent(context, SendBirdChatActivity.class);
+        if (theme != null && theme.getToolbarTitle() != null) {
+            a1.putExtra("TITLE", theme.getToolbarTitle());
+        }
+        a1.putExtra("CHANNEL_URL", chat_id);
+        context.startActivity(a1);
+    }
+
+    @Override
+    public void closeChatView(Context context, CloseChatViewInterface closeChatViewInterface) {
+        Intent i = new Intent(context, SendBirdChatActivity.class);
+        i.putExtra("close",true);
+        context.startActivity(i);
+        if (closeChatViewInterface != null) {
+            closeChatViewInterface.onClosed();
+        }
     }
 
     @Override

@@ -109,16 +109,25 @@
                    });
     ```
  
-#### 3.3 join()
- * Joining the chat by url(id) provided from back-end
- * To prevent connection errors, always call join inside onMessageCenterConnected callback
+#### 3.3 openChatView()
+ * Joining the chat by url(id) provided
  * Sample code for joining a conversation
     ```bash
-    MessageCenter.join(context: this, chat_id: "sample_chat_id"); 
+    MessageCenter.join(context: this, chat_id: "sample_chat_id", theme: new Theme(toolbar: "title")); 
     ```
- * Executing this code will open the chatting window 
+ * if Theme object is not provided, the app will take the defaults 
+ * Theme Object now have (toolbar_title), and for IOS (toolbar_title, color primary, color secondary)
+ * Executing this interface will open the chatting window 
+ 
+ #### 3.4 closeChatView()
+  * Closing the chat view from the app side
+  * Sample code for closing the chat view
+     ```bash
+     MessageCenter.closeChatView(context: this); 
+     ```
+  * Executing this interface will close the chatting window in the sdk
 
-#### 3.4 handleNotification()
+#### 3.5 handleNotification()
  * Handles only the related to MessageCenter Notifications 
  
  * Sample code for Handling MessageCenter Notification 
@@ -129,7 +138,7 @@
     * CHANNEL_URL : a string url of the channel a message sent to 
     * FROM_NOTIFICATION : a boolean field defining if message came from notification
 
-#### 3.5 isConnected()
+#### 3.6 isConnected()
 
  * returns true if Message Center is connected 
  
@@ -138,7 +147,7 @@
     MessageCenter.isConnected();
     ```
  
-#### 3.6 disconnect()
+#### 3.7 disconnect()
 
  * Disconnects the chat services and stop receiving notifications for chat, best case to use if with user logout 
  
