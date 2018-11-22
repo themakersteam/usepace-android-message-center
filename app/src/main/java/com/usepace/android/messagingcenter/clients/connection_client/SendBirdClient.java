@@ -8,6 +8,7 @@ import com.sendbird.android.SendBird;
 import com.sendbird.android.SendBirdException;
 import com.sendbird.android.User;
 import com.usepace.android.messagingcenter.exceptions.MessageCenterException;
+import com.usepace.android.messagingcenter.interfaces.AppHandleNotificationInterface;
 import com.usepace.android.messagingcenter.interfaces.CloseChatViewInterface;
 import com.usepace.android.messagingcenter.interfaces.ConnectionInterface;
 import com.usepace.android.messagingcenter.interfaces.DisconnectInterface;
@@ -124,7 +125,7 @@ class SendBirdClient extends ClientInterface {
     }
 
     @Override
-    public void handleNotification(Context context, Class next, int icon, String title, RemoteMessage remoteMessage, List<String> messages) {
+    public void sdkHandleNotification(Context context, Class next, int icon, String title, RemoteMessage remoteMessage, List<String> messages) {
         if (remoteMessage.getData().containsKey("sendbird")) {
             try {
                 JSONObject jsonObject = new JSONObject(remoteMessage.getData().get("sendbird"));
@@ -136,6 +137,25 @@ class SendBirdClient extends ClientInterface {
                 new NotificationUtil().generateOne(context, pendingIntent, icon, title, message, messages);
             }
             catch (Exception e){
+            }
+        }
+    }
+
+    @Override
+    public void appHandleNotification(RemoteMessage remoteMessage, AppHandleNotificationInterface appHandleNotificationInterface) {
+        try {
+            if (appHandleNotificationInterface == null)
+                return;
+            if (remoteMessage.getData().containsKey("sendbird")) {
+                appHandleNotificationInterface.onMatched(new JSONObject(remoteMessage.getData().get("sendbird")));
+            }
+            else{
+                appHandleNotificationInterface.onUnMatched();
+            }
+        }
+        catch (Exception e) {
+            if (appHandleNotificationInterface != null) {
+                appHandleNotificationInterface.onUnMatched();
             }
         }
     }

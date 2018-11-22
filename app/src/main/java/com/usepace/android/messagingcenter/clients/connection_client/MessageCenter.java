@@ -3,6 +3,7 @@ package com.usepace.android.messagingcenter.clients.connection_client;
 import android.content.Context;
 import com.google.firebase.messaging.RemoteMessage;
 import com.usepace.android.messagingcenter.exceptions.MessageCenterException;
+import com.usepace.android.messagingcenter.interfaces.AppHandleNotificationInterface;
 import com.usepace.android.messagingcenter.interfaces.CloseChatViewInterface;
 import com.usepace.android.messagingcenter.interfaces.ConnectionInterface;
 import com.usepace.android.messagingcenter.interfaces.DisconnectInterface;
@@ -103,14 +104,28 @@ public class MessageCenter {
     /**
      *
      */
-    public static void handleNotification(Context context, Class next, int icon, String title, RemoteMessage remoteMessage) {
+    public static void sdkHandleNotification(Context context, Class next, int icon, String title, RemoteMessage remoteMessage) {
         try {
             if (notificationInboxMessages == null)
                 notificationInboxMessages = new ArrayList<>();
-            client().getClient(LAST_CLIENT).handleNotification(context, next, icon, title, remoteMessage, notificationInboxMessages);
+            client().getClient(LAST_CLIENT).sdkHandleNotification(context, next, icon, title, remoteMessage, notificationInboxMessages);
         }
         catch (MessageCenterException e) {
 
+        }
+    }
+
+    /**
+     *
+     */
+    public static void appHandleNotification(RemoteMessage remoteMessage, AppHandleNotificationInterface appHandleNotificationInterface) {
+        try {
+            client().getClient(LAST_CLIENT).appHandleNotification(remoteMessage, appHandleNotificationInterface);
+        }
+        catch (MessageCenterException e) {
+            if (appHandleNotificationInterface != null) {
+                appHandleNotificationInterface.onUnMatched();
+            }
         }
     }
 

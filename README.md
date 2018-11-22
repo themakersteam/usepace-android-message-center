@@ -127,18 +127,39 @@
      ```
   * Executing this interface will close the chatting window in the sdk
 
-#### 3.5 handleNotification()
+#### 3.5 sdkHandleNotification()
  * Handles only the related to MessageCenter Notifications 
  
  * Sample code for Handling MessageCenter Notification 
     ```bash
-    MessageCenter.handleNotification(context: context,class: Class next, icon: R.mipmap.notifcation, title: "Message App", remotemessage: remoteMessage); 
+    MessageCenter.sdkHandleNotification(context: context,class: Class next, icon: R.mipmap.notifcation, title: "Message App", remotemessage: remoteMessage); 
     ```
  * if app was opened from notification you will get 2 extra fields with the intent 
     * CHANNEL_URL : a string url of the channel a message sent to 
     * FROM_NOTIFICATION : a boolean field defining if message came from notification
 
-#### 3.6 isConnected()
+#### 3.6 appHandleNotification()
+ * checks payload if its related to MessageCenter Notifications 
+ 
+ * Sample code for Handling App MessageCenter Notification 
+    ```bash
+    MessageCenter.appHandleNotification(remotemessage: remoteMessage, interface: new AppHandleNoticiationInterface() { 
+                      @Override
+                      public void onMatched(JSONObject data) {
+                          //JSON Object will moduled with next versions 
+                          // to get the message call jsonObject.getString("message")
+                          // to get the channel url call jsonObject.getJSONObject("channel").getString("channel_url")
+                          // More information is provided with the JSON object, toString() to know more         
+                      }
+          
+                      @Override
+                      public void onUnMatched() {
+          
+                      }
+                   });
+    ```
+    
+#### 3.7 isConnected()
 
  * returns true if Message Center is connected 
  
@@ -147,7 +168,7 @@
     MessageCenter.isConnected();
     ```
  
-#### 3.7 disconnect()
+#### 3.8 disconnect()
 
  * Disconnects the chat services and stop receiving notifications for chat, best case to use if with user logout 
  
