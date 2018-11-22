@@ -5,6 +5,7 @@ import com.google.firebase.messaging.RemoteMessage;
 import com.usepace.android.messagingcenter.exceptions.MessageCenterException;
 import com.usepace.android.messagingcenter.interfaces.ConnectionInterface;
 import com.usepace.android.messagingcenter.interfaces.DisconnectInterface;
+import com.usepace.android.messagingcenter.interfaces.UnReadMessagesInterface;
 import com.usepace.android.messagingcenter.model.ConnectionRequest;
 import java.util.ArrayList;
 import java.util.List;
@@ -45,6 +46,21 @@ public class MessageCenter {
         }
     }
 
+
+    /**
+     *
+     * @param chat_id
+     * @param unReadMessagesInterface
+     */
+    public static void getUnReadMessagesCount(String chat_id, UnReadMessagesInterface unReadMessagesInterface) {
+        try {
+            client().getClient(LAST_CLIENT).getUnReadMessagesCount(chat_id, unReadMessagesInterface);
+        }
+        catch (MessageCenterException e) {
+            unReadMessagesInterface.onErrorRetrievingMessages(e);
+        }
+    }
+
     /**
      *
      * @param chat_id
@@ -54,7 +70,6 @@ public class MessageCenter {
             client().getClient(LAST_CLIENT).join(context, chat_id);
         }
         catch (MessageCenterException e) {
-
         }
     }
 

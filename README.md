@@ -86,7 +86,30 @@
                   });
    ```
 
-#### 3.2 join()
+#### 3.2 getUnReadMessagesCount()
+ * Getting Total of Unread Messages 
+ 
+      ```bash
+     MessageCenter.getUnReadMessagesCount(String chat_id, UnReadMessagesInterface unread_message_interface)
+      ```
+ * if chat_id is not provided, the sdk will retrieve the total unread messages for all channels 
+ * if chat_id is provided, the sdk will retrieve the total unread messages for the provided channel
+ * Sample code for retrieving the count 
+    ```bash
+    MessageCenter.getUnReadMessagesCount(chat_id: "channel_sample", new UnReadMessagesInterface() {
+                      @Override
+                      public void onUnreadMessages(int count) {
+                              
+                      }
+          
+                      @Override
+                      public void onErrorRetrievingMessages(MessageCenterException e) {
+          
+                      }
+                   });
+    ```
+ 
+#### 3.3 join()
  * Joining the chat by url(id) provided from back-end
  * To prevent connection errors, always call join inside onMessageCenterConnected callback
  * Sample code for joining a conversation
@@ -95,7 +118,7 @@
     ```
  * Executing this code will open the chatting window 
 
-#### 3.3 handleNotification()
+#### 3.4 handleNotification()
  * Handles only the related to MessageCenter Notifications 
  
  * Sample code for Handling MessageCenter Notification 
@@ -106,7 +129,7 @@
     * CHANNEL_URL : a string url of the channel a message sent to 
     * FROM_NOTIFICATION : a boolean field defining if message came from notification
 
-#### 3.4 isConnected()
+#### 3.5 isConnected()
 
  * returns true if Message Center is connected 
  
@@ -115,9 +138,9 @@
     MessageCenter.isConnected();
     ```
  
-#### 3.5 disconnect()
+#### 3.6 disconnect()
 
- * Disconnects the chat services and stop receiving notifications for chat, can be used on the destroy of the app if necessary 
+ * Disconnects the chat services and stop receiving notifications for chat, best case to use if with user logout 
  
  * Sample code for disconnecting
     ```bash
