@@ -32,10 +32,20 @@
     ```bash
      tools:replace="android:theme"
     ```
-  
-### 3. Usage
 
-#### 3.0 Design
+### 3. Sample App
+
+  * For Debugging/Testing the library (to be able to run the library as an application) do the following:
+  
+  * Replace The `` build.gradle `` plugin from ``com.android.library`` to ``com.android.application``
+  
+  * Uncomment the Manifest ``todo: Uncomment for testing `` 
+  
+  * Test and debug method inside ``TestActivity.Java``, Default Launcher for the app
+  
+### 4. Usage
+
+#### 4.0 Design
  * For toolbar title override the following string to strings.xml - strings-ar.xml
  
     ```bash
@@ -49,7 +59,7 @@
      <color name="message_center_primary_accent">{color}</color>
      ```
 
-#### 3.1 connect()
+#### 4.1 connect()
 
  * First Step for integrating the app is to connect on the start of the application  
  
@@ -86,7 +96,7 @@
                   });
    ```
 
-#### 3.2 getUnReadMessagesCount()
+#### 4.2 getUnReadMessagesCount()
  * Getting Total of Unread Messages 
  
       ```bash
@@ -109,7 +119,7 @@
                    });
     ```
  
-#### 3.3 openChatView()
+#### 4.3 openChatView()
  * Joining the chat by url(id) provided
  * Sample code for joining a conversation
     ```bash
@@ -119,7 +129,7 @@
  * Theme Object now have (toolbar_title), and for IOS (toolbar_title, color primary, color secondary)
  * Executing this interface will open the chatting window 
  
- #### 3.4 closeChatView()
+ #### 4.4 closeChatView()
   * Closing the chat view from the app side
   * Sample code for closing the chat view
      ```bash
@@ -127,7 +137,9 @@
      ```
   * Executing this interface will close the chatting window in the sdk
 
-#### 3.5 sdkHandleNotification()
+
+#### 4.5 sdkhandleNotification()
+
  * Handles only the related to MessageCenter Notifications 
  
  * Sample code for Handling MessageCenter Notification 
@@ -138,7 +150,8 @@
     * CHANNEL_URL : a string url of the channel a message sent to 
     * FROM_NOTIFICATION : a boolean field defining if message came from notification
 
-#### 3.6 appHandleNotification()
+#### 4.6 appHandleNotification()
+
  * checks payload if its related to MessageCenter Notifications 
  
  * Sample code for Handling App MessageCenter Notification 
@@ -159,7 +172,7 @@
                    });
     ```
     
-#### 3.7 isConnected()
+#### 4.7 isConnected()
 
  * returns true if Message Center is connected 
  
@@ -167,8 +180,8 @@
     ```bash
     MessageCenter.isConnected();
     ```
- 
-#### 3.8 disconnect()
+
+#### 4.8 disconnect()
 
  * Disconnects the chat services and stop receiving notifications for chat, best case to use if with user logout 
  
