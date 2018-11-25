@@ -123,7 +123,7 @@
  * Joining the chat by url(id) provided
  * Sample code for joining a conversation
     ```bash
-    MessageCenter.join(context: this, chat_id: "sample_chat_id", theme: new Theme(toolbar: "title")); 
+    MessageCenter.openChatView(context: this, chat_id: "sample_chat_id", theme: new Theme(toolbar: "title")); 
     ```
  * if Theme object is not provided, the app will take the defaults 
  * Theme Object now have (toolbar_title), and for IOS (toolbar_title, color primary, color secondary)
@@ -137,18 +137,42 @@
      ```
   * Executing this interface will close the chatting window in the sdk
 
-#### 4.5 handleNotification()
+
+#### 4.5 sdkhandleNotification()
+
  * Handles only the related to MessageCenter Notifications 
  
  * Sample code for Handling MessageCenter Notification 
     ```bash
-    MessageCenter.handleNotification(context: context,class: Class next, icon: R.mipmap.notifcation, title: "Message App", remotemessage: remoteMessage); 
+    MessageCenter.sdkHandleNotification(context: context,class: Class next, icon: R.mipmap.notifcation, title: "Message App", remotemessage: remoteMessage); 
     ```
  * if app was opened from notification you will get 2 extra fields with the intent 
     * CHANNEL_URL : a string url of the channel a message sent to 
     * FROM_NOTIFICATION : a boolean field defining if message came from notification
 
-#### 4.6 isConnected()
+#### 4.6 appHandleNotification()
+
+ * checks payload if its related to MessageCenter Notifications 
+ 
+ * Sample code for Handling App MessageCenter Notification 
+    ```bash
+    MessageCenter.appHandleNotification(remotemessage: remoteMessage, interface: new AppHandleNoticiationInterface() { 
+                      @Override
+                      public void onMatched(JSONObject data) {
+                          //JSON Object will moduled with next versions 
+                          // to get the message call jsonObject.getString("message")
+                          // to get the channel url call jsonObject.getJSONObject("channel").getString("channel_url")
+                          // More information is provided with the JSON object, toString() to know more         
+                      }
+          
+                      @Override
+                      public void onUnMatched() {
+          
+                      }
+                   });
+    ```
+    
+#### 4.7 isConnected()
 
  * returns true if Message Center is connected 
  
@@ -156,8 +180,8 @@
     ```bash
     MessageCenter.isConnected();
     ```
- 
-#### 4.7 disconnect()
+
+#### 4.8 disconnect()
 
  * Disconnects the chat services and stop receiving notifications for chat, best case to use if with user logout 
  
