@@ -6,8 +6,9 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
-
+import android.widget.TextView;
 import com.sendbird.android.SendBird;
 import com.usepace.android.messagingcenter.R;
 import com.usepace.android.messagingcenter.clients.connection_client.MessageCenter;
@@ -18,7 +19,8 @@ public class SendBirdChatActivity extends AppCompatActivity{
 
 
     private onBackPressedListener mOnBackPressedListener;
-
+    private Toolbar toolbar;
+    private TextView toolbarSubtitle;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -31,10 +33,7 @@ public class SendBirdChatActivity extends AppCompatActivity{
     private void init() {
         SendBird.setAutoBackgroundDetection(true);
         PreferenceUtils.init(this);
-        if (getSupportActionBar() != null) {
-            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-            getSupportActionBar().setTitle(getIntent().hasExtra("TITLE") ? getIntent().getStringExtra("TITLE") : getString(R.string.message_center_toolbar_title));
-        }
+        initToolBar();
         String channelUrl = getIntent().getStringExtra("CHANNEL_URL");
 
         if(channelUrl != null) {
@@ -51,6 +50,16 @@ public class SendBirdChatActivity extends AppCompatActivity{
         }
     }
 
+    private void initToolBar() {
+        toolbar = findViewById(R.id.my_toolbar);
+        toolbarSubtitle = findViewById(R.id.toolbar_subtitle);
+        setSupportActionBar(toolbar);
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+            getSupportActionBar().setTitle(getIntent().hasExtra("TITLE") ? getIntent().getStringExtra("TITLE") : getString(R.string.message_center_toolbar_title));
+        }
+        toolbarSubtitle.setText(getIntent().hasExtra("SUBTITLE") ? getIntent().getStringExtra("SUBTITLE") : "");
+    }
 
     public void setOnBackPressedListener(onBackPressedListener listener) {
         mOnBackPressedListener = listener;
