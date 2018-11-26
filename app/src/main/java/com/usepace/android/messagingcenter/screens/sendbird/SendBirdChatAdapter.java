@@ -1,6 +1,7 @@
 package com.usepace.android.messagingcenter.screens.sendbird;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.widget.RecyclerView;
@@ -648,7 +649,8 @@ class SendBirdChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     }
 
     private class MyUserMessageHolder extends RecyclerView.ViewHolder {
-        TextView messageText, editedText, timeText, readReceiptText;
+        TextView messageText, editedText, timeText;
+        ImageView readReceipt;
         ViewGroup urlPreviewContainer;
         TextView urlPreviewSiteNameText, urlPreviewTitleText, urlPreviewDescriptionText;
         ImageView urlPreviewMainImageView;
@@ -660,7 +662,7 @@ class SendBirdChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
             messageText = (TextView) itemView.findViewById(R.id.text_group_chat_message);
             editedText = (TextView) itemView.findViewById(R.id.text_group_chat_edited);
             timeText = (TextView) itemView.findViewById(R.id.text_group_chat_time);
-            readReceiptText = (TextView) itemView.findViewById(R.id.text_group_chat_read_receipt);
+            readReceipt = (ImageView) itemView.findViewById(R.id.img_group_chat_read_receipt);
 
             urlPreviewContainer = (ViewGroup) itemView.findViewById(R.id.url_preview_container);
             urlPreviewSiteNameText = (TextView) itemView.findViewById(R.id.text_url_preview_site_name);
@@ -683,21 +685,22 @@ class SendBirdChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
             }
 
             if (isFailedMessage) {
-                readReceiptText.setText(R.string.message_failed);
-                readReceiptText.setVisibility(View.VISIBLE);
-            } else if (isTempMessage) {
-                readReceiptText.setText(R.string.message_sending);
-                readReceiptText.setVisibility(View.VISIBLE);
+                readReceipt.setImageResource(R.drawable.ic_msgsent);
+                readReceipt.setColorFilter(Color.parseColor("#FFDD2C00"));
+            }
+            else if (isTempMessage) {
+                readReceipt.setImageResource(R.drawable.ic_msgsent);
+                readReceipt.setColorFilter(Color.parseColor("#9b9b9b"));
             } else {
-
                 // Since setChannel is set slightly after adapter is created
                 if (channel != null) {
                     int readReceipt = channel.getReadReceipt(message);
                     if (readReceipt > 0) {
-                        readReceiptText.setVisibility(View.VISIBLE);
-                        readReceiptText.setText(String.valueOf(readReceipt));
+                        this.readReceipt.setImageResource(R.drawable.ic_msgdelivered);
+                        this.readReceipt.setColorFilter(Color.parseColor("#9b9b9b"));
                     } else {
-                        readReceiptText.setVisibility(View.INVISIBLE);
+                        this.readReceipt.setImageResource(R.drawable.ic_msgdelivered);
+                        this.readReceipt.setColorFilter(Color.parseColor("#00c269"));
                     }
                 }
             }
@@ -747,8 +750,7 @@ class SendBirdChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     }
 
     private class OtherUserMessageHolder extends RecyclerView.ViewHolder {
-        TextView messageText, editedText, nicknameText, timeText, readReceiptText;
-        ImageView profileImage;
+        TextView messageText, editedText, timeText;
 
         ViewGroup urlPreviewContainer;
         TextView urlPreviewSiteNameText, urlPreviewTitleText, urlPreviewDescriptionText;
@@ -760,9 +762,6 @@ class SendBirdChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
             messageText = (TextView) itemView.findViewById(R.id.text_group_chat_message);
             editedText = (TextView) itemView.findViewById(R.id.text_group_chat_edited);
             timeText = (TextView) itemView.findViewById(R.id.text_group_chat_time);
-            nicknameText = (TextView) itemView.findViewById(R.id.text_group_chat_nickname);
-            profileImage = (ImageView) itemView.findViewById(R.id.image_group_chat_profile);
-            readReceiptText = (TextView) itemView.findViewById(R.id.text_group_chat_read_receipt);
 
             urlPreviewContainer = (ViewGroup) itemView.findViewById(R.id.url_preview_container);
             urlPreviewSiteNameText = (TextView) itemView.findViewById(R.id.text_url_preview_site_name);
@@ -773,29 +772,6 @@ class SendBirdChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
 
 
         void bind(Context context, final UserMessage message, GroupChannel channel, boolean isNewDay, boolean isContinuous, final OnItemClickListener clickListener, final OnItemLongClickListener longClickListener, final int position) {
-
-            // Since setChannel is set slightly after adapter is created
-            if (channel != null) {
-                int readReceipt = channel.getReadReceipt(message);
-                if (readReceipt > 0) {
-                    readReceiptText.setVisibility(View.VISIBLE);
-                    readReceiptText.setText(String.valueOf(readReceipt));
-                } else {
-                    readReceiptText.setVisibility(View.INVISIBLE);
-                }
-            }
-
-            // Hide profile image and nickname if the previous message was also sent by current sender.
-            if (isContinuous) {
-                profileImage.setVisibility(View.INVISIBLE);
-                nicknameText.setVisibility(View.GONE);
-            } else {
-                profileImage.setVisibility(View.VISIBLE);
-                ImageUtils.displayRoundImageFromUrl(context, message.getSender().getProfileUrl(), profileImage);
-
-                nicknameText.setVisibility(View.VISIBLE);
-                nicknameText.setText(message.getSender().getNickname());
-            }
 
             messageText.setText(message.getMessage());
             timeText.setText(DateUtils.formatTime(message.getCreatedAt()));
@@ -899,18 +875,15 @@ class SendBirdChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     }
 
     private class OtherFileMessageHolder extends RecyclerView.ViewHolder {
-        TextView nicknameText, timeText, fileNameText, fileSizeText, readReceiptText;
-        ImageView profileImage;
+        TextView timeText, fileNameText, fileSizeText, readReceiptText;
 
         public OtherFileMessageHolder(View itemView) {
             super(itemView);
 
-            nicknameText = (TextView) itemView.findViewById(R.id.text_group_chat_nickname);
             timeText = (TextView) itemView.findViewById(R.id.text_group_chat_time);
             fileNameText = (TextView) itemView.findViewById(R.id.text_group_chat_file_name);
 //            fileSizeText = (TextView) itemView.findViewById(R.id.text_group_chat_file_size);
 
-            profileImage = (ImageView) itemView.findViewById(R.id.image_group_chat_profile);
             readReceiptText = (TextView) itemView.findViewById(R.id.text_group_chat_read_receipt);
         }
 
@@ -928,18 +901,6 @@ class SendBirdChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
                 } else {
                     readReceiptText.setVisibility(View.INVISIBLE);
                 }
-            }
-
-            // Hide profile image and nickname if the previous message was also sent by current sender.
-            if (isContinuous) {
-                profileImage.setVisibility(View.INVISIBLE);
-                nicknameText.setVisibility(View.GONE);
-            } else {
-                profileImage.setVisibility(View.VISIBLE);
-                ImageUtils.displayRoundImageFromUrl(context, message.getSender().getProfileUrl(), profileImage);
-
-                nicknameText.setVisibility(View.VISIBLE);
-                nicknameText.setText(message.getSender().getNickname());
             }
 
             if (listener != null) {
@@ -1037,16 +998,14 @@ class SendBirdChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
 
     private class OtherImageFileMessageHolder extends RecyclerView.ViewHolder {
 
-        TextView timeText, nicknameText, readReceiptText;
-        ImageView profileImage, fileThumbnailImage;
+        TextView timeText, readReceiptText;
+        ImageView fileThumbnailImage;
 
         public OtherImageFileMessageHolder(View itemView) {
             super(itemView);
 
             timeText = (TextView) itemView.findViewById(R.id.text_group_chat_time);
-            nicknameText = (TextView) itemView.findViewById(R.id.text_group_chat_nickname);
             fileThumbnailImage = (ImageView) itemView.findViewById(R.id.image_group_chat_file_thumbnail);
-            profileImage = (ImageView) itemView.findViewById(R.id.image_group_chat_profile);
             readReceiptText = (TextView) itemView.findViewById(R.id.text_group_chat_read_receipt);
         }
 
@@ -1062,18 +1021,6 @@ class SendBirdChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
                 } else {
                     readReceiptText.setVisibility(View.INVISIBLE);
                 }
-            }
-
-            // Hide profile image and nickname if the previous message was also sent by current sender.
-            if (isContinuous) {
-                profileImage.setVisibility(View.INVISIBLE);
-                nicknameText.setVisibility(View.GONE);
-            } else {
-                profileImage.setVisibility(View.VISIBLE);
-                ImageUtils.displayRoundImageFromUrl(context, message.getSender().getProfileUrl(), profileImage);
-
-                nicknameText.setVisibility(View.VISIBLE);
-                nicknameText.setText(message.getSender().getNickname());
             }
 
             // Get thumbnails from FileMessage
@@ -1179,16 +1126,14 @@ class SendBirdChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
 
     private class OtherVideoFileMessageHolder extends RecyclerView.ViewHolder {
 
-        TextView timeText, nicknameText, readReceiptText;
-        ImageView profileImage, fileThumbnailImage;
+        TextView timeText, readReceiptText;
+        ImageView  fileThumbnailImage;
 
         public OtherVideoFileMessageHolder(View itemView) {
             super(itemView);
 
             timeText = (TextView) itemView.findViewById(R.id.text_group_chat_time);
-            nicknameText = (TextView) itemView.findViewById(R.id.text_group_chat_nickname);
             fileThumbnailImage = (ImageView) itemView.findViewById(R.id.image_group_chat_file_thumbnail);
-            profileImage = (ImageView) itemView.findViewById(R.id.image_group_chat_profile);
             readReceiptText = (TextView) itemView.findViewById(R.id.text_group_chat_read_receipt);
         }
 
@@ -1204,18 +1149,6 @@ class SendBirdChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
                 } else {
                     readReceiptText.setVisibility(View.INVISIBLE);
                 }
-            }
-
-            // Hide profile image and nickname if the previous message was also sent by current sender.
-            if (isContinuous) {
-                profileImage.setVisibility(View.INVISIBLE);
-                nicknameText.setVisibility(View.GONE);
-            } else {
-                profileImage.setVisibility(View.VISIBLE);
-                ImageUtils.displayRoundImageFromUrl(context, message.getSender().getProfileUrl(), profileImage);
-
-                nicknameText.setVisibility(View.VISIBLE);
-                nicknameText.setText(message.getSender().getNickname());
             }
 
             // Get thumbnails from FileMessage

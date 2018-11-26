@@ -422,7 +422,8 @@ public class SendBirdChatFragment extends Fragment {
         mChatAdapter.setItemLongClickListener(new SendBirdChatAdapter.OnItemLongClickListener() {
             @Override
             public void onUserMessageItemLongClick(UserMessage message, int position) {
-                showMessageOptionsDialog(message, position);
+                //Disabling edit/delete options
+                //showMessageOptionsDialog(message, position);
             }
 
             @Override
