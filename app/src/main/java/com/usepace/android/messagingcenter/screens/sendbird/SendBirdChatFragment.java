@@ -28,6 +28,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -79,7 +80,7 @@ public class SendBirdChatFragment extends Fragment {
     private SendBirdChatAdapter mChatAdapter;
     private LinearLayoutManager mLayoutManager;
     private EditText mMessageEditText;
-    private Button mMessageSendButton;
+    private ImageView mMessageSendButton;
     private ImageButton mUploadFileButton;
     private View mCurrentEventLayout;
     private TextView mCurrentEventText;
@@ -136,7 +137,7 @@ public class SendBirdChatFragment extends Fragment {
         mCurrentEventText = (TextView) rootView.findViewById(R.id.text_group_chat_current_event);
 
         mMessageEditText = (EditText) rootView.findViewById(R.id.edittext_group_chat_message);
-        mMessageSendButton = (Button) rootView.findViewById(R.id.button_group_chat_send);
+        mMessageSendButton = (ImageView) rootView.findViewById(R.id.button_group_chat_send);
         mUploadFileButton = (ImageButton) rootView.findViewById(R.id.button_group_chat_upload);
 
         mMessageEditText.addTextChangedListener(new TextWatcher() {
@@ -151,14 +152,13 @@ public class SendBirdChatFragment extends Fragment {
             @Override
             public void afterTextChanged(Editable s) {
                 if (s.length() > 0) {
-                    mMessageSendButton.setEnabled(true);
+                    mMessageSendButton.setImageResource(R.drawable.ic_send);
                 } else {
-                    mMessageSendButton.setEnabled(false);
+                    mMessageSendButton.setImageResource(R.drawable.ic_camera);
                 }
             }
         });
 
-        mMessageSendButton.setEnabled(false);
         mMessageSendButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -175,6 +175,9 @@ public class SendBirdChatFragment extends Fragment {
                     if (userInput.length() > 0) {
                         sendUserMessage(userInput);
                         mMessageEditText.setText("");
+                    }
+                    else {
+                        // Open camera
                     }
                 }
             }
@@ -460,7 +463,6 @@ public class SendBirdChatFragment extends Fragment {
                 mEditingMessage = null;
 
                 mUploadFileButton.setVisibility(View.VISIBLE);
-                mMessageSendButton.setText("SEND");
                 mMessageEditText.setText("");
                 break;
 
@@ -469,7 +471,6 @@ public class SendBirdChatFragment extends Fragment {
                 mEditingMessage = editingMessage;
 
                 mUploadFileButton.setVisibility(View.GONE);
-                mMessageSendButton.setText("SAVE");
                 String messageString = ((UserMessage)editingMessage).getMessage();
                 if (messageString == null) {
                     messageString = "";

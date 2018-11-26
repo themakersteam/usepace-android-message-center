@@ -6,6 +6,7 @@
         <item name="colorPrimary">@color/message_center_primary</item>
         <item name="colorPrimaryDark">@color/message_center_primary_dark</item>
         <item name="colorAccent">@color/message_center_primary_accent</item>
+        <item name="android:textColorHint">#c5c5c5</item>
     </style>
 
     <!-- ChatView Toolbar Theme -->
