@@ -5,6 +5,7 @@
     <color name="message_center_primary">#774df2</color>
     <color name="message_center_primary_dark">#512DA8</color>
     <color name="message_center_primary_accent">#1fcc94</color>
+    <color name="message_center_chat_view_background">#F2F0E3</color>
 
     <!-- Group Chat -->
     <color name="groupChatBubbleMe">@color/message_center_primary</color>

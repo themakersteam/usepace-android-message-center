@@ -20,7 +20,7 @@ public class TestActivity extends AppCompatActivity{
         MessageCenter.connect(this, prepareRequest(), new ConnectionInterface() {
             @Override
             public void onMessageCenterConnected() {
-                MessageCenter.openChatView(TestActivity.this, chat_id, new Theme("Test Title", "#12345678 • Provider name"));
+                MessageCenter.openChatView(TestActivity.this, chat_id, new Theme("Test Title", "#12345678 • Provider name", ":"));
             }
 
             @Override
