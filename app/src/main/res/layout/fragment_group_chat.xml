@@ -14,40 +14,61 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
+        android:background="#FFFFFF"
         android:minHeight="48dp">
 
         <ImageButton
             android:id="@+id/button_group_chat_upload"
-            app:srcCompat="@drawable/ic_add_black_24dp"
+            android:src="@drawable/ic_add"
             android:background="?attr/selectableItemBackground"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
-            android:contentDescription="Upload file"
-            android:layout_gravity="bottom"/>
-
-        <EditText
-            android:id="@+id/edittext_group_chat_message"
-            android:hint="Enter message"
-            android:background="@android:color/transparent"
-            android:layout_gravity="center"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
             android:layout_marginLeft="16dp"
             android:layout_marginRight="16dp"
-            android:layout_width="0dp"
-            android:layout_weight="1"
-            android:layout_height="wrap_content"
-            android:maxLines="6"/>
+            android:contentDescription="Upload file"
+            android:tint="@color/message_center_primary_dark"
+            android:layout_gravity="center"/>
 
-        <Button
-            android:id="@+id/button_group_chat_send"
-            android:text="SEND"
-            android:textSize="14dp"
-            android:textColor="@drawable/selector_btn_send"
-            android:background="?attr/selectableItemBackground"
-            android:clickable="true"
-            android:layout_width="64dp"
-            android:layout_height="48dp"
-            android:gravity="center"
-            android:layout_gravity="bottom" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/send_message_edit_text_design"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="10dp"
+            android:layout_marginEnd="17dp"
+            android:layout_marginRight="17dp"
+            android:orientation="horizontal">
+
+            <EditText
+                android:id="@+id/edittext_group_chat_message"
+                android:hint="@string/type_message_hint"
+                android:layout_gravity="center"
+                android:paddingRight="16dp"
+                android:background="@android:color/transparent"
+                android:paddingLeft="16dp"
+                android:paddingTop="14dp"
+                android:paddingBottom="14dp"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:textSize="15sp"
+                android:textColor="#000000"
+                android:layout_height="wrap_content"
+                android:maxLines="6"/>
+
+            <ImageView
+                android:id="@+id/button_group_chat_send"
+                android:clickable="true"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:gravity="center"
+                android:layout_marginEnd="10dp"
+                android:layout_marginRight="10dp"
+                android:src="@drawable/ic_camera"
+                android:tint="@color/message_center_primary_dark"
+                android:layout_gravity="center_vertical" />
+
+        </LinearLayout>
+
     </LinearLayout>
 
     <View
