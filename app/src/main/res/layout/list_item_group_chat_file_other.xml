@@ -8,28 +8,6 @@
     android:paddingRight="8dp"
     android:layout_marginBottom="8dp">
 
-
-    <ImageView
-        android:id="@+id/image_group_chat_profile"
-        android:src="@drawable/profile_placeholder"
-        android:layout_alignParentTop="true"
-        android:layout_alignWithParentIfMissing="true"
-        android:layout_alignParentLeft="true"
-        android:layout_width="32dp"
-        android:layout_height="32dp"
-        android:layout_marginRight="8dp"
-        android:layout_marginTop="8dp"/>
-
-    <TextView
-        android:text="Daniel Silberschatz"
-        android:id="@+id/text_group_chat_nickname"
-        android:textSize="16sp"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_toRightOf="@id/image_group_chat_profile"
-        android:layout_alignTop="@id/image_group_chat_profile"
-        android:layout_marginBottom="4dp"/>
-
     <LinearLayout
         android:id="@+id/layout_group_chat_file_message"
         android:layout_width="wrap_content"
@@ -37,8 +15,7 @@
         android:background="@drawable/group_chat_file_background"
         android:gravity="center_vertical"
         android:orientation="horizontal"
-        android:layout_toRightOf="@id/image_group_chat_profile"
-        android:layout_below="@id/text_group_chat_nickname"
+        android:layout_alignParentTop="true"
         android:padding="12dp">
 
         <ImageView
@@ -74,23 +51,26 @@
 
     </LinearLayout>
 
-    <TextView
-        android:id="@+id/text_group_chat_time"
-        android:textSize="10dp"
-        android:text="21:27"
-        android:textColor="#8e8e8e"
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_gravity="bottom|end"
+        android:gravity="bottom|end"
+        android:layout_marginBottom="4dp"
+        android:paddingLeft="12dp"
+        android:paddingRight="12dp"
         android:layout_toRightOf="@id/layout_group_chat_file_message"
-        android:layout_alignBottom="@id/layout_group_chat_file_message"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+        android:layout_alignBottom="@id/layout_group_chat_file_message">
 
-    <TextView
-        android:id="@+id/text_group_chat_read_receipt"
-        android:textSize="10dp"
-        android:text="2"
-        android:textStyle="bold"
-        android:layout_above="@id/text_group_chat_time"
-        android:layout_alignLeft="@id/text_group_chat_time"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+        <TextView
+            android:id="@+id/text_group_chat_time"
+            android:textSize="10dp"
+            android:text="21:27"
+            android:textColor="#9b9b9b"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+    </LinearLayout>
+
 </RelativeLayout>

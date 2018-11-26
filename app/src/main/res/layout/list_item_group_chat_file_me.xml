@@ -63,14 +63,16 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
 
-    <TextView
-        android:id="@+id/text_group_chat_read_receipt"
-        android:textSize="10dp"
-        android:textStyle="bold"
+    <ImageView
+        android:id="@+id/img_group_chat_read_receipt"
+        android:layout_marginStart="4dp"
+        android:layout_marginLeft="4dp"
+        android:src="@drawable/ic_msgsent"
+        android:layout_gravity="center"
+        android:layout_width="12dp"
         android:layout_above="@id/text_group_chat_time"
         android:layout_alignRight="@id/text_group_chat_time"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+        android:layout_height="8dp"/>
 
     <com.dinuscxj.progressbar.CircleProgressBar
         android:id="@+id/circle_progress"
@@ -80,8 +82,8 @@
         android:layout_alignRight="@id/text_group_chat_time"
         android:visibility="gone"
         app:progress_stroke_width="3.5dp"
-        app:progress_start_color="#875eff"
-        app:progress_end_color="#875eff"
+        app:progress_start_color="@color/message_center_primary"
+        app:progress_end_color="@color/message_center_primary_dark"
         app:progress_background_color="#c1c1c1"
         app:progress_stroke_cap="butt"/>
 

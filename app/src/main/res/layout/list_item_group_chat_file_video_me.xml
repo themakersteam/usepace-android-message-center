@@ -14,10 +14,10 @@
         android:layout_height="wrap_content"
         android:layout_alignParentRight="true"
         android:layout_alignParentTop="true"
-        app:cardBackgroundColor="@color/cardview_light_background"
+        app:cardBackgroundColor="@color/message_center_chat_view_bubble_color"
         app:cardUseCompatPadding="true"
-        app:cardCornerRadius="12dp"
-        app:cardElevation="0dp"
+        app:cardCornerRadius="6dp"
+        app:cardElevation="1dp"
         app:cardPreventCornerOverlap="false"
         android:layout_marginTop="8dp">
 
@@ -27,6 +27,7 @@
             android:layout_height="148dp"
             android:scaleType="centerCrop"
             android:adjustViewBounds="true"
+            android:layout_marginBottom="20dp"
             />
 
         <ImageView
@@ -35,41 +36,54 @@
             android:scaleType="fitCenter"
             android:src="@drawable/ic_play"
             android:adjustViewBounds="true"
+            android:layout_marginBottom="20dp"
             />
+
+        <LinearLayout
+            android:id="@+id/time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_gravity="bottom|end"
+            android:gravity="bottom|end"
+            android:layout_marginBottom="4dp"
+            android:paddingLeft="12dp"
+            android:paddingRight="12dp">
+
+            <TextView
+                android:id="@+id/text_group_chat_time"
+                android:textSize="10dp"
+                android:text="21:27"
+                android:textColor="#9b9b9b"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+            <ImageView
+                android:id="@+id/img_group_chat_read_receipt"
+                android:layout_marginStart="4dp"
+                android:layout_marginLeft="4dp"
+                android:src="@drawable/ic_msgsent"
+                android:layout_gravity="center"
+                android:layout_width="12dp"
+                android:layout_height="8dp"/>
+
+        </LinearLayout>
+
+        <com.dinuscxj.progressbar.CircleProgressBar
+            android:id="@+id/circle_progress"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_above="@id/time"
+            android:layout_alignRight="@id/time"
+            android:visibility="gone"
+            app:progress_stroke_width="3.5dp"
+            app:progress_start_color="@color/message_center_primary_dark"
+            app:progress_end_color="@color/message_center_primary"
+            app:progress_background_color="#c1c1c1"
+            app:progress_stroke_cap="butt"/>
 
     </android.support.v7.widget.CardView>
 
-    <TextView
-        android:id="@+id/text_group_chat_time"
-        android:textSize="10dp"
-        android:text="21:27"
-        android:textColor="#8e8e8e"
-        android:layout_toLeftOf="@id/card_group_chat_message"
-        android:layout_alignBottom="@id/card_group_chat_message"
-        android:layout_marginBottom="8dp"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
 
-    <TextView
-        android:id="@+id/text_group_chat_read_receipt"
-        android:textSize="10dp"
-        android:textStyle="bold"
-        android:layout_above="@id/text_group_chat_time"
-        android:layout_alignRight="@id/text_group_chat_time"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
-
-    <com.dinuscxj.progressbar.CircleProgressBar
-        android:id="@+id/circle_progress"
-        android:layout_width="20dp"
-        android:layout_height="20dp"
-        android:layout_above="@id/text_group_chat_time"
-        android:layout_alignRight="@id/text_group_chat_time"
-        android:visibility="gone"
-        app:progress_stroke_width="3.5dp"
-        app:progress_start_color="#875eff"
-        app:progress_end_color="#875eff"
-        app:progress_background_color="#c1c1c1"
-        app:progress_stroke_cap="butt"/>
 
 </RelativeLayout>
