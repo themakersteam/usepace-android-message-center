@@ -619,6 +619,72 @@ class SendBirdChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
 
     }
 
+    /**
+     *
+     * @param readReceiptImg
+     * @param isFailedMessage
+     * @param isTempMessage
+     */
+    private void processReadReceipt(ImageView readReceiptImg, boolean isFailedMessage, boolean isTempMessage, GroupChannel channel, UserMessage message) {
+        if (isFailedMessage) {
+            readReceiptImg.setImageResource(R.drawable.ic_msgsent);
+            readReceiptImg.setColorFilter(Color.parseColor("#FFDD2C00"));
+        }
+        else if (isTempMessage) {
+            readReceiptImg.setImageResource(R.drawable.ic_msgsent);
+            readReceiptImg.setColorFilter(Color.parseColor("#9b9b9b"));
+        } else {
+            // Since setChannel is set slightly after adapter is created
+            if (channel != null) {
+                int readReceipt = channel.getReadReceipt(message);
+                if (readReceipt > 0) {
+                    readReceiptImg.setImageResource(R.drawable.ic_msgdelivered);
+                    readReceiptImg.setColorFilter(Color.parseColor("#9b9b9b"));
+                } else {
+                    readReceiptImg.setImageResource(R.drawable.ic_msgdelivered);
+                    readReceiptImg.setColorFilter(Color.parseColor("#00c269"));
+                }
+            }
+        }
+    }
+
+    /**
+     *
+     * @param circleProgressBar
+     * @param readReceiptImg
+     * @param isFailedMessage
+     * @param isTempMessage
+     * @param channel
+     * @param message
+     */
+    private void processReadReceiptForFile(CircleProgressBar circleProgressBar, ImageView readReceiptImg, boolean isFailedMessage, boolean isTempMessage, GroupChannel channel, FileMessage message) {
+        if (isFailedMessage) {
+            readReceiptImg.setImageResource(R.drawable.ic_msgsent);
+            readReceiptImg.setColorFilter(Color.parseColor("#FFDD2C00"));
+            circleProgressBar.setVisibility(View.GONE);
+            mFileMessageMap.remove(message);
+        }
+        else if (isTempMessage) {
+            readReceiptImg.setImageResource(R.drawable.ic_msgsent);
+            readReceiptImg.setColorFilter(Color.parseColor("#9b9b9b"));
+            circleProgressBar.setVisibility(View.VISIBLE);
+            mFileMessageMap.put(message, circleProgressBar);
+        } else {
+            circleProgressBar.setVisibility(View.GONE);
+            mFileMessageMap.remove(message);
+            // Since setChannel is set slightly after adapter is created
+            if (channel != null) {
+                int readReceipt = channel.getReadReceipt(message);
+                if (readReceipt > 0) {
+                    readReceiptImg.setImageResource(R.drawable.ic_msgdelivered);
+                    readReceiptImg.setColorFilter(Color.parseColor("#9b9b9b"));
+                } else {
+                    readReceiptImg.setImageResource(R.drawable.ic_msgdelivered);
+                    readReceiptImg.setColorFilter(Color.parseColor("#00c269"));
+                }
+            }
+        }
+    }
 
     private class AdminMessageHolder extends RecyclerView.ViewHolder {
         private TextView messageText;
@@ -684,26 +750,7 @@ class SendBirdChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
                 editedText.setVisibility(View.GONE);
             }
 
-            if (isFailedMessage) {
-                readReceipt.setImageResource(R.drawable.ic_msgsent);
-                readReceipt.setColorFilter(Color.parseColor("#FFDD2C00"));
-            }
-            else if (isTempMessage) {
-                readReceipt.setImageResource(R.drawable.ic_msgsent);
-                readReceipt.setColorFilter(Color.parseColor("#9b9b9b"));
-            } else {
-                // Since setChannel is set slightly after adapter is created
-                if (channel != null) {
-                    int readReceipt = channel.getReadReceipt(message);
-                    if (readReceipt > 0) {
-                        this.readReceipt.setImageResource(R.drawable.ic_msgdelivered);
-                        this.readReceipt.setColorFilter(Color.parseColor("#9b9b9b"));
-                    } else {
-                        this.readReceipt.setImageResource(R.drawable.ic_msgdelivered);
-                        this.readReceipt.setColorFilter(Color.parseColor("#00c269"));
-                    }
-                }
-            }
+            processReadReceipt(readReceipt, isFailedMessage, isTempMessage, channel, message);
 
             // If continuous from previous message, remove extra padding.
             if (isContinuous) {
@@ -819,15 +866,16 @@ class SendBirdChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     }
 
     private class MyFileMessageHolder extends RecyclerView.ViewHolder {
-        TextView fileNameText, timeText, readReceiptText;
+        TextView fileNameText, timeText;
         CircleProgressBar circleProgressBar;
+        ImageView readReceipt;
 
         public MyFileMessageHolder(View itemView) {
             super(itemView);
 
             timeText = (TextView) itemView.findViewById(R.id.text_group_chat_time);
             fileNameText = (TextView) itemView.findViewById(R.id.text_group_chat_file_name);
-            readReceiptText = (TextView) itemView.findViewById(R.id.text_group_chat_read_receipt);
+            readReceipt = (ImageView) itemView.findViewById(R.id.img_group_chat_read_receipt);
             circleProgressBar = (CircleProgressBar) itemView.findViewById(R.id.circle_progress);
         }
 
@@ -835,33 +883,7 @@ class SendBirdChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
             fileNameText.setText(message.getName());
             timeText.setText(DateUtils.formatTime(message.getCreatedAt()));
 
-            if (isFailedMessage) {
-                readReceiptText.setText(R.string.message_failed);
-                readReceiptText.setVisibility(View.VISIBLE);
-
-                circleProgressBar.setVisibility(View.GONE);
-                mFileMessageMap.remove(message);
-            } else if (isTempMessage) {
-                readReceiptText.setText(R.string.message_sending);
-                readReceiptText.setVisibility(View.GONE);
-
-                circleProgressBar.setVisibility(View.VISIBLE);
-                mFileMessageMap.put(message, circleProgressBar);
-            } else {
-                circleProgressBar.setVisibility(View.GONE);
-                mFileMessageMap.remove(message);
-
-                if (channel != null) {
-                    int readReceipt = channel.getReadReceipt(message);
-                    if (readReceipt > 0) {
-                        readReceiptText.setVisibility(View.VISIBLE);
-                        readReceiptText.setText(String.valueOf(readReceipt));
-                    } else {
-                        readReceiptText.setVisibility(View.INVISIBLE);
-                    }
-                }
-
-            }
+            processReadReceiptForFile(circleProgressBar, readReceipt, isFailedMessage, isTempMessage, channel, message);
 
             if (listener != null) {
                 itemView.setOnClickListener(new View.OnClickListener() {
@@ -875,33 +897,19 @@ class SendBirdChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     }
 
     private class OtherFileMessageHolder extends RecyclerView.ViewHolder {
-        TextView timeText, fileNameText, fileSizeText, readReceiptText;
+        TextView timeText, fileNameText;
 
         public OtherFileMessageHolder(View itemView) {
             super(itemView);
 
             timeText = (TextView) itemView.findViewById(R.id.text_group_chat_time);
             fileNameText = (TextView) itemView.findViewById(R.id.text_group_chat_file_name);
-//            fileSizeText = (TextView) itemView.findViewById(R.id.text_group_chat_file_size);
 
-            readReceiptText = (TextView) itemView.findViewById(R.id.text_group_chat_read_receipt);
         }
 
         void bind(Context context, final FileMessage message, GroupChannel channel, boolean isNewDay, boolean isContinuous, final OnItemClickListener listener) {
             fileNameText.setText(message.getName());
             timeText.setText(DateUtils.formatTime(message.getCreatedAt()));
-//            fileSizeText.setText(String.valueOf(message.getSize()));
-
-            // Since setChannel is set slightly after adapter is created, check if null.
-            if (channel != null) {
-                int readReceipt = channel.getReadReceipt(message);
-                if (readReceipt > 0) {
-                    readReceiptText.setVisibility(View.VISIBLE);
-                    readReceiptText.setText(String.valueOf(readReceipt));
-                } else {
-                    readReceiptText.setVisibility(View.INVISIBLE);
-                }
-            }
 
             if (listener != null) {
                 itemView.setOnClickListener(new View.OnClickListener() {
@@ -919,8 +927,8 @@ class SendBirdChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
      * Displays only the image thumbnail.
      */
     private class MyImageFileMessageHolder extends RecyclerView.ViewHolder {
-        TextView timeText, readReceiptText;
-        ImageView fileThumbnailImage;
+        TextView timeText;
+        ImageView fileThumbnailImage, readReceipt;
         CircleProgressBar circleProgressBar;
 
         public MyImageFileMessageHolder(View itemView) {
@@ -928,40 +936,14 @@ class SendBirdChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
 
             timeText = (TextView) itemView.findViewById(R.id.text_group_chat_time);
             fileThumbnailImage = (ImageView) itemView.findViewById(R.id.image_group_chat_file_thumbnail);
-            readReceiptText = (TextView) itemView.findViewById(R.id.text_group_chat_read_receipt);
+            readReceipt = (ImageView) itemView.findViewById(R.id.img_group_chat_read_receipt);
             circleProgressBar = (CircleProgressBar) itemView.findViewById(R.id.circle_progress);
         }
 
         void bind(Context context, final FileMessage message, GroupChannel channel, boolean isNewDay, boolean isTempMessage, boolean isFailedMessage, Uri tempFileMessageUri, final OnItemClickListener listener) {
             timeText.setText(DateUtils.formatTime(message.getCreatedAt()));
 
-            if (isFailedMessage) {
-                readReceiptText.setText(R.string.message_failed);
-                readReceiptText.setVisibility(View.VISIBLE);
-
-                circleProgressBar.setVisibility(View.GONE);
-                mFileMessageMap.remove(message);
-            } else if (isTempMessage) {
-                readReceiptText.setText(R.string.message_sending);
-                readReceiptText.setVisibility(View.GONE);
-
-                circleProgressBar.setVisibility(View.VISIBLE);
-                mFileMessageMap.put(message, circleProgressBar);
-            } else {
-                circleProgressBar.setVisibility(View.GONE);
-                mFileMessageMap.remove(message);
-
-                // Since setChannel is set slightly after adapter is created, check if null.
-                if (channel != null) {
-                    int readReceipt = channel.getReadReceipt(message);
-                    if (readReceipt > 0) {
-                        readReceiptText.setVisibility(View.VISIBLE);
-                        readReceiptText.setText(String.valueOf(readReceipt));
-                    } else {
-                        readReceiptText.setVisibility(View.INVISIBLE);
-                    }
-                }
-            }
+            processReadReceiptForFile(circleProgressBar, readReceipt, isFailedMessage, isTempMessage, channel, message);
 
             if (isTempMessage && tempFileMessageUri != null) {
                 ImageUtils.displayImageFromUrl(context, tempFileMessageUri.toString(), fileThumbnailImage, null);
@@ -998,7 +980,7 @@ class SendBirdChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
 
     private class OtherImageFileMessageHolder extends RecyclerView.ViewHolder {
 
-        TextView timeText, readReceiptText;
+        TextView timeText;
         ImageView fileThumbnailImage;
 
         public OtherImageFileMessageHolder(View itemView) {
@@ -1006,22 +988,10 @@ class SendBirdChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
 
             timeText = (TextView) itemView.findViewById(R.id.text_group_chat_time);
             fileThumbnailImage = (ImageView) itemView.findViewById(R.id.image_group_chat_file_thumbnail);
-            readReceiptText = (TextView) itemView.findViewById(R.id.text_group_chat_read_receipt);
         }
 
         void bind(Context context, final FileMessage message, GroupChannel channel, boolean isNewDay, boolean isContinuous, final OnItemClickListener listener) {
             timeText.setText(DateUtils.formatTime(message.getCreatedAt()));
-
-            // Since setChannel is set slightly after adapter is created, check if null.
-            if (channel != null) {
-                int readReceipt = channel.getReadReceipt(message);
-                if (readReceipt > 0) {
-                    readReceiptText.setVisibility(View.VISIBLE);
-                    readReceiptText.setText(String.valueOf(readReceipt));
-                } else {
-                    readReceiptText.setVisibility(View.INVISIBLE);
-                }
-            }
 
             // Get thumbnails from FileMessage
             ArrayList<FileMessage.Thumbnail> thumbnails = (ArrayList<FileMessage.Thumbnail>) message.getThumbnails();
@@ -1057,8 +1027,8 @@ class SendBirdChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
      * Displays only the video thumbnail.
      */
     private class MyVideoFileMessageHolder extends RecyclerView.ViewHolder {
-        TextView timeText, readReceiptText;
-        ImageView fileThumbnailImage;
+        TextView timeText;
+        ImageView fileThumbnailImage, readReceiptText;
         CircleProgressBar circleProgressBar;
 
         public MyVideoFileMessageHolder(View itemView) {
@@ -1066,40 +1036,14 @@ class SendBirdChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
 
             timeText = (TextView) itemView.findViewById(R.id.text_group_chat_time);
             fileThumbnailImage = (ImageView) itemView.findViewById(R.id.image_group_chat_file_thumbnail);
-            readReceiptText = (TextView) itemView.findViewById(R.id.text_group_chat_read_receipt);
+            readReceiptText = (ImageView) itemView.findViewById(R.id.img_group_chat_read_receipt);
             circleProgressBar = (CircleProgressBar) itemView.findViewById(R.id.circle_progress);
         }
 
         void bind(Context context, final FileMessage message, GroupChannel channel, boolean isNewDay, boolean isTempMessage, boolean isFailedMessage, Uri tempFileMessageUri, final OnItemClickListener listener) {
             timeText.setText(DateUtils.formatTime(message.getCreatedAt()));
 
-            if (isFailedMessage) {
-                readReceiptText.setText(R.string.message_failed);
-                readReceiptText.setVisibility(View.VISIBLE);
-
-                circleProgressBar.setVisibility(View.GONE);
-                mFileMessageMap.remove(message);
-            } else if (isTempMessage) {
-                readReceiptText.setText(R.string.message_sending);
-                readReceiptText.setVisibility(View.GONE);
-
-                circleProgressBar.setVisibility(View.VISIBLE);
-                mFileMessageMap.put(message, circleProgressBar);
-            } else {
-                circleProgressBar.setVisibility(View.GONE);
-                mFileMessageMap.remove(message);
-
-                // Since setChannel is set slightly after adapter is created, check if null.
-                if (channel != null) {
-                    int readReceipt = channel.getReadReceipt(message);
-                    if (readReceipt > 0) {
-                        readReceiptText.setVisibility(View.VISIBLE);
-                        readReceiptText.setText(String.valueOf(readReceipt));
-                    } else {
-                        readReceiptText.setVisibility(View.INVISIBLE);
-                    }
-                }
-            }
+            processReadReceiptForFile(circleProgressBar, readReceiptText, isFailedMessage, isTempMessage, channel, message);
 
             if (isTempMessage && tempFileMessageUri != null) {
                 ImageUtils.displayImageFromUrl(context, tempFileMessageUri.toString(), fileThumbnailImage, null);
@@ -1126,7 +1070,7 @@ class SendBirdChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
 
     private class OtherVideoFileMessageHolder extends RecyclerView.ViewHolder {
 
-        TextView timeText, readReceiptText;
+        TextView timeText;
         ImageView  fileThumbnailImage;
 
         public OtherVideoFileMessageHolder(View itemView) {
@@ -1134,22 +1078,10 @@ class SendBirdChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
 
             timeText = (TextView) itemView.findViewById(R.id.text_group_chat_time);
             fileThumbnailImage = (ImageView) itemView.findViewById(R.id.image_group_chat_file_thumbnail);
-            readReceiptText = (TextView) itemView.findViewById(R.id.text_group_chat_read_receipt);
         }
 
         void bind(Context context, final FileMessage message, GroupChannel channel, boolean isNewDay, boolean isContinuous, final OnItemClickListener listener) {
             timeText.setText(DateUtils.formatTime(message.getCreatedAt()));
-
-            // Since setChannel is set slightly after adapter is created, check if null.
-            if (channel != null) {
-                int readReceipt = channel.getReadReceipt(message);
-                if (readReceipt > 0) {
-                    readReceiptText.setVisibility(View.VISIBLE);
-                    readReceiptText.setText(String.valueOf(readReceipt));
-                } else {
-                    readReceiptText.setVisibility(View.INVISIBLE);
-                }
-            }
 
             // Get thumbnails from FileMessage
             ArrayList<FileMessage.Thumbnail> thumbnails = (ArrayList<FileMessage.Thumbnail>) message.getThumbnails();
