@@ -4,12 +4,12 @@
 
     <!-- View background color -->
     <solid
-        android:color="@color/groupChatDateBackground" >
+        android:color="@color/message_center_chat_view_welcome_background" >
     </solid>
 
     <!-- The radius makes the corners rounded -->
     <corners
-        android:radius="16dp">
+        android:radius="8dp">
     </corners>
 
 </shape>

@@ -40,6 +40,9 @@ public class SendBirdChatActivity extends AppCompatActivity{
             Fragment fragment = SendBirdChatFragment.newInstance(channelUrl);
             Bundle bundle = new Bundle();
             bundle.putString("CHANNEL_URL", channelUrl);
+            if (getIntent() != null && getIntent().getExtras() != null) {
+                bundle.putAll(getIntent().getExtras());
+            }
             fragment.setArguments(bundle);
             FragmentManager manager = getSupportFragmentManager();
             manager.popBackStack();
