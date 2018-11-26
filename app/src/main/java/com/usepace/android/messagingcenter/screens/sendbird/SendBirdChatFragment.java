@@ -555,12 +555,13 @@ public class SendBirdChatFragment extends Fragment {
             String string;
 
             if (typingUsers.size() == 1) {
-                string = typingUsers.get(0).getNickname() + getString(R.string.is_typing);
+                string = typingUsers.get(0).getNickname() + " " + getString(R.string.is_typing);
             } else if (typingUsers.size() == 2) {
                 string = typingUsers.get(0).getNickname() + " " + typingUsers.get(1).getNickname() + getString(R.string.is_typing);
             } else {
                 string = getString(R.string.multiple_users_are_typing);
             }
+            string = string + "...";
             mCurrentEventText.setText(string);
         } else {
             mCurrentEventLayout.setVisibility(View.GONE);
