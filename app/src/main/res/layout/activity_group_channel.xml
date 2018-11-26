@@ -10,6 +10,39 @@
         android:layout_height="wrap_content"
         android:fitsSystemWindows="true">
 
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="80dp"
+            android:background="?attr/colorPrimary"
+            android:orientation="vertical">
+
+            <android.support.v7.widget.Toolbar
+                android:id="@+id/my_toolbar"
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:background="?attr/colorPrimary"
+                app:titleTextAppearance="@style/ChatView.TitleText"
+                android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
+                app:popupTheme="@style/ThemeOverlay.AppCompat.Light"/>
+
+            <TextView
+                android:id="@+id/toolbar_subtitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="16sp"
+                android:fontFamily="sans-serif"
+                android:textStyle="normal"
+                android:textColor="#ffffff"
+                android:letterSpacing="-0.02"
+                android:layout_gravity="start"
+                android:gravity="start"
+                android:layout_marginStart="72dp"
+                android:layout_marginLeft="72dp"
+                android:text="#12345678 • Provider name"
+                />
+
+        </LinearLayout>
+
     </android.support.design.widget.AppBarLayout>
 
     <FrameLayout

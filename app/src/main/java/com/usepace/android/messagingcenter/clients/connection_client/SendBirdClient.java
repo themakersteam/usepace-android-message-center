@@ -96,8 +96,13 @@ class SendBirdClient extends ClientInterface {
     @Override
     public void openChatView(Context context, String chat_id, Theme theme) {
         Intent a1 = new Intent(context, SendBirdChatActivity.class);
-        if (theme != null && theme.getToolbarTitle() != null) {
-            a1.putExtra("TITLE", theme.getToolbarTitle());
+        if (theme != null) {
+            if (theme.getToolbarTitle() != null) {
+                a1.putExtra("TITLE", theme.getToolbarTitle());
+            }
+            if (theme.getToolbarSubtitle() != null) {
+                a1.putExtra("SUBTITLE", theme.getToolbarSubtitle());
+            }
         }
         a1.putExtra("CHANNEL_URL", chat_id);
         context.startActivity(a1);

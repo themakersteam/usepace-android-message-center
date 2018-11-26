@@ -1,11 +1,17 @@
 <resources>
 
     <!-- Base application theme. -->
-    <style name="ChatTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+    <style name="ChatTheme" parent="Theme.AppCompat.NoActionBar">
         <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/message_center_primary</item>
         <item name="colorPrimaryDark">@color/message_center_primary_dark</item>
         <item name="colorAccent">@color/message_center_primary_accent</item>
+    </style>
+
+    <!-- ChatView Toolbar Theme -->
+    <style name="ChatView.TitleText" parent="TextAppearance.Widget.AppCompat.Toolbar.Title">
+        <item name="android:textSize">16sp</item>
+        <item name="android:textStyle">normal</item>
     </style>
 
 </resources>
