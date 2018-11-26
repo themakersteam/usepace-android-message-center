@@ -17,7 +17,7 @@ public class TestActivity extends AppCompatActivity{
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        MessageCenter.connect(this, prepareRequest(), new ConnectionInterface() {
+        MessageCenter.connect(this, prepareDriverRequest(), new ConnectionInterface() {
             @Override
             public void onMessageCenterConnected() {
                 MessageCenter.openChatView(TestActivity.this, chat_id, new Theme("Test Title", "#12345678 • Provider name", ":"));
@@ -30,7 +30,17 @@ public class TestActivity extends AppCompatActivity{
         });
     }
 
-    private ConnectionRequest prepareRequest() {
+    private ConnectionRequest prepareCustomerRequest() {
+        ConnectionRequest connectionRequest = new ConnectionRequest();
+        connectionRequest.setAppId("FE3AD311-7F0F-4E7E-9E22-25FF141A37C0");
+        connectionRequest.setClient(MessageCenter.CLIENT_SENDBIRD);
+        connectionRequest.setUserId("rider_sony");
+        connectionRequest.setAccessToken("4a8f3c197450b4762cd2dcf02a130816a503f4f2");
+        connectionRequest.setFcmToken("testo");
+        return connectionRequest;
+    }
+
+    private ConnectionRequest prepareDriverRequest() {
         ConnectionRequest connectionRequest = new ConnectionRequest();
         connectionRequest.setAppId("FE3AD311-7F0F-4E7E-9E22-25FF141A37C0");
         connectionRequest.setClient(MessageCenter.CLIENT_SENDBIRD);

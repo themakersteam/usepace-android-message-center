@@ -7,11 +7,12 @@
     <color name="message_center_primary_accent">#1fcc94</color>
     <color name="message_center_chat_view_background">#F2F0E3</color>
     <color name="message_center_chat_view_welcome_background">#66fece09</color>
+    <color name="message_center_chat_view_bubble_color">#fff7d6</color>
 
     <!-- Group Chat -->
-    <color name="groupChatBubbleMe">@color/message_center_primary</color>
+    <color name="groupChatBubbleMe">@color/message_center_chat_view_bubble_color</color>
     <color name="groupChatTextMe">#ffffff</color>
-    <color name="groupChatBubbleOther">#eef1f6</color>
+    <color name="groupChatBubbleOther">#eeffffff</color>
     <color name="groupChatTextOther">#000000</color>
     <color name="groupChatAdminBackground">#e0fcff</color>
     <color name="groupChatDateText">#ffffff</color>
