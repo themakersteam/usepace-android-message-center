@@ -57,6 +57,7 @@
      <color name="message_center_primary">{color}</color>
      <color name="message_center_primary_dark">{color}</color>
      <color name="message_center_primary_accent">{color}</color>
+     <color name="message_center_chat_view_background">{color}</color>
      ```
 
 #### 4.1 connect()
@@ -126,7 +127,7 @@
     MessageCenter.openChatView(context: this, chat_id: "sample_chat_id", theme: new Theme(toolbar: "title", toolbar_subtitle: "subtitle")); 
     ```
  * if Theme object is not provided, the app will take the defaults 
- * Theme Object now have (toolbar_title), and for IOS (toolbar_title, color primary, color secondary)
+ * Theme Object for android have (```toolbar```, ```toolbar_subtitle```, ```welcome_message```) ..
  * Executing this interface will open the chatting window 
  
  #### 4.4 closeChatView()
