@@ -76,17 +76,20 @@
         <LinearLayout
             android:id="@+id/layout_group_chat_current_event"
             android:layout_width="match_parent"
-            android:layout_height="36dp"
-            android:layout_marginLeft="@dimen/activity_horizontal_margin"
-            android:layout_marginRight="@dimen/activity_horizontal_margin"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="8dp"
+            android:layout_marginRight="8dp"
+            android:layout_marginBottom="8dp"
+            android:layout_gravity="start"
+            android:gravity="start"
             android:visibility="gone">
 
             <TextView
                 android:id="@+id/text_group_chat_current_event"
-                android:text="Terry and Harry are typing"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"/>
+                android:textSize="11sp"
+                android:textColor="#434340" />
 
         </LinearLayout>
 

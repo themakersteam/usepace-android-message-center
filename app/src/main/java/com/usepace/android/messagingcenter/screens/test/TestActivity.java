@@ -17,7 +17,7 @@ public class TestActivity extends AppCompatActivity{
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        MessageCenter.connect(this, prepareDriverRequest(), new ConnectionInterface() {
+        MessageCenter.connect(this, prepareCustomerRequest(), new ConnectionInterface() {
             @Override
             public void onMessageCenterConnected() {
                 MessageCenter.openChatView(TestActivity.this, chat_id, new Theme("Test Title", "#12345678 • Provider name", ":"));
