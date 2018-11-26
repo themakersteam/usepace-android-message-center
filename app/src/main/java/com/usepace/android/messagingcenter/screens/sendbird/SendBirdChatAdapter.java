@@ -2,6 +2,7 @@ package com.usepace.android.messagingcenter.screens.sendbird;
 
 import android.content.Context;
 import android.net.Uri;
+import android.os.Bundle;
 import android.support.v7.widget.RecyclerView;
 import android.util.Base64;
 import android.view.LayoutInflater;
@@ -20,6 +21,7 @@ import com.sendbird.android.SendBirdException;
 import com.sendbird.android.User;
 import com.sendbird.android.UserMessage;
 import com.usepace.android.messagingcenter.R;
+import com.usepace.android.messagingcenter.model.SendBirdMessage;
 import com.usepace.android.messagingcenter.utils.DateUtils;
 import com.usepace.android.messagingcenter.utils.FileUtils;
 import com.usepace.android.messagingcenter.utils.ImageUtils;
@@ -46,11 +48,13 @@ class SendBirdChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     private static final int VIEW_TYPE_FILE_MESSAGE_VIDEO_ME = 24;
     private static final int VIEW_TYPE_FILE_MESSAGE_VIDEO_OTHER = 25;
     private static final int VIEW_TYPE_ADMIN_MESSAGE = 30;
+    private static final int VIEW_TYPE_WELCOME_MESSAGE = 31;
 
     private Context mContext;
+    private SendBirdMessage welcome_message = null;
     private HashMap<FileMessage, CircleProgressBar> mFileMessageMap;
     private GroupChannel mChannel;
-    private List<BaseMessage> mMessageList;
+    private List<SendBirdMessage> mMessageList;
 
     private OnItemClickListener mItemClickListener;
     private OnItemLongClickListener mItemLongClickListener;
@@ -74,10 +78,13 @@ class SendBirdChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     }
 
 
-    public SendBirdChatAdapter(Context context) {
+    public SendBirdChatAdapter(Context context, Bundle args) {
         mContext = context;
         mFileMessageMap = new HashMap<>();
         mMessageList = new ArrayList<>();
+        if (args != null && args.containsKey("WELCOME_MESSAGE")) {
+            welcome_message = new SendBirdMessage(args.getString("WELCOME_MESSAGE"));
+        }
     }
 
     public void setContext(Context context) {
@@ -99,7 +106,10 @@ class SendBirdChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
             // Reset message list, then add cached messages.
             mMessageList.clear();
             for(int i = 1; i < dataArray.length; i++) {
-                mMessageList.add(BaseMessage.buildFromSerializedData(Base64.decode(dataArray[i], Base64.DEFAULT | Base64.NO_WRAP)));
+                mMessageList.add(SendBirdMessage.buildFromSerializedData(Base64.decode(dataArray[i], Base64.DEFAULT | Base64.NO_WRAP)));
+            }
+            if (welcome_message != null) {
+                mMessageList.add(welcome_message);
             }
 
             notifyDataSetChanged();
@@ -114,7 +124,7 @@ class SendBirdChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
             if (mChannel != null) {
                 // Convert current data into string.
                 sb.append(Base64.encodeToString(mChannel.serialize(), Base64.DEFAULT | Base64.NO_WRAP));
-                BaseMessage message = null;
+                SendBirdMessage message = null;
                 for (int i = 0; i < Math.min(mMessageList.size(), 100); i++) {
                     message = mMessageList.get(i);
                     if (!isTempMessage(message)) {
@@ -158,6 +168,10 @@ class SendBirdChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
 
         switch (viewType) {
+            case VIEW_TYPE_WELCOME_MESSAGE:
+                View welcomeUserMsgView = LayoutInflater.from(parent.getContext())
+                        .inflate(R.layout.list_item_group_chat_welcome_message, parent, false);
+                return new WelcomeMessageHolder(welcomeUserMsgView);
             case VIEW_TYPE_USER_MESSAGE_ME:
                 View myUserMsgView = LayoutInflater.from(parent.getContext())
                         .inflate(R.layout.list_item_group_chat_user_me, parent, false);
@@ -202,32 +216,34 @@ class SendBirdChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     }
 
     /**
-     * Binds variables in the BaseMessage to UI components in the ViewHolder.
+     * Binds variables in the SendBirdMessage to UI components in the ViewHolder.
      */
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
-        BaseMessage message = mMessageList.get(position);
+        SendBirdMessage message = mMessageList.get(position);
         boolean isContinuous = false;
         boolean isNewDay = false;
         boolean isTempMessage = false;
         boolean isFailedMessage = false;
         Uri tempFileMessageUri = null;
 
-        // If there is at least one item preceding the current one, check the previous message.
-        if (position < mMessageList.size() - 1) {
-            BaseMessage prevMessage = mMessageList.get(position + 1);
+        if (mMessageList.get(position).getBase() != null) {
+            // If there is at least one item preceding the current one, check the previous message.
+            if (position < mMessageList.size() - 1) {
+                SendBirdMessage prevMessage = mMessageList.get(position + 1);
 
-            // If the date of the previous message is different, display the date before the message,
-            // and also set isContinuous to false to show information such as the sender's nickname
-            // and profile image.
-            if (!DateUtils.hasSameDate(message.getCreatedAt(), prevMessage.getCreatedAt())) {
+                // If the date of the previous message is different, display the date before the message,
+                // and also set isContinuous to false to show information such as the sender's nickname
+                // and profile image.
+                if (!DateUtils.hasSameDate(message.getCreatedAt(), prevMessage.getCreatedAt())) {
+                    isNewDay = true;
+                    isContinuous = false;
+                } else {
+                    isContinuous = isContinuous(message, prevMessage);
+                }
+            } else if (position == mMessageList.size() - 1) {
                 isNewDay = true;
-                isContinuous = false;
-            } else {
-                isContinuous = isContinuous(message, prevMessage);
             }
-        } else if (position == mMessageList.size() - 1) {
-            isNewDay = true;
         }
 
         isTempMessage = isTempMessage(message);
@@ -235,32 +251,35 @@ class SendBirdChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         isFailedMessage = isFailedMessage(message);
 
         switch (holder.getItemViewType()) {
+            case VIEW_TYPE_WELCOME_MESSAGE:
+                ((WelcomeMessageHolder) holder).bind(mContext, message);
+                break;
             case VIEW_TYPE_USER_MESSAGE_ME:
-                ((MyUserMessageHolder) holder).bind(mContext, (UserMessage) message, mChannel, isContinuous, isNewDay, isTempMessage, isFailedMessage, mItemClickListener, mItemLongClickListener, position);
+                ((MyUserMessageHolder) holder).bind(mContext, (UserMessage) message.getBase(), mChannel, isContinuous, isNewDay, isTempMessage, isFailedMessage, mItemClickListener, mItemLongClickListener, position);
                 break;
             case VIEW_TYPE_USER_MESSAGE_OTHER:
-                ((OtherUserMessageHolder) holder).bind(mContext, (UserMessage) message, mChannel, isNewDay, isContinuous, mItemClickListener, mItemLongClickListener, position);
+                ((OtherUserMessageHolder) holder).bind(mContext, (UserMessage) message.getBase(), mChannel, isNewDay, isContinuous, mItemClickListener, mItemLongClickListener, position);
                 break;
             case VIEW_TYPE_ADMIN_MESSAGE:
-                ((AdminMessageHolder) holder).bind(mContext, (AdminMessage) message, mChannel, isNewDay);
+                ((AdminMessageHolder) holder).bind(mContext, (AdminMessage) message.getBase(), mChannel, isNewDay);
                 break;
             case VIEW_TYPE_FILE_MESSAGE_ME:
-                ((MyFileMessageHolder) holder).bind(mContext, (FileMessage) message, mChannel, isNewDay, isTempMessage, isFailedMessage, tempFileMessageUri, mItemClickListener);
+                ((MyFileMessageHolder) holder).bind(mContext, (FileMessage) message.getBase(), mChannel, isNewDay, isTempMessage, isFailedMessage, tempFileMessageUri, mItemClickListener);
                 break;
             case VIEW_TYPE_FILE_MESSAGE_OTHER:
-                ((OtherFileMessageHolder) holder).bind(mContext, (FileMessage) message, mChannel, isNewDay, isContinuous, mItemClickListener);
+                ((OtherFileMessageHolder) holder).bind(mContext, (FileMessage) message.getBase(), mChannel, isNewDay, isContinuous, mItemClickListener);
                 break;
             case VIEW_TYPE_FILE_MESSAGE_IMAGE_ME:
-                ((MyImageFileMessageHolder) holder).bind(mContext, (FileMessage) message, mChannel, isNewDay, isTempMessage, isFailedMessage, tempFileMessageUri, mItemClickListener);
+                ((MyImageFileMessageHolder) holder).bind(mContext, (FileMessage) message.getBase(), mChannel, isNewDay, isTempMessage, isFailedMessage, tempFileMessageUri, mItemClickListener);
                 break;
             case VIEW_TYPE_FILE_MESSAGE_IMAGE_OTHER:
-                ((OtherImageFileMessageHolder) holder).bind(mContext, (FileMessage) message, mChannel, isNewDay, isContinuous, mItemClickListener);
+                ((OtherImageFileMessageHolder) holder).bind(mContext, (FileMessage) message.getBase(), mChannel, isNewDay, isContinuous, mItemClickListener);
                 break;
             case VIEW_TYPE_FILE_MESSAGE_VIDEO_ME:
-                ((MyVideoFileMessageHolder) holder).bind(mContext, (FileMessage) message, mChannel, isNewDay, isTempMessage, isFailedMessage, tempFileMessageUri, mItemClickListener);
+                ((MyVideoFileMessageHolder) holder).bind(mContext, (FileMessage) message.getBase(), mChannel, isNewDay, isTempMessage, isFailedMessage, tempFileMessageUri, mItemClickListener);
                 break;
             case VIEW_TYPE_FILE_MESSAGE_VIDEO_OTHER:
-                ((OtherVideoFileMessageHolder) holder).bind(mContext, (FileMessage) message, mChannel, isNewDay, isContinuous, mItemClickListener);
+                ((OtherVideoFileMessageHolder) holder).bind(mContext, (FileMessage) message.getBase(), mChannel, isNewDay, isContinuous, mItemClickListener);
                 break;
             default:
                 break;
@@ -273,18 +292,21 @@ class SendBirdChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     @Override
     public int getItemViewType(int position) {
 
-        BaseMessage message = mMessageList.get(position);
+        SendBirdMessage message = mMessageList.get(position);
 
-        if (message instanceof UserMessage) {
-            UserMessage userMessage = (UserMessage) message;
+        if (message.getBase() == null) {
+            return VIEW_TYPE_WELCOME_MESSAGE;
+        }
+        else if (message.getBase() instanceof UserMessage) {
+            UserMessage userMessage = (UserMessage) message.getBase();
             // If the sender is current user
             if (userMessage.getSender().getUserId().equals(SendBird.getCurrentUser().getUserId())) {
                 return VIEW_TYPE_USER_MESSAGE_ME;
             } else {
                 return VIEW_TYPE_USER_MESSAGE_OTHER;
             }
-        } else if (message instanceof FileMessage) {
-            FileMessage fileMessage = (FileMessage) message;
+        } else if (message.getBase() instanceof FileMessage) {
+            FileMessage fileMessage = (FileMessage) message.getBase();
             if (fileMessage.getType().toLowerCase().startsWith("image")) {
                 // If the sender is current user
                 if (fileMessage.getSender().getUserId().equals(SendBird.getCurrentUser().getUserId())) {
@@ -305,7 +327,7 @@ class SendBirdChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
                     return VIEW_TYPE_FILE_MESSAGE_OTHER;
                 }
             }
-        } else if (message instanceof AdminMessage) {
+        } else if (message.getBase() instanceof AdminMessage) {
             return VIEW_TYPE_ADMIN_MESSAGE;
         }
 
@@ -321,22 +343,22 @@ class SendBirdChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         mChannel = channel;
     }
 
-    public boolean isTempMessage(BaseMessage message) {
+    public boolean isTempMessage(SendBirdMessage message) {
         return message.getMessageId() == 0;
     }
 
-    public boolean isFailedMessage(BaseMessage message) {
+    public boolean isFailedMessage(SendBirdMessage message) {
         if (!isTempMessage(message)) {
             return false;
         }
 
-        if (message instanceof UserMessage) {
-            int index = mFailedMessageIdList.indexOf(((UserMessage) message).getRequestId());
+        if (message.getBase() instanceof UserMessage) {
+            int index = mFailedMessageIdList.indexOf(((UserMessage) message.getBase()).getRequestId());
             if (index >= 0) {
                 return true;
             }
-        } else if (message instanceof FileMessage) {
-            int index = mFailedMessageIdList.indexOf(((FileMessage) message).getRequestId());
+        } else if (message.getBase() instanceof FileMessage) {
+            int index = mFailedMessageIdList.indexOf(((FileMessage) message.getBase()).getRequestId());
             if (index >= 0) {
                 return true;
             }
@@ -346,16 +368,16 @@ class SendBirdChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     }
 
 
-    public Uri getTempFileMessageUri(BaseMessage message) {
+    public Uri getTempFileMessageUri(SendBirdMessage message) {
         if (!isTempMessage(message)) {
             return null;
         }
 
-        if (!(message instanceof FileMessage)) {
+        if (!(message.getBase() instanceof FileMessage)) {
             return null;
         }
 
-        return mTempFileMessageUriTable.get(((FileMessage) message).getRequestId());
+        return mTempFileMessageUriTable.get(((FileMessage) message.getBase()).getRequestId());
     }
 
     public void markMessageFailed(String requestId) {
@@ -377,11 +399,11 @@ class SendBirdChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     }
 
     public void setFileProgressPercent(FileMessage message, int percent) {
-        BaseMessage msg;
+        SendBirdMessage msg;
         for (int i = mMessageList.size() - 1; i >= 0; i--) {
             msg = mMessageList.get(i);
-            if (msg instanceof FileMessage) {
-                if (message.getRequestId().equals(((FileMessage)msg).getRequestId())) {
+            if (msg.getBase() instanceof FileMessage) {
+                if (message.getRequestId().equals(((FileMessage)msg.getBase()).getRequestId())) {
                     CircleProgressBar circleProgressBar = mFileMessageMap.get(message);
                     if (circleProgressBar != null) {
                         circleProgressBar.setProgress(percent);
@@ -392,19 +414,19 @@ class SendBirdChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         }
     }
 
-    public void markMessageSent(BaseMessage message) {
-        BaseMessage msg;
+    public void markMessageSent(SendBirdMessage message) {
+        SendBirdMessage msg;
         for (int i = mMessageList.size() - 1; i >= 0; i--) {
             msg = mMessageList.get(i);
-            if (message instanceof UserMessage && msg instanceof UserMessage) {
-                if (((UserMessage) msg).getRequestId().equals(((UserMessage) message).getRequestId())) {
+            if (message.getBase() instanceof UserMessage && msg.getBase() instanceof UserMessage) {
+                if (((UserMessage) msg.getBase()).getRequestId().equals(((UserMessage) message.getBase()).getRequestId())) {
                     mMessageList.set(i, message);
                     notifyDataSetChanged();
                     return;
                 }
-            } else if (message instanceof FileMessage && msg instanceof FileMessage) {
-                if (((FileMessage) msg).getRequestId().equals(((FileMessage) message).getRequestId())) {
-                    mTempFileMessageUriTable.remove(((FileMessage) message).getRequestId());
+            } else if (message.getBase() instanceof FileMessage && msg.getBase() instanceof FileMessage) {
+                if (((FileMessage) msg.getBase()).getRequestId().equals(((FileMessage) message.getBase()).getRequestId())) {
+                    mTempFileMessageUriTable.remove(((FileMessage) message.getBase()).getRequestId());
                     mMessageList.set(i, message);
                     notifyDataSetChanged();
                     return;
@@ -418,12 +440,12 @@ class SendBirdChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     }
 
     public void addFirst(BaseMessage message) {
-        mMessageList.add(0, message);
+        mMessageList.add(0, new SendBirdMessage(message));
         notifyDataSetChanged();
     }
 
     public void delete(long msgId) {
-        for(BaseMessage msg : mMessageList) {
+        for(SendBirdMessage msg : mMessageList) {
             if(msg.getMessageId() == msgId) {
                 mMessageList.remove(msg);
                 notifyDataSetChanged();
@@ -433,12 +455,12 @@ class SendBirdChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     }
 
     public void update(BaseMessage message) {
-        BaseMessage baseMessage;
+        SendBirdMessage baseMessage;
         for (int index = 0; index < mMessageList.size(); index++) {
             baseMessage = mMessageList.get(index);
             if(message.getMessageId() == baseMessage.getMessageId()) {
                 mMessageList.remove(index);
-                mMessageList.add(index, message);
+                mMessageList.add(index, new SendBirdMessage(message));
                 notifyDataSetChanged();
                 break;
             }
@@ -495,7 +517,7 @@ class SendBirdChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
                 }
 
                 for(BaseMessage message : list) {
-                    mMessageList.add(message);
+                    mMessageList.add(new SendBirdMessage(message));
                 }
 
                 notifyDataSetChanged();
@@ -530,16 +552,20 @@ class SendBirdChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
                     return;
                 }
 
-                for (BaseMessage message : mMessageList) {
+                for (SendBirdMessage message : mMessageList) {
                     if (isTempMessage(message) || isFailedMessage(message)) {
-                        list.add(0, message);
+                        list.add(0, message.getBase());
                     }
                 }
 
                 mMessageList.clear();
 
                 for(BaseMessage message : list) {
-                    mMessageList.add(message);
+                    mMessageList.add(new SendBirdMessage(message));
+                }
+
+                if (welcome_message != null) {
+                    mMessageList.add(welcome_message);
                 }
 
                 notifyDataSetChanged();
@@ -561,28 +587,28 @@ class SendBirdChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
      * This is done so that redundant UI, such as sender nickname and profile picture,
      * does not have to displayed when not necessary.
      */
-    private boolean isContinuous(BaseMessage currentMsg, BaseMessage precedingMsg) {
+    private boolean isContinuous(SendBirdMessage currentMsg, SendBirdMessage precedingMsg) {
         // null check
         if (currentMsg == null || precedingMsg == null) {
             return false;
         }
 
-        if (currentMsg instanceof AdminMessage && precedingMsg instanceof AdminMessage) {
+        if (currentMsg.getBase() instanceof AdminMessage && precedingMsg.getBase() instanceof AdminMessage) {
             return true;
         }
 
         User currentUser = null, precedingUser = null;
 
-        if (currentMsg instanceof UserMessage) {
-            currentUser = ((UserMessage) currentMsg).getSender();
-        } else if (currentMsg instanceof FileMessage) {
-            currentUser = ((FileMessage) currentMsg).getSender();
+        if (currentMsg.getBase() instanceof UserMessage) {
+            currentUser = ((UserMessage) currentMsg.getBase()).getSender();
+        } else if (currentMsg.getBase() instanceof FileMessage) {
+            currentUser = ((FileMessage) currentMsg.getBase()).getSender();
         }
 
-        if (precedingMsg instanceof UserMessage) {
-            precedingUser = ((UserMessage) precedingMsg).getSender();
-        } else if (precedingMsg instanceof FileMessage) {
-            precedingUser = ((FileMessage) precedingMsg).getSender();
+        if (precedingMsg.getBase() instanceof UserMessage) {
+            precedingUser = ((UserMessage) precedingMsg.getBase()).getSender();
+        } else if (precedingMsg.getBase() instanceof FileMessage) {
+            precedingUser = ((FileMessage) precedingMsg.getBase()).getSender();
         }
 
         // If admin message or
@@ -594,29 +620,35 @@ class SendBirdChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
 
 
     private class AdminMessageHolder extends RecyclerView.ViewHolder {
-        private TextView messageText, dateText;
+        private TextView messageText;
 
         AdminMessageHolder(View itemView) {
             super(itemView);
 
             messageText = (TextView) itemView.findViewById(R.id.text_group_chat_message);
-            dateText = (TextView) itemView.findViewById(R.id.text_group_chat_date);
         }
 
         void bind(Context context, AdminMessage message, GroupChannel channel, boolean isNewDay) {
             messageText.setText(message.getMessage());
+        }
+    }
 
-            if (isNewDay) {
-                dateText.setVisibility(View.VISIBLE);
-                dateText.setText(DateUtils.formatDate(message.getCreatedAt()));
-            } else {
-                dateText.setVisibility(View.GONE);
-            }
+
+    private class WelcomeMessageHolder extends RecyclerView.ViewHolder {
+        TextView messageText;
+
+        WelcomeMessageHolder(View itemView) {
+            super(itemView);
+            messageText = (TextView) itemView.findViewById(R.id.text_group_chat_welcome);
+        }
+
+        void bind(Context context, final SendBirdMessage message) {
+            messageText.setText(message.getWelcomeMessage());
         }
     }
 
     private class MyUserMessageHolder extends RecyclerView.ViewHolder {
-        TextView messageText, editedText, timeText, readReceiptText, dateText;
+        TextView messageText, editedText, timeText, readReceiptText;
         ViewGroup urlPreviewContainer;
         TextView urlPreviewSiteNameText, urlPreviewTitleText, urlPreviewDescriptionText;
         ImageView urlPreviewMainImageView;
@@ -629,7 +661,6 @@ class SendBirdChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
             editedText = (TextView) itemView.findViewById(R.id.text_group_chat_edited);
             timeText = (TextView) itemView.findViewById(R.id.text_group_chat_time);
             readReceiptText = (TextView) itemView.findViewById(R.id.text_group_chat_read_receipt);
-            dateText = (TextView) itemView.findViewById(R.id.text_group_chat_date);
 
             urlPreviewContainer = (ViewGroup) itemView.findViewById(R.id.url_preview_container);
             urlPreviewSiteNameText = (TextView) itemView.findViewById(R.id.text_url_preview_site_name);
@@ -678,14 +709,6 @@ class SendBirdChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
                 padding.setVisibility(View.VISIBLE);
             }
 
-            // If the message is sent on a different date than the previous one, display the date.
-            if (isNewDay) {
-                dateText.setVisibility(View.VISIBLE);
-                dateText.setText(DateUtils.formatDate(message.getCreatedAt()));
-            } else {
-                dateText.setVisibility(View.GONE);
-            }
-
             urlPreviewContainer.setVisibility(View.GONE);
             if (message.getCustomType().equals(URL_PREVIEW_CUSTOM_TYPE)) {
                 try {
@@ -724,7 +747,7 @@ class SendBirdChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     }
 
     private class OtherUserMessageHolder extends RecyclerView.ViewHolder {
-        TextView messageText, editedText, nicknameText, timeText, readReceiptText, dateText;
+        TextView messageText, editedText, nicknameText, timeText, readReceiptText;
         ImageView profileImage;
 
         ViewGroup urlPreviewContainer;
@@ -740,7 +763,6 @@ class SendBirdChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
             nicknameText = (TextView) itemView.findViewById(R.id.text_group_chat_nickname);
             profileImage = (ImageView) itemView.findViewById(R.id.image_group_chat_profile);
             readReceiptText = (TextView) itemView.findViewById(R.id.text_group_chat_read_receipt);
-            dateText = (TextView) itemView.findViewById(R.id.text_group_chat_date);
 
             urlPreviewContainer = (ViewGroup) itemView.findViewById(R.id.url_preview_container);
             urlPreviewSiteNameText = (TextView) itemView.findViewById(R.id.text_url_preview_site_name);
@@ -761,14 +783,6 @@ class SendBirdChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
                 } else {
                     readReceiptText.setVisibility(View.INVISIBLE);
                 }
-            }
-
-            // Show the date if the message was sent on a different date than the previous message.
-            if (isNewDay) {
-                dateText.setVisibility(View.VISIBLE);
-                dateText.setText(DateUtils.formatDate(message.getCreatedAt()));
-            } else {
-                dateText.setVisibility(View.GONE);
             }
 
             // Hide profile image and nickname if the previous message was also sent by current sender.
@@ -829,7 +843,7 @@ class SendBirdChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     }
 
     private class MyFileMessageHolder extends RecyclerView.ViewHolder {
-        TextView fileNameText, timeText, readReceiptText, dateText;
+        TextView fileNameText, timeText, readReceiptText;
         CircleProgressBar circleProgressBar;
 
         public MyFileMessageHolder(View itemView) {
@@ -839,7 +853,6 @@ class SendBirdChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
             fileNameText = (TextView) itemView.findViewById(R.id.text_group_chat_file_name);
             readReceiptText = (TextView) itemView.findViewById(R.id.text_group_chat_read_receipt);
             circleProgressBar = (CircleProgressBar) itemView.findViewById(R.id.circle_progress);
-            dateText = (TextView) itemView.findViewById(R.id.text_group_chat_date);
         }
 
         void bind(Context context, final FileMessage message, GroupChannel channel, boolean isNewDay, boolean isTempMessage, boolean isFailedMessage, Uri tempFileMessageUri, final OnItemClickListener listener) {
@@ -873,13 +886,6 @@ class SendBirdChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
                 }
 
             }
-            // Show the date if the message was sent on a different date than the previous message.
-            if (isNewDay) {
-                dateText.setVisibility(View.VISIBLE);
-                dateText.setText(DateUtils.formatDate(message.getCreatedAt()));
-            } else {
-                dateText.setVisibility(View.GONE);
-            }
 
             if (listener != null) {
                 itemView.setOnClickListener(new View.OnClickListener() {
@@ -893,7 +899,7 @@ class SendBirdChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     }
 
     private class OtherFileMessageHolder extends RecyclerView.ViewHolder {
-        TextView nicknameText, timeText, fileNameText, fileSizeText, dateText, readReceiptText;
+        TextView nicknameText, timeText, fileNameText, fileSizeText, readReceiptText;
         ImageView profileImage;
 
         public OtherFileMessageHolder(View itemView) {
@@ -905,7 +911,6 @@ class SendBirdChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
 //            fileSizeText = (TextView) itemView.findViewById(R.id.text_group_chat_file_size);
 
             profileImage = (ImageView) itemView.findViewById(R.id.image_group_chat_profile);
-            dateText = (TextView) itemView.findViewById(R.id.text_group_chat_date);
             readReceiptText = (TextView) itemView.findViewById(R.id.text_group_chat_read_receipt);
         }
 
@@ -923,14 +928,6 @@ class SendBirdChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
                 } else {
                     readReceiptText.setVisibility(View.INVISIBLE);
                 }
-            }
-
-            // Show the date if the message was sent on a different date than the previous message.
-            if (isNewDay) {
-                dateText.setVisibility(View.VISIBLE);
-                dateText.setText(DateUtils.formatDate(message.getCreatedAt()));
-            } else {
-                dateText.setVisibility(View.GONE);
             }
 
             // Hide profile image and nickname if the previous message was also sent by current sender.
@@ -961,7 +958,7 @@ class SendBirdChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
      * Displays only the image thumbnail.
      */
     private class MyImageFileMessageHolder extends RecyclerView.ViewHolder {
-        TextView timeText, readReceiptText, dateText;
+        TextView timeText, readReceiptText;
         ImageView fileThumbnailImage;
         CircleProgressBar circleProgressBar;
 
@@ -972,7 +969,6 @@ class SendBirdChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
             fileThumbnailImage = (ImageView) itemView.findViewById(R.id.image_group_chat_file_thumbnail);
             readReceiptText = (TextView) itemView.findViewById(R.id.text_group_chat_read_receipt);
             circleProgressBar = (CircleProgressBar) itemView.findViewById(R.id.circle_progress);
-            dateText = (TextView) itemView.findViewById(R.id.text_group_chat_date);
         }
 
         void bind(Context context, final FileMessage message, GroupChannel channel, boolean isNewDay, boolean isTempMessage, boolean isFailedMessage, Uri tempFileMessageUri, final OnItemClickListener listener) {
@@ -1004,14 +1000,6 @@ class SendBirdChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
                         readReceiptText.setVisibility(View.INVISIBLE);
                     }
                 }
-            }
-
-            // Show the date if the message was sent on a different date than the previous message.
-            if (isNewDay) {
-                dateText.setVisibility(View.VISIBLE);
-                dateText.setText(DateUtils.formatDate(message.getCreatedAt()));
-            } else {
-                dateText.setVisibility(View.GONE);
             }
 
             if (isTempMessage && tempFileMessageUri != null) {
@@ -1049,7 +1037,7 @@ class SendBirdChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
 
     private class OtherImageFileMessageHolder extends RecyclerView.ViewHolder {
 
-        TextView timeText, nicknameText, readReceiptText, dateText;
+        TextView timeText, nicknameText, readReceiptText;
         ImageView profileImage, fileThumbnailImage;
 
         public OtherImageFileMessageHolder(View itemView) {
@@ -1060,7 +1048,6 @@ class SendBirdChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
             fileThumbnailImage = (ImageView) itemView.findViewById(R.id.image_group_chat_file_thumbnail);
             profileImage = (ImageView) itemView.findViewById(R.id.image_group_chat_profile);
             readReceiptText = (TextView) itemView.findViewById(R.id.text_group_chat_read_receipt);
-            dateText = (TextView) itemView.findViewById(R.id.text_group_chat_date);
         }
 
         void bind(Context context, final FileMessage message, GroupChannel channel, boolean isNewDay, boolean isContinuous, final OnItemClickListener listener) {
@@ -1075,14 +1062,6 @@ class SendBirdChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
                 } else {
                     readReceiptText.setVisibility(View.INVISIBLE);
                 }
-            }
-
-            // Show the date if the message was sent on a different date than the previous message.
-            if (isNewDay) {
-                dateText.setVisibility(View.VISIBLE);
-                dateText.setText(DateUtils.formatDate(message.getCreatedAt()));
-            } else {
-                dateText.setVisibility(View.GONE);
             }
 
             // Hide profile image and nickname if the previous message was also sent by current sender.
@@ -1131,7 +1110,7 @@ class SendBirdChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
      * Displays only the video thumbnail.
      */
     private class MyVideoFileMessageHolder extends RecyclerView.ViewHolder {
-        TextView timeText, readReceiptText, dateText;
+        TextView timeText, readReceiptText;
         ImageView fileThumbnailImage;
         CircleProgressBar circleProgressBar;
 
@@ -1142,7 +1121,6 @@ class SendBirdChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
             fileThumbnailImage = (ImageView) itemView.findViewById(R.id.image_group_chat_file_thumbnail);
             readReceiptText = (TextView) itemView.findViewById(R.id.text_group_chat_read_receipt);
             circleProgressBar = (CircleProgressBar) itemView.findViewById(R.id.circle_progress);
-            dateText = (TextView) itemView.findViewById(R.id.text_group_chat_date);
         }
 
         void bind(Context context, final FileMessage message, GroupChannel channel, boolean isNewDay, boolean isTempMessage, boolean isFailedMessage, Uri tempFileMessageUri, final OnItemClickListener listener) {
@@ -1176,14 +1154,6 @@ class SendBirdChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
                 }
             }
 
-            // Show the date if the message was sent on a different date than the previous message.
-            if (isNewDay) {
-                dateText.setVisibility(View.VISIBLE);
-                dateText.setText(DateUtils.formatDate(message.getCreatedAt()));
-            } else {
-                dateText.setVisibility(View.GONE);
-            }
-
             if (isTempMessage && tempFileMessageUri != null) {
                 ImageUtils.displayImageFromUrl(context, tempFileMessageUri.toString(), fileThumbnailImage, null);
             } else {
@@ -1209,7 +1179,7 @@ class SendBirdChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
 
     private class OtherVideoFileMessageHolder extends RecyclerView.ViewHolder {
 
-        TextView timeText, nicknameText, readReceiptText, dateText;
+        TextView timeText, nicknameText, readReceiptText;
         ImageView profileImage, fileThumbnailImage;
 
         public OtherVideoFileMessageHolder(View itemView) {
@@ -1220,7 +1190,6 @@ class SendBirdChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
             fileThumbnailImage = (ImageView) itemView.findViewById(R.id.image_group_chat_file_thumbnail);
             profileImage = (ImageView) itemView.findViewById(R.id.image_group_chat_profile);
             readReceiptText = (TextView) itemView.findViewById(R.id.text_group_chat_read_receipt);
-            dateText = (TextView) itemView.findViewById(R.id.text_group_chat_date);
         }
 
         void bind(Context context, final FileMessage message, GroupChannel channel, boolean isNewDay, boolean isContinuous, final OnItemClickListener listener) {
@@ -1235,14 +1204,6 @@ class SendBirdChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
                 } else {
                     readReceiptText.setVisibility(View.INVISIBLE);
                 }
-            }
-
-            // Show the date if the message was sent on a different date than the previous message.
-            if (isNewDay) {
-                dateText.setVisibility(View.VISIBLE);
-                dateText.setText(DateUtils.formatDate(message.getCreatedAt()));
-            } else {
-                dateText.setVisibility(View.GONE);
             }
 
             // Hide profile image and nickname if the previous message was also sent by current sender.

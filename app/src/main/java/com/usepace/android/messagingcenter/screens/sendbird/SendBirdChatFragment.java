@@ -41,6 +41,7 @@ import com.sendbird.android.SendBird;
 import com.sendbird.android.SendBirdException;
 import com.sendbird.android.UserMessage;
 import com.usepace.android.messagingcenter.R;
+import com.usepace.android.messagingcenter.model.SendBirdMessage;
 import com.usepace.android.messagingcenter.screens.mediaplayer.MediaPlayerActivity;
 import com.usepace.android.messagingcenter.screens.photoviewer.PhotoViewerActivity;
 import com.usepace.android.messagingcenter.utils.ConnectionManager;
@@ -114,7 +115,7 @@ public class SendBirdChatFragment extends Fragment {
         CHANNEL_HANDLER_ID = mChannelUrl;
 
 
-        mChatAdapter = new SendBirdChatAdapter(getActivity());
+        mChatAdapter = new SendBirdChatAdapter(getActivity(), getArguments());
         setUpChatListAdapter();
 
         // Load messages from cache.
@@ -378,13 +379,13 @@ public class SendBirdChatFragment extends Fragment {
             @Override
             public void onUserMessageItemClick(UserMessage message) {
                 // Restore failed message and remove the failed message from list.
-                if (mChatAdapter.isFailedMessage(message)) {
+                if (mChatAdapter.isFailedMessage(new SendBirdMessage(message))) {
                     retryFailedMessage(message);
                     return;
                 }
 
                 // Message is sending. Do nothing on click event.
-                if (mChatAdapter.isTempMessage(message)) {
+                if (mChatAdapter.isTempMessage(new SendBirdMessage(message))) {
                     return;
                 }
 
@@ -403,13 +404,13 @@ public class SendBirdChatFragment extends Fragment {
             @Override
             public void onFileMessageItemClick(FileMessage message) {
                 // Load media chooser and remove the failed message from list.
-                if (mChatAdapter.isFailedMessage(message)) {
+                if (mChatAdapter.isFailedMessage(new SendBirdMessage(message))) {
                     retryFailedMessage(message);
                     return;
                 }
 
                 // Message is sending. Do nothing on click event.
-                if (mChatAdapter.isTempMessage(message)) {
+                if (mChatAdapter.isTempMessage(new SendBirdMessage(message))) {
                     return;
                 }
 
@@ -523,7 +524,7 @@ public class SendBirdChatFragment extends Fragment {
                                 String userInput = ((UserMessage) message).getMessage();
                                 sendUserMessage(userInput);
                             } else if (message instanceof FileMessage) {
-                                Uri uri = mChatAdapter.getTempFileMessageUri(message);
+                                Uri uri = mChatAdapter.getTempFileMessageUri(new SendBirdMessage(message));
                                 sendFileWithThumbnail(uri);
                             }
                             mChatAdapter.removeFailedMessage(message);
@@ -674,7 +675,7 @@ public class SendBirdChatFragment extends Fragment {
                         }
 
                         // Update a sent message to RecyclerView
-                        mChatAdapter.markMessageSent(userMessage);
+                        mChatAdapter.markMessageSent(new SendBirdMessage(userMessage));
                     }
                 };
 
@@ -715,7 +716,7 @@ public class SendBirdChatFragment extends Fragment {
                 }
 
                 // Update a sent message to RecyclerView
-                mChatAdapter.markMessageSent(userMessage);
+                mChatAdapter.markMessageSent(new SendBirdMessage(userMessage));
             }
         });
 
@@ -788,7 +789,7 @@ public class SendBirdChatFragment extends Fragment {
                         return;
                     }
 
-                    mChatAdapter.markMessageSent(fileMessage);
+                    mChatAdapter.markMessageSent(new SendBirdMessage(fileMessage));
                 }
             };
 

@@ -103,6 +103,9 @@ class SendBirdClient extends ClientInterface {
             if (theme.getToolbarSubtitle() != null) {
                 a1.putExtra("SUBTITLE", theme.getToolbarSubtitle());
             }
+            if (theme.getWelcomeMessage() != null) {
+                a1.putExtra("WELCOME_MESSAGE", theme.getWelcomeMessage());
+            }
         }
         a1.putExtra("CHANNEL_URL", chat_id);
         context.startActivity(a1);

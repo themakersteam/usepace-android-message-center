@@ -58,6 +58,7 @@
      <color name="message_center_primary_dark">{color}</color>
      <color name="message_center_primary_accent">{color}</color>
      <color name="message_center_chat_view_background">{color}</color>
+     <color name="message_center_chat_view_welcome_background">{color}</color>
      ```
 
 #### 4.1 connect()
