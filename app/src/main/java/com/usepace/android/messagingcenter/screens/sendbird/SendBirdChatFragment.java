@@ -9,6 +9,7 @@ import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
@@ -45,6 +46,7 @@ import com.usepace.android.messagingcenter.R;
 import com.usepace.android.messagingcenter.model.SendBirdMessage;
 import com.usepace.android.messagingcenter.screens.mediaplayer.MediaPlayerActivity;
 import com.usepace.android.messagingcenter.screens.photoviewer.PhotoViewerActivity;
+import com.usepace.android.messagingcenter.screens.sendfile.SendFileActivity;
 import com.usepace.android.messagingcenter.utils.ConnectionManager;
 import com.usepace.android.messagingcenter.utils.FileUtils;
 import com.usepace.android.messagingcenter.utils.UrlPreviewInfo;
@@ -71,6 +73,7 @@ public class SendBirdChatFragment extends Fragment {
     private static final String STATE_CHANNEL_URL = "STATE_CHANNEL_URL";
     private static final int INTENT_REQUEST_CHOOSE_MEDIA = 301;
     private static final int PERMISSION_WRITE_EXTERNAL_STORAGE = 13;
+    private static final int SEND_FILE_ACTIVITY_RESULT = 101;
 
     private InputMethodManager mIMM;
     private HashMap<BaseChannel.SendFileMessageWithProgressHandler, FileMessage> mFileProgressHandlerMap;
@@ -177,7 +180,7 @@ public class SendBirdChatFragment extends Fragment {
                         mMessageEditText.setText("");
                     }
                     else {
-                        // Open camera
+                        openSendFileScreen(SendFileActivity.REQUEST_IMAGE_CAPTURE);
                     }
                 }
             }
@@ -217,6 +220,10 @@ public class SendBirdChatFragment extends Fragment {
         setHasOptionsMenu(true);
 
         return rootView;
+    }
+
+    private void openSendFileScreen(int action) {
+        startActivityForResult(new Intent(getActivity(), SendFileActivity.class).putExtra("ACTION", action), SEND_FILE_ACTIVITY_RESULT);
     }
 
     private void refresh() {
@@ -352,13 +359,21 @@ public class SendBirdChatFragment extends Fragment {
 
         // Set this as true to restore background connection management.
         SendBird.setAutoBackgroundDetection(true);
-        if (requestCode == INTENT_REQUEST_CHOOSE_MEDIA && resultCode == Activity.RESULT_OK) {
+        if ((requestCode == INTENT_REQUEST_CHOOSE_MEDIA || requestCode == SEND_FILE_ACTIVITY_RESULT) && resultCode == Activity.RESULT_OK) {
             // If user has successfully chosen the image, show a dialog to confirm upload.
             if (data == null) {
                 Log.d(LOG_TAG, "data is null!");
                 return;
             }
             sendFileWithThumbnail(data.getData());
+            if (data.hasExtra("CAPTION")) {
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        sendUserMessage(data.getStringExtra("CAPTION"));
+                    }
+                }, 750);
+            }
         }
     }
 
