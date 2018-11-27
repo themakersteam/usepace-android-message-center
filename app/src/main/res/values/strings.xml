@@ -24,6 +24,7 @@
     <string name="edit_message">Edit message</string>
     <string name="delete_message_option">Delete message</string>
     <string name="type_message_hint">Type a message</string>
+    <string name="ms_caption">Caption</string>
 
     <!-- Global Strings -->
     <string name="message_center_toolbar_title">Message Center</string>

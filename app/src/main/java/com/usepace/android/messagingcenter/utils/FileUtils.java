@@ -14,6 +14,7 @@ import android.provider.DocumentsContract;
 import android.provider.MediaStore;
 import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -189,6 +190,18 @@ public class FileUtils {
     private static boolean isNewGooglePhotosUri(Uri uri) {
         return "com.google.android.apps.photos.contentprovider".equals(uri.getAuthority());
     }
+
+    /**
+     *
+     * @param inContext
+     * @param inImage
+     * @return Uri from bitmap
+     */
+    public static Uri getImageUri(Context inContext, Bitmap inImage) {
+        String path = MediaStore.Images.Media.insertImage(inContext.getContentResolver(), inImage, "MSG_CNTR", null);
+        return Uri.parse(path);
+    }
+
 
     /**
      * Downloads a file using DownloadManager.

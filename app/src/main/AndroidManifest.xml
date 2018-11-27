@@ -6,6 +6,8 @@
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.INTERNET"/>
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+    <uses-feature android:name="android.hardware.camera"
+        android:required="true" />
 
     <application
         android:allowBackup="true"
@@ -38,6 +40,12 @@
 
         <activity
             android:name="com.usepace.android.messagingcenter.screens.photoviewer.PhotoViewerActivity"
+            android:configChanges="orientation|screenSize|keyboardHidden|screenLayout"
+            android:screenOrientation="portrait"
+            android:theme="@style/ChatTheme"/>
+
+        <activity
+            android:name="com.usepace.android.messagingcenter.screens.sendfile.SendFileActivity"
             android:configChanges="orientation|screenSize|keyboardHidden|screenLayout"
             android:screenOrientation="portrait"
             android:theme="@style/ChatTheme"/>
