@@ -28,5 +28,8 @@
 
     <!-- Global Strings -->
     <string name="message_center_toolbar_title">مركز الرسائل</string>
+    <string name="send_location">Send this location</string>
+    <string name="share_location">Share Location</string>
+    <string name="need_gps_permission">Need GPS permission for getting your location</string>
 
 </resources>
