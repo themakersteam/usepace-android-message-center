@@ -25,6 +25,9 @@
     <string name="delete_message_option">Delete message</string>
     <string name="type_message_hint">Type a message</string>
     <string name="ms_caption">Caption</string>
+    <string name="ms_camera">Camera</string>
+    <string name="ms_photos">Photos</string>
+    <string name="ms_location">Location</string>
 
     <!-- Global Strings -->
     <string name="message_center_toolbar_title">Message Center</string>

@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:background="@drawable/rounded_box">
+
+        <RelativeLayout
+            android:id="@+id/action_camera"
+            android:clickable="true"
+            android:paddingBottom="10dp"
+            android:paddingTop="10dp"
+            android:foreground="?attr/selectableItemBackground"
+            android:layout_width="match_parent"
+            android:layout_height="52dp">
+
+            <ImageView
+                android:id="@+id/action_img"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:src="@drawable/ic_camera"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentLeft="true"
+                android:layout_centerVertical="true"
+                android:layout_marginStart="16dp"
+                android:tint="@color/message_center_primary_dark"
+                android:layout_marginLeft="16dp"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="17sp"
+                android:fontFamily="sans-serif"
+                android:layout_toEndOf="@+id/action_img"
+                android:layout_toRightOf="@+id/action_img"
+                android:layout_centerVertical="true"
+                android:textStyle="normal"
+                android:textColor="@color/message_center_primary_dark"
+                android:lineSpacingExtra="8sp"
+                android:text="@string/ms_camera"
+                android:layout_marginStart="32dp"
+                android:layout_marginLeft="32dp"/>
+
+        </RelativeLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="#1e000000"/>
+
+        <RelativeLayout
+            android:id="@+id/action_gallery"
+            android:clickable="true"
+            android:paddingBottom="10dp"
+            android:paddingTop="10dp"
+            android:foreground="?attr/selectableItemBackground"
+            android:layout_width="match_parent"
+            android:layout_height="52dp">
+
+            <ImageView
+                android:id="@+id/action_img_gallery"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:src="@drawable/ic_photos"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentLeft="true"
+                android:layout_centerVertical="true"
+                android:layout_marginStart="16dp"
+                android:tint="@color/message_center_primary_dark"
+                android:layout_marginLeft="16dp"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="17sp"
+                android:fontFamily="sans-serif"
+                android:layout_toEndOf="@+id/action_img_gallery"
+                android:layout_toRightOf="@+id/action_img_gallery"
+                android:layout_centerVertical="true"
+                android:textStyle="normal"
+                android:textColor="@color/message_center_primary_dark"
+                android:lineSpacingExtra="8sp"
+                android:text="@string/ms_photos"
+                android:layout_marginStart="32dp"
+                android:layout_marginLeft="32dp"/>
+
+        </RelativeLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="#1e000000"/>
+
+        <RelativeLayout
+            android:id="@+id/action_location"
+            android:clickable="true"
+            android:paddingBottom="10dp"
+            android:paddingTop="10dp"
+            android:foreground="?attr/selectableItemBackground"
+            android:layout_width="match_parent"
+            android:layout_height="52dp">
+
+            <ImageView
+                android:id="@+id/action_img_location"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:src="@drawable/ic_location"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentLeft="true"
+                android:layout_marginStart="16dp"
+                android:layout_centerVertical="true"
+                android:tint="@color/message_center_primary_dark"
+                android:layout_marginLeft="16dp"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="17sp"
+                android:fontFamily="sans-serif"
+                android:layout_toEndOf="@+id/action_img_location"
+                android:layout_toRightOf="@+id/action_img_location"
+                android:layout_centerVertical="true"
+                android:textStyle="normal"
+                android:textColor="@color/message_center_primary_dark"
+                android:lineSpacingExtra="8sp"
+                android:text="@string/ms_location"
+                android:layout_marginStart="32dp"
+                android:layout_marginLeft="32dp"/>
+
+        </RelativeLayout>
+
+    </LinearLayout>
+
+
+    <RelativeLayout
+        android:id="@+id/dismiss_shadow"
+        android:clickable="true"
+        android:paddingBottom="10dp"
+        android:paddingTop="10dp"
+        android:foreground="?attr/selectableItemBackground"
+        android:layout_width="match_parent"
+        android:background="@drawable/rounded_box"
+        android:layout_marginTop="4dp"
+        android:layout_marginBottom="10dp"
+        android:layout_height="52dp">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="17sp"
+            android:fontFamily="sans-serif"
+            android:layout_centerVertical="true"
+            android:textStyle="bold"
+            android:gravity="center"
+            android:textColor="@color/message_center_primary_dark"
+            android:text="@string/cancel" />
+
+    </RelativeLayout>
+
+
+</LinearLayout>

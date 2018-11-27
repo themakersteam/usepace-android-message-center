@@ -79,6 +79,7 @@ public class SendBirdChatFragment extends Fragment {
     private HashMap<BaseChannel.SendFileMessageWithProgressHandler, FileMessage> mFileProgressHandlerMap;
 
     private RelativeLayout mRootLayout;
+    private FileOptionsBottomSheetAdapter mBottomSheetAdapter;
     private RecyclerView mRecyclerView;
     private SendBirdChatAdapter mChatAdapter;
     private LinearLayoutManager mLayoutManager;
@@ -95,6 +96,7 @@ public class SendBirdChatFragment extends Fragment {
 
     private int mCurrentState = STATE_NORMAL;
     private BaseMessage mEditingMessage = null;
+
 
     /**
      * To create an instance of this fragment, a Channel URL should be required.
@@ -189,7 +191,7 @@ public class SendBirdChatFragment extends Fragment {
         mUploadFileButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                requestMedia();
+                showFileOptions();
             }
         });
 
@@ -390,6 +392,32 @@ public class SendBirdChatFragment extends Fragment {
                 }
             }
         });
+    }
+
+    private void showFileOptions() {
+        if(mBottomSheetAdapter != null && mBottomSheetAdapter.isAdded()) {
+            mBottomSheetAdapter.dismiss();
+        }
+        else {
+            mBottomSheetAdapter = new FileOptionsBottomSheetAdapter().newInstance();
+            mBottomSheetAdapter.setListener(new FileOptionsBottomSheetAdapter.ButtonClickListener() {
+                @Override
+                public void onCameraClicked() {
+                    mBottomSheetAdapter.dismiss();
+                }
+
+                @Override
+                public void onGalleryClicked() {
+                    mBottomSheetAdapter.dismiss();
+                }
+
+                @Override
+                public void onLocationClicked() {
+                    mBottomSheetAdapter.dismiss();
+                }
+            });
+            mBottomSheetAdapter.show(getActivity().getSupportFragmentManager(), mBottomSheetAdapter.getTag());
+        }
     }
 
     private void setUpChatListAdapter() {
