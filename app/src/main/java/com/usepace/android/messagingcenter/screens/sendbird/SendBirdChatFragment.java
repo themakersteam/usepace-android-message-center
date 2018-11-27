@@ -43,6 +43,7 @@ import com.sendbird.android.UserMessage;
 import com.usepace.android.messagingcenter.R;
 import com.usepace.android.messagingcenter.model.SendBirdMessage;
 import com.usepace.android.messagingcenter.screens.mediaplayer.MediaPlayerActivity;
+import com.usepace.android.messagingcenter.screens.myLocation.MyLocationActivity;
 import com.usepace.android.messagingcenter.screens.photoviewer.PhotoViewerActivity;
 import com.usepace.android.messagingcenter.screens.sendfile.SendFileActivity;
 import com.usepace.android.messagingcenter.utils.ConnectionManager;
@@ -72,6 +73,7 @@ public class SendBirdChatFragment extends Fragment {
     private static final int INTENT_REQUEST_CHOOSE_MEDIA = 301;
     private static final int PERMISSION_WRITE_EXTERNAL_STORAGE = 13;
     private static final int SEND_FILE_ACTIVITY_RESULT = 101;
+    private static final int OPEN_LOCATION_ACTIVITY_RESULT = 102;
 
     private InputMethodManager mIMM;
     private HashMap<BaseChannel.SendFileMessageWithProgressHandler, FileMessage> mFileProgressHandlerMap;
@@ -375,6 +377,11 @@ public class SendBirdChatFragment extends Fragment {
                 }, 750);
             }
         }
+        else if (requestCode == OPEN_LOCATION_ACTIVITY_RESULT && resultCode == Activity.RESULT_OK) {
+            if (data != null && data.hasExtra("lat") && data.hasExtra("lng")) {
+                sendUserMessage("location://?lat=" + data.getDoubleExtra("lat", 0) + "&long=" + data.getDoubleExtra("lng", 0));
+            }
+        }
     }
 
     private void setUpRecyclerView() {
@@ -413,6 +420,7 @@ public class SendBirdChatFragment extends Fragment {
 
                 @Override
                 public void onLocationClicked() {
+                    startActivityForResult(new Intent(getActivity(), MyLocationActivity.class), OPEN_LOCATION_ACTIVITY_RESULT);
                     mBottomSheetAdapter.dismiss();
                 }
             });
