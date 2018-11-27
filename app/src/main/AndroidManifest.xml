@@ -6,6 +6,8 @@
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.INTERNET"/>
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-feature android:name="android.hardware.camera"
         android:required="true" />
 
@@ -15,7 +17,7 @@
         android:supportsRtl="true">
 
         <!-- todo: Uncomment for testing -->
-        <!--<activity
+        <!-- <activity
             android:name=".screens.test.TestActivity"
             android:configChanges="orientation|screenSize|keyboardHidden|screenLayout"
             android:launchMode="singleTask"
@@ -28,7 +30,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
 
-        </activity>-->
+        </activity> -->
 
         <activity android:name="com.usepace.android.messagingcenter.screens.sendbird.SendBirdChatActivity"
             android:configChanges="screenSize|keyboardHidden|screenLayout"
@@ -55,6 +57,24 @@
             android:configChanges="orientation|screenSize|keyboardHidden|screenLayout"
             android:screenOrientation="portrait"
             android:theme="@style/ChatTheme"/>
+
+        <activity
+            android:name="com.usepace.android.messagingcenter.screens.myLocation.MyLocationActivity"
+            android:configChanges="orientation|screenSize|keyboardHidden|screenLayout"
+            android:screenOrientation="portrait"
+            android:theme="@style/ChatTheme"/>
+
+        <!--
+             The API key for Google Maps-based APIs is defined as a string resource.
+             (See the file "res/values/google_maps_api.xml").
+             Note that the API key is linked to the encryption key used to sign the APK.
+             You need a different API key for each encryption key, including the release key that is used to
+             sign the APK for publishing.
+             You can define the keys for the debug and release targets in src/debug/ and src/release/.
+        -->
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="@string/google_maps_key" />
 
     </application>
 

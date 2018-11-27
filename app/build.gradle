@@ -27,6 +27,7 @@ repositories {
 ext {
     mSupportLibVersion = '27.1.0'
     firebase_services_version = "11.8.0"
+    googleLibVersion = "11.8.0"
 }
 
 dependencies {
@@ -51,6 +52,9 @@ dependencies {
 
     //Firebase Messaging
     implementation "com.google.firebase:firebase-messaging:${firebase_services_version}"
+    implementation "com.google.android.gms:play-services-maps:${googleLibVersion}"
+    implementation "com.google.android.gms:play-services-location:${googleLibVersion}"
+    implementation "com.google.android.gms:play-services-places:${googleLibVersion}"
 
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'com.android.support.test:runner:1.0.2'
