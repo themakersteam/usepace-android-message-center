@@ -4,9 +4,15 @@ import com.sendbird.android.GroupChannel;
 import com.sendbird.android.Member;
 import com.sendbird.android.SendBird;
 import com.sendbird.android.User;
+
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 public class TextUtils {
 
@@ -42,6 +48,57 @@ public class TextUtils {
             }
             return names.delete(0, 2).toString();
         }
+    }
+
+    /**
+     *
+     * @return
+     * @throws UnsupportedEncodingException
+     */
+    public static Map<String, String> getQueries(String uri, String prefix) throws UnsupportedEncodingException {
+        if (uri == null) throw new UnsupportedEncodingException("");
+        if (uri.contains(prefix)) {
+            uri = uri.replaceAll(prefix, "");
+            if (uri.contains("?"))
+                uri = uri.replaceAll("\\?", "");
+            return splitQuery(uri);
+        }
+        return new HashMap<>();
+    }
+
+    /**
+     *
+     * @param url
+     * @return HashMap split for a url
+     * e.g to a keyValue pair
+     *
+     * @throws UnsupportedEncodingException
+     */
+    public static Map<String, String> splitQuery(String url) throws UnsupportedEncodingException {
+        Map<String, String> query_pairs = new LinkedHashMap<>();
+        String query = url;
+        String[] pairs = query.split("&");
+        for (String pair : pairs) {
+            int idx = pair.indexOf("=");
+            query_pairs.put(URLDecoder.decode(pair.substring(0, idx), "UTF-8"), URLDecoder.decode(pair.substring(idx + 1), "UTF-8"));
+        }
+        return query_pairs;
+    }
+
+
+    public static String getLocationUrlMessageIfExists(String mMessage) {
+        if (mMessage.startsWith("location://")) {
+            try {
+                Map<String, String> quirys = TextUtils.getQueries(mMessage, "location://");
+                if (quirys.containsKey("lat") && quirys.containsKey("long")) {
+                    mMessage = "https://www.google.com/maps/search/?api=1&query=" +  quirys.get("lat") + "," + quirys.get("long");
+                    return mMessage;
+                }
+            } catch (UnsupportedEncodingException e) {
+
+            }
+        }
+        return mMessage;
     }
 
     /**
