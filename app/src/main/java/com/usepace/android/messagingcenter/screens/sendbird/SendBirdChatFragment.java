@@ -21,6 +21,7 @@ import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -31,6 +32,11 @@ import android.widget.ImageButton;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
+import com.google.android.gms.common.GooglePlayServicesRepairableException;
+import com.google.android.gms.location.places.Place;
+import com.google.android.gms.location.places.ui.PlacePicker;
 import com.sendbird.android.AdminMessage;
 import com.sendbird.android.BaseChannel;
 import com.sendbird.android.BaseMessage;
@@ -54,6 +60,8 @@ import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.List;
 
+import static android.app.Activity.RESULT_OK;
+
 
 public class SendBirdChatFragment extends Fragment {
 
@@ -69,6 +77,7 @@ public class SendBirdChatFragment extends Fragment {
     private static final String STATE_CHANNEL_URL = "STATE_CHANNEL_URL";
     private static final int INTENT_REQUEST_CHOOSE_MEDIA = 301;
     private static final int PERMISSION_WRITE_EXTERNAL_STORAGE = 13;
+    private static final int PLACE_PICKER_REQUEST = 1;;
 
     private InputMethodManager mIMM;
     private HashMap<BaseChannel.SendFileMessageWithProgressHandler, FileMessage> mFileProgressHandlerMap;
@@ -182,7 +191,7 @@ public class SendBirdChatFragment extends Fragment {
         mUploadFileButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                requestMedia();
+                showAttachmentOptionsDialog();
             }
         });
 
@@ -348,13 +357,24 @@ public class SendBirdChatFragment extends Fragment {
 
         // Set this as true to restore background connection management.
         SendBird.setAutoBackgroundDetection(true);
-        if (requestCode == INTENT_REQUEST_CHOOSE_MEDIA && resultCode == Activity.RESULT_OK) {
+        if (requestCode == INTENT_REQUEST_CHOOSE_MEDIA && resultCode == RESULT_OK) {
             // If user has successfully chosen the image, show a dialog to confirm upload.
             if (data == null) {
                 Log.d(LOG_TAG, "data is null!");
                 return;
             }
             sendFileWithThumbnail(data.getData());
+        }
+        if (requestCode == PLACE_PICKER_REQUEST) {
+            if (resultCode == RESULT_OK) {
+                Place place = PlacePicker.getPlace(getContext(), data);
+                String location = place.getLatLng().latitude + "," + place.getLatLng().longitude;
+
+                String locationUrl = "https://maps.googleapis.com/maps/api/staticmap?center="+place.getLatLng().latitude + "," + place.getLatLng().longitude
+                        +"&zoom=18&size=650x450&maptype=roadmap" + "&markers=color:red%7C"+place.getLatLng().latitude + "," + place.getLatLng().longitude+
+                        "&key="+getString(R.string.google_maps_key);
+                sendMyLocationMessage(locationUrl, location);
+            }
         }
     }
 
@@ -449,6 +469,29 @@ public class SendBirdChatFragment extends Fragment {
             }
         });
         builder.create().show();
+    }
+
+    private void showAttachmentOptionsDialog() {
+        String[] options = new String[] { getString(R.string.gallery), getString(R.string.location) };
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity(), R.style.Theme_AppCompat_Light_Dialog_Alert);
+        builder.setCancelable(true);
+        builder.setItems(options, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                if (which == 0) {   // 0 for photos media from local storage
+                    requestMedia();
+                } else if (which == 1) {    // 1 for location
+                    sendLocation();
+                }
+            }
+        });
+        AlertDialog dialog = builder.create();
+        if(dialog.getWindow() != null) {
+            dialog.getWindow().setWindowAnimations(R.style.DialogAnimation);
+            dialog.getWindow().setGravity(Gravity.BOTTOM);
+        }
+        dialog.show();
     }
 
     private void setState(int state, BaseMessage editingMessage, final int position) {
@@ -565,6 +608,22 @@ public class SendBirdChatFragment extends Fragment {
         }
     }
 
+    private void sendLocation() {
+        PlacePicker.IntentBuilder builder = new PlacePicker.IntentBuilder();
+
+        try {
+            startActivityForResult(builder.build(getActivity()), PLACE_PICKER_REQUEST);
+
+            // Set this as false to maintain connection
+            // even when an external Activity is started.
+            SendBird.setAutoBackgroundDetection(false);
+        } catch (GooglePlayServicesRepairableException e) {
+            e.printStackTrace();
+        } catch (GooglePlayServicesNotAvailableException e) {
+            e.printStackTrace();
+        }
+    }
+
     private void requestMedia() {
         if (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.WRITE_EXTERNAL_STORAGE)
                 != PackageManager.PERMISSION_GRANTED) {
@@ -628,6 +687,14 @@ public class SendBirdChatFragment extends Fragment {
             Intent intent = new Intent(getActivity(), MediaPlayerActivity.class);
             intent.putExtra("url", message.getUrl());
             startActivity(intent);
+        } else if (type.startsWith("location")) {
+            final String locationUrl = message.getUrl();
+            final String latLng = message.getData();
+            Uri gmmIntentUri = Uri.parse("geo:" + latLng.split(",")[0] + "," + latLng.split(",")[1] +
+                    "?q=" + latLng.split(",")[0] + "," + latLng.split(",")[1]);//q for marker
+            Intent mapIntent = new Intent(Intent.ACTION_VIEW, gmmIntentUri);
+            mapIntent.setPackage("com.google.android.apps.maps");
+            startActivity(mapIntent);
         } else {
             showDownloadConfirmDialog(message);
         }
@@ -740,6 +807,24 @@ public class SendBirdChatFragment extends Fragment {
             mIsTyping = false;
             mChannel.endTyping();
         }
+    }
+
+    private void sendMyLocationMessage(String url, String latLng) {
+        FileMessage locationMessage = mChannel.sendFileMessage(url, "My location", "location", 0, latLng, "location", new BaseChannel.SendFileMessageHandler() {
+            @Override
+            public void onSent(FileMessage fileMessage, SendBirdException e) {
+                if (e != null) {
+                    Toast.makeText(getActivity(), "" + e.getCode() + ":" + e.getMessage(), Toast.LENGTH_SHORT).show();
+                    mChatAdapter.markMessageFailed(fileMessage.getRequestId());
+                    return;
+                }
+
+                mChatAdapter.markMessageSent(fileMessage);
+            }
+        });
+
+        // Display a user message to RecyclerView
+        mChatAdapter.addFirst(locationMessage);
     }
 
     /**

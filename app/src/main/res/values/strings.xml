@@ -26,5 +26,7 @@
 
     <!-- Global Strings -->
     <string name="message_center_toolbar_title">Message Center</string>
+    <string name="gallery">Gallery</string>
+    <string name="location">Location</string>
 
 </resources>

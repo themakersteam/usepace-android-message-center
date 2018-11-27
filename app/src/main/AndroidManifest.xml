@@ -13,20 +13,20 @@
         android:supportsRtl="true">
 
         <!-- todo: Uncomment for testing -->
-        <!--<activity
-            android:name=".screens.test.TestActivity"
-            android:configChanges="orientation|screenSize|keyboardHidden|screenLayout"
-            android:launchMode="singleTask"
-            android:screenOrientation="portrait"
-            android:theme="@style/Theme.AppCompat"
-            android:windowSoftInputMode="adjustNothing">
+        <!--<activity-->
+            <!--android:name=".screens.test.TestActivity"-->
+            <!--android:configChanges="orientation|screenSize|keyboardHidden|screenLayout"-->
+            <!--android:launchMode="singleTask"-->
+            <!--android:screenOrientation="portrait"-->
+            <!--android:theme="@style/Theme.AppCompat"-->
+            <!--android:windowSoftInputMode="adjustNothing">-->
 
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
+            <!--<intent-filter>-->
+                <!--<action android:name="android.intent.action.MAIN" />-->
+                <!--<category android:name="android.intent.category.LAUNCHER" />-->
+            <!--</intent-filter>-->
 
-        </activity>-->
+        <!--</activity>-->
 
         <activity android:name="com.usepace.android.messagingcenter.screens.sendbird.SendBirdChatActivity"
             android:configChanges="screenSize|keyboardHidden|screenLayout"
@@ -47,6 +47,18 @@
             android:configChanges="orientation|screenSize|keyboardHidden|screenLayout"
             android:screenOrientation="portrait"
             android:theme="@style/ChatTheme"/>
+
+        <!--
+             The API key for Google Maps-based APIs is defined as a string resource.
+             (See the file "res/values/google_maps_api.xml").
+             Note that the API key is linked to the encryption key used to sign the APK.
+             You need a different API key for each encryption key, including the release key that is used to
+             sign the APK for publishing.
+             You can define the keys for the debug and release targets in src/debug/ and src/release/.
+        -->
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="@string/google_maps_key" />
 
     </application>
 

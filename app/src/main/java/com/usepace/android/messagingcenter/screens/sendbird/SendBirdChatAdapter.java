@@ -285,7 +285,7 @@ class SendBirdChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
             }
         } else if (message instanceof FileMessage) {
             FileMessage fileMessage = (FileMessage) message;
-            if (fileMessage.getType().toLowerCase().startsWith("image")) {
+            if (fileMessage.getType().toLowerCase().startsWith("image") || fileMessage.getType().toLowerCase().startsWith("location")) {
                 // If the sender is current user
                 if (fileMessage.getSender().getUserId().equals(SendBird.getCurrentUser().getUserId())) {
                     return VIEW_TYPE_FILE_MESSAGE_IMAGE_ME;
