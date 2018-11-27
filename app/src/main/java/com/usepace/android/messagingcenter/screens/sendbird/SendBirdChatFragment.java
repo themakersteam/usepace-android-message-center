@@ -2,6 +2,7 @@ package com.usepace.android.messagingcenter.screens.sendbird;
 
 import android.Manifest;
 import android.app.Activity;
+import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -48,6 +49,7 @@ import com.usepace.android.messagingcenter.screens.photoviewer.PhotoViewerActivi
 import com.usepace.android.messagingcenter.screens.sendfile.SendFileActivity;
 import com.usepace.android.messagingcenter.utils.ConnectionManager;
 import com.usepace.android.messagingcenter.utils.FileUtils;
+import com.usepace.android.messagingcenter.utils.TextUtils;
 import com.usepace.android.messagingcenter.utils.UrlPreviewInfo;
 import com.usepace.android.messagingcenter.utils.WebUtils;
 import org.json.JSONException;
@@ -448,9 +450,22 @@ public class SendBirdChatFragment extends Fragment {
                     try {
                         UrlPreviewInfo info = new UrlPreviewInfo(message.getData());
                         Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(info.getUrl()));
-                        startActivity(browserIntent);
+                        try {
+                            startActivity(browserIntent);
+                        }
+                        catch (ActivityNotFoundException e) {
+
+                        }
                     } catch (JSONException e) {
                         e.printStackTrace();
+                    }
+                }
+                else if (message.getMessage().startsWith("location://")) {
+                    Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(TextUtils.getLocationUrlMessageIfExists(message.getMessage())));
+                    try {
+                        startActivity(browserIntent);
+                    }
+                    catch (ActivityNotFoundException e){
                     }
                 }
             }

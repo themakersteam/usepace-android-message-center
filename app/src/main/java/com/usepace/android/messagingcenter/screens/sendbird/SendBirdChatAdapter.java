@@ -28,6 +28,8 @@ import com.usepace.android.messagingcenter.utils.FileUtils;
 import com.usepace.android.messagingcenter.utils.ImageUtils;
 import com.usepace.android.messagingcenter.utils.TextUtils;
 import com.usepace.android.messagingcenter.utils.UrlPreviewInfo;
+import com.usepace.android.messagingcenter.utils.WebUtils;
+
 import org.json.JSONException;
 import java.io.File;
 import java.io.IOException;
@@ -740,8 +742,9 @@ class SendBirdChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
             padding = itemView.findViewById(R.id.view_group_chat_padding);
         }
 
-        void bind(Context context, final UserMessage message, GroupChannel channel, boolean isContinuous, boolean isNewDay, boolean isTempMessage, boolean isFailedMessage, final OnItemClickListener clickListener, final OnItemLongClickListener longClickListener, final int position) {
-            messageText.setText(message.getMessage());
+        void bind(final Context context, final UserMessage message, GroupChannel channel, boolean isContinuous, boolean isNewDay, boolean isTempMessage, boolean isFailedMessage, final OnItemClickListener clickListener, final OnItemLongClickListener longClickListener, final int position) {
+            String mMessage = TextUtils.getLocationUrlMessageIfExists(message.getMessage());
+            messageText.setText(mMessage);
             timeText.setText(DateUtils.formatTime(message.getCreatedAt()));
 
             if (message.getUpdatedAt() > 0) {
@@ -772,6 +775,20 @@ class SendBirdChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
                     urlPreviewContainer.setVisibility(View.GONE);
                     e.printStackTrace();
                 }
+            }
+            else if (message.getMessage().startsWith("location://")){
+                new WebUtils.UrlPreviewAsyncTask() {
+                    @Override
+                    protected void onPostExecute(UrlPreviewInfo info) {
+                        if (info != null) {
+                            urlPreviewContainer.setVisibility(View.VISIBLE);
+                            urlPreviewSiteNameText.setText("@" + info.getSiteName() != null ? info.getSiteName() : "");
+                            urlPreviewTitleText.setText(info.getTitle());
+                            urlPreviewDescriptionText.setText(info.getDescription());
+                            ImageUtils.displayImageFromUrl(context, info.getImageUrl(), urlPreviewMainImageView, null);
+                        }
+                    }
+                }.execute(mMessage);
             }
 
             if (clickListener != null) {
@@ -818,9 +835,9 @@ class SendBirdChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         }
 
 
-        void bind(Context context, final UserMessage message, GroupChannel channel, boolean isNewDay, boolean isContinuous, final OnItemClickListener clickListener, final OnItemLongClickListener longClickListener, final int position) {
-
-            messageText.setText(message.getMessage());
+        void bind(final Context context, final UserMessage message, GroupChannel channel, boolean isNewDay, boolean isContinuous, final OnItemClickListener clickListener, final OnItemLongClickListener longClickListener, final int position) {
+            String mMessage = TextUtils.getLocationUrlMessageIfExists(message.getMessage());
+            messageText.setText(mMessage);
             timeText.setText(DateUtils.formatTime(message.getCreatedAt()));
 
             if (message.getUpdatedAt() > 0) {
@@ -843,7 +860,20 @@ class SendBirdChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
                     e.printStackTrace();
                 }
             }
-
+            else if (message.getMessage().startsWith("location://")){
+                new WebUtils.UrlPreviewAsyncTask() {
+                    @Override
+                    protected void onPostExecute(UrlPreviewInfo info) {
+                        if (info != null) {
+                            urlPreviewContainer.setVisibility(View.VISIBLE);
+                            urlPreviewSiteNameText.setText("@" + info.getSiteName() != null ? info.getSiteName() : "");
+                            urlPreviewTitleText.setText(info.getTitle());
+                            urlPreviewDescriptionText.setText(info.getDescription());
+                            ImageUtils.displayImageFromUrl(context, info.getImageUrl(), urlPreviewMainImageView, null);
+                        }
+                    }
+                }.execute(mMessage);
+            }
 
             if (clickListener != null) {
                 itemView.setOnClickListener(new View.OnClickListener() {
