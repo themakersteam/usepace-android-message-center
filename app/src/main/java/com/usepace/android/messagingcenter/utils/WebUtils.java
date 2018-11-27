@@ -141,13 +141,13 @@ public class WebUtils {
                 /**
                  * site_name, title, image, description, url
                  */
-                if(result.keySet().size() == 5) {
+                if(result.keySet().size() >= 4) {
                     return new UrlPreviewInfo(
-                            result.get("url"),
-                            result.get("site_name"),
-                            result.get("title"),
-                            result.get("description"),
-                            result.get("image")
+                            result.get("url") != null ? result.get("url") : "",
+                            result.get("site_name") != null ? result.get("site_name") : "",
+                            result.get("title") != null ? result.get("title") : "",
+                            result.get("description") != null ? result.get("description") : "",
+                            result.get("image") != null ? result.get("image") : ""
                     );
                 }
             } catch (IOException e) {
