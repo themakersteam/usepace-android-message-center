@@ -13,6 +13,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
+
+import com.sendbird.android.SendBird;
 import com.usepace.android.messagingcenter.R;
 import com.usepace.android.messagingcenter.utils.FileUtils;
 import java.io.IOException;
@@ -37,9 +39,11 @@ public class SendFileActivity extends AppCompatActivity {
         if (getIntent() != null && getIntent().hasExtra("ACTION")) {
             if (getIntent().getIntExtra("ACTION", REQUEST_IMAGE_CAPTURE) == REQUEST_IMAGE_CAPTURE) {
                 dispatchTakePictureIntent();
+                SendBird.setAutoBackgroundDetection(false);
             }
             else if (getIntent().getIntExtra("ACTION", REQUEST_IMAGE_CAPTURE) == REQUEST_GALLERY_CAPTURE) {
                 dispatchGalleryIntent();
+                SendBird.setAutoBackgroundDetection(false);
             }
         }
         else {
@@ -100,6 +104,7 @@ public class SendFileActivity extends AppCompatActivity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        SendBird.setAutoBackgroundDetection(true);
         if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
             if (data == null){
                 return;

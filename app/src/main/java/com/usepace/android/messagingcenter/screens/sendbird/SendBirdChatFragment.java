@@ -7,7 +7,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
@@ -26,7 +25,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -404,11 +402,13 @@ public class SendBirdChatFragment extends Fragment {
                 @Override
                 public void onCameraClicked() {
                     mBottomSheetAdapter.dismiss();
+                    openSendFileScreen(SendFileActivity.REQUEST_IMAGE_CAPTURE);
                 }
 
                 @Override
                 public void onGalleryClicked() {
                     mBottomSheetAdapter.dismiss();
+                    requestMedia();
                 }
 
                 @Override
@@ -615,29 +615,9 @@ public class SendBirdChatFragment extends Fragment {
     private void requestMedia() {
         if (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.WRITE_EXTERNAL_STORAGE)
                 != PackageManager.PERMISSION_GRANTED) {
-            // If storage permissions are not granted, request permissions at run-time,
-            // as per < API 23 guidelines.
             requestStoragePermissions();
         } else {
-            Intent intent = new Intent();
-
-            // Pick images or videos
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-                intent.setType("*/*");
-                String[] mimeTypes = {"image/*", "video/*"};
-                intent.putExtra(Intent.EXTRA_MIME_TYPES, mimeTypes);
-            } else {
-                intent.setType("image/* video/*");
-            }
-
-            intent.setAction(Intent.ACTION_GET_CONTENT);
-
-            // Always show the chooser (if there are multiple options available)
-            startActivityForResult(Intent.createChooser(intent, getString(R.string.select_media)), INTENT_REQUEST_CHOOSE_MEDIA);
-
-            // Set this as false to maintain connection
-            // even when an external Activity is started.
-            SendBird.setAutoBackgroundDetection(false);
+            openSendFileScreen(SendFileActivity.REQUEST_GALLERY_CAPTURE);
         }
     }
 
