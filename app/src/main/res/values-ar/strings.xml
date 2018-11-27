@@ -22,6 +22,9 @@
     <string name="delete_message_option">حذف الرسالة</string>
     <string name="type_message_hint">كتابة الرسالة</string>
     <string name="ms_caption">الشرح</string>
+    <string name="ms_camera">الكاميرا</string>
+    <string name="ms_photos">الصور</string>
+    <string name="ms_location">الموقع</string>
 
     <!-- Global Strings -->
     <string name="message_center_toolbar_title">مركز الرسائل</string>
