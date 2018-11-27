@@ -10,6 +10,7 @@ import com.bumptech.glide.load.DataSource;
 import com.bumptech.glide.load.engine.GlideException;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.Target;
+import com.github.chrisbanes.photoview.PhotoView;
 import com.usepace.android.messagingcenter.R;
 import com.usepace.android.messagingcenter.utils.ImageUtils;
 
@@ -23,7 +24,7 @@ public class PhotoViewerActivity extends AppCompatActivity {
         String url = getIntent().getStringExtra("url");
         String type = getIntent().getStringExtra("type");
 
-        ImageView imageView = (ImageView) findViewById(R.id.main_image_view);
+        PhotoView imageView = (PhotoView) findViewById(R.id.main_image_view);
         final ProgressBar progressBar = (ProgressBar) findViewById(R.id.progress_bar);
 
 
