@@ -1,6 +1,25 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
-    <item android:drawable="@color/message_center_primary" android:state_checked="true" />
-    <item android:drawable="@color/message_center_primary_dark" android:state_pressed="true" />
-    <item android:drawable="@android:color/transparent" />
+    <item
+        android:state_checked="true" >
+        <shape>
+            <solid android:color="@color/message_center_primary"/>
+            <corners android:radius="2dp" />
+        </shape>
+    </item>
+
+    <item
+        android:state_pressed="true">
+        <shape>
+            <solid android:color="@color/message_center_primary_dark"/>
+            <corners android:radius="2dp" />
+        </shape>
+    </item>
+
+    <item>
+        <shape>
+            <solid android:color="@android:color/transparent"/>
+            <corners android:radius="2dp" />
+        </shape>
+    </item>
 </selector>
