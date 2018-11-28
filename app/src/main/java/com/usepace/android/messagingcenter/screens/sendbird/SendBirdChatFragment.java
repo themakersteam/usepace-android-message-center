@@ -87,6 +87,7 @@ public class SendBirdChatFragment extends Fragment {
     private LinearLayoutManager mLayoutManager;
     private EditText mMessageEditText;
     private ImageView mMessageSendButton;
+    private ImageView mMessageCameraButton;
     private ImageButton mUploadFileButton;
     private View mCurrentEventLayout;
     private TextView mCurrentEventText;
@@ -145,6 +146,7 @@ public class SendBirdChatFragment extends Fragment {
 
         mMessageEditText = (EditText) rootView.findViewById(R.id.edittext_group_chat_message);
         mMessageSendButton = (ImageView) rootView.findViewById(R.id.button_group_chat_send);
+        mMessageCameraButton = (ImageView)rootView.findViewById(R.id.button_camera_send);
         mUploadFileButton = (ImageButton) rootView.findViewById(R.id.button_group_chat_upload);
 
         mMessageEditText.addTextChangedListener(new TextWatcher() {
@@ -158,11 +160,8 @@ public class SendBirdChatFragment extends Fragment {
 
             @Override
             public void afterTextChanged(Editable s) {
-                if (s.length() > 0) {
-                    mMessageSendButton.setImageResource(R.drawable.ic_send);
-                } else {
-                    mMessageSendButton.setImageResource(R.drawable.ic_camera);
-                }
+                mMessageSendButton.setVisibility(s.length() > 0 ? View.VISIBLE : View.GONE);
+                mMessageCameraButton.setVisibility(s.length() > 0 ? View.GONE : View.VISIBLE);
             }
         });
 
@@ -183,10 +182,14 @@ public class SendBirdChatFragment extends Fragment {
                         sendUserMessage(userInput);
                         mMessageEditText.setText("");
                     }
-                    else {
-                        openSendFileScreen(SendFileActivity.REQUEST_IMAGE_CAPTURE);
-                    }
                 }
+            }
+        });
+
+        mMessageCameraButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                requestMedia(SendFileActivity.REQUEST_IMAGE_CAPTURE);
             }
         });
 
@@ -411,13 +414,13 @@ public class SendBirdChatFragment extends Fragment {
                 @Override
                 public void onCameraClicked() {
                     mBottomSheetAdapter.dismiss();
-                    openSendFileScreen(SendFileActivity.REQUEST_IMAGE_CAPTURE);
+                    requestMedia(SendFileActivity.REQUEST_IMAGE_CAPTURE);
                 }
 
                 @Override
                 public void onGalleryClicked() {
                     mBottomSheetAdapter.dismiss();
-                    requestMedia();
+                    requestMedia(SendFileActivity.REQUEST_GALLERY_CAPTURE);
                 }
 
                 @Override
@@ -627,12 +630,12 @@ public class SendBirdChatFragment extends Fragment {
         }
     }
 
-    private void requestMedia() {
+    private void requestMedia(int request) {
         if (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.WRITE_EXTERNAL_STORAGE)
                 != PackageManager.PERMISSION_GRANTED) {
             requestStoragePermissions();
         } else {
-            openSendFileScreen(SendFileActivity.REQUEST_GALLERY_CAPTURE);
+            openSendFileScreen(request);
         }
     }
 
