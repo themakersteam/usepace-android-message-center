@@ -7,6 +7,7 @@ import com.usepace.android.messagingcenter.interfaces.AppHandleNotificationInter
 import com.usepace.android.messagingcenter.interfaces.CloseChatViewInterface;
 import com.usepace.android.messagingcenter.interfaces.ConnectionInterface;
 import com.usepace.android.messagingcenter.interfaces.DisconnectInterface;
+import com.usepace.android.messagingcenter.interfaces.OpenChatViewInterface;
 import com.usepace.android.messagingcenter.interfaces.UnReadMessagesInterface;
 import com.usepace.android.messagingcenter.model.ConnectionRequest;
 import com.usepace.android.messagingcenter.model.Theme;
@@ -68,11 +69,14 @@ public class MessageCenter {
      *
      * @param chat_id
      */
-    public static void openChatView(Context context, String chat_id, Theme theme) {
+    public static void openChatView(Context context, String chat_id, Theme theme, OpenChatViewInterface openChatViewInterface) {
         try {
-            client().getClient(LAST_CLIENT).openChatView(context, chat_id, theme);
+            client().getClient(LAST_CLIENT).openChatView(context, chat_id, theme, openChatViewInterface);
         }
         catch (MessageCenterException e) {
+            if (openChatViewInterface != null) {
+                openChatViewInterface.onError(e);
+            }
         }
     }
 

@@ -12,6 +12,7 @@ import com.usepace.android.messagingcenter.interfaces.AppHandleNotificationInter
 import com.usepace.android.messagingcenter.interfaces.CloseChatViewInterface;
 import com.usepace.android.messagingcenter.interfaces.ConnectionInterface;
 import com.usepace.android.messagingcenter.interfaces.DisconnectInterface;
+import com.usepace.android.messagingcenter.interfaces.OpenChatViewInterface;
 import com.usepace.android.messagingcenter.interfaces.UnReadMessagesInterface;
 import com.usepace.android.messagingcenter.model.ConnectionRequest;
 import com.usepace.android.messagingcenter.model.Theme;
@@ -22,10 +23,12 @@ import java.util.List;
 
 class SendBirdClient extends ClientInterface {
 
+    private ConnectionRequest lastConnecitonRequest;
     private static SendBirdClient sendbirdClient;
 
     @Override
     public void connect(Context context, final ConnectionRequest connectionRequest, final ConnectionInterface connectionInterface) {
+        this.lastConnecitonRequest = connectionRequest;
         SendBird.init(connectionRequest.getAppId(), context);
         SendBird.connect(connectionRequest.getUserId() != null ? connectionRequest.getUserId() : "", connectionRequest.getAccessToken(), new SendBird.ConnectHandler() {
             @Override
@@ -94,21 +97,29 @@ class SendBirdClient extends ClientInterface {
     }
 
     @Override
-    public void openChatView(Context context, String chat_id, Theme theme) {
-        Intent a1 = new Intent(context, SendBirdChatActivity.class);
-        if (theme != null) {
-            if (theme.getToolbarTitle() != null) {
-                a1.putExtra("TITLE", theme.getToolbarTitle());
-            }
-            if (theme.getToolbarSubtitle() != null) {
-                a1.putExtra("SUBTITLE", theme.getToolbarSubtitle());
-            }
-            if (theme.getWelcomeMessage() != null) {
-                a1.putExtra("WELCOME_MESSAGE", theme.getWelcomeMessage());
+    public void openChatView(final Context context, final String chat_id, final Theme theme, final OpenChatViewInterface openChatViewInterface) {
+        if (!isConnected() && lastConnecitonRequest != null) {
+            connect(context, lastConnecitonRequest, new ConnectionInterface() {
+                @Override
+                public void onMessageCenterConnected() {
+                    openChatView(context, theme, chat_id);
+                }
+                @Override
+                public void onMessageCenterConnectionError(int code, MessageCenterException e) {
+                    if (openChatViewInterface != null) {
+                        openChatViewInterface.onError(e);
+                    }
+                }
+            });
+        }
+        else if (isConnected()) {
+            openChatView(context, theme, chat_id);
+        }
+        else {
+            if (openChatViewInterface != null) {
+                openChatViewInterface.onError(new MessageCenterException("You have to be connected to be able to join Chat view !", 302));
             }
         }
-        a1.putExtra("CHANNEL_URL", chat_id);
-        context.startActivity(a1);
     }
 
     @Override
@@ -123,11 +134,11 @@ class SendBirdClient extends ClientInterface {
 
     @Override
     public void disconnect(final DisconnectInterface disconnectInterface) {
-        SendBird.disconnect(new SendBird.DisconnectHandler() {
+        lastConnecitonRequest = null;
+        SendBird.unregisterPushTokenAllForCurrentUser(new SendBird.UnregisterPushTokenHandler() {
             @Override
-            public void onDisconnected() {
-                if (disconnectInterface != null)
-                    disconnectInterface.onMessageCenterDisconnected();
+            public void onUnregistered(SendBirdException e) {
+                disconnectApp(disconnectInterface);
             }
         });
     }
@@ -164,6 +175,40 @@ class SendBirdClient extends ClientInterface {
         catch (Exception e) {
             if (appHandleNotificationInterface != null) {
                 appHandleNotificationInterface.onUnMatched();
+            }
+        }
+    }
+
+    private void openChatView(Context context, Theme theme, String chat_id) {
+        Intent a1 = new Intent(context, SendBirdChatActivity.class);
+        if (theme != null) {
+            if (theme.getToolbarTitle() != null) {
+                a1.putExtra("TITLE", theme.getToolbarTitle());
+            }
+            if (theme.getToolbarSubtitle() != null) {
+                a1.putExtra("SUBTITLE", theme.getToolbarSubtitle());
+            }
+            if (theme.getWelcomeMessage() != null) {
+                a1.putExtra("WELCOME_MESSAGE", theme.getWelcomeMessage());
+            }
+        }
+        a1.putExtra("CHANNEL_URL", chat_id);
+        context.startActivity(a1);
+    }
+
+    private void disconnectApp(final DisconnectInterface disconnectInterface) {
+        if (isConnected()) {
+            SendBird.disconnect(new SendBird.DisconnectHandler() {
+                @Override
+                public void onDisconnected() {
+                    if (disconnectInterface != null)
+                        disconnectInterface.onMessageCenterDisconnected();
+                }
+            });
+        }
+        else {
+            if (disconnectInterface != null) {
+                disconnectInterface.onMessageCenterDisconnected();
             }
         }
     }
