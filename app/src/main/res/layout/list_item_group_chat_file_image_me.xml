@@ -17,6 +17,7 @@
         app:cardUseCompatPadding="true"
         app:cardCornerRadius="6dp"
         app:cardElevation="1dp"
+        android:layout_alignParentEnd="true"
         app:cardPreventCornerOverlap="false"
         android:layout_marginTop="8dp">
 

@@ -16,6 +16,8 @@
         android:gravity="center_vertical"
         android:orientation="horizontal"
         android:layout_alignParentTop="true"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentLeft="true"
         android:padding="12dp">
 
         <ImageView
