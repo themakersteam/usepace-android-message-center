@@ -11,62 +11,98 @@
 
     <LinearLayout
         android:id="@+id/layout_group_chat_chatbox"
-        android:layout_alignParentBottom="true"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
+        android:layout_alignParentBottom="true"
         android:background="#FFFFFF"
-        android:minHeight="48dp">
-
-        <ImageButton
-            android:id="@+id/button_group_chat_upload"
-            android:src="@drawable/ic_add"
-            android:background="?attr/selectableItemBackground"
-            android:layout_width="24dp"
-            android:layout_height="24dp"
-            android:layout_marginLeft="16dp"
-            android:layout_marginRight="16dp"
-            android:contentDescription="Upload file"
-            android:tint="@color/message_center_primary_dark"
-            android:layout_gravity="center"/>
+        android:orientation="vertical">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@drawable/send_message_edit_text_design"
+            android:orientation="horizontal"
             android:layout_marginTop="10dp"
             android:layout_marginBottom="10dp"
-            android:layout_marginEnd="17dp"
-            android:layout_marginRight="17dp"
-            android:orientation="horizontal">
+            android:minHeight="48dp">
 
-            <EditText
-                android:id="@+id/edittext_group_chat_message"
-                android:hint="@string/type_message_hint"
-                android:layout_gravity="center"
-                android:paddingRight="16dp"
-                android:background="@android:color/transparent"
-                android:paddingLeft="16dp"
-                android:paddingTop="14dp"
-                android:paddingBottom="14dp"
-                android:layout_width="0dp"
-                android:layout_weight="1"
-                android:textSize="15sp"
-                android:textColor="#000000"
-                android:layout_height="wrap_content"
-                android:maxLines="6"/>
-
-            <ImageView
-                android:id="@+id/button_group_chat_send"
-                android:clickable="true"
+            <ImageButton
+                android:id="@+id/button_group_chat_upload"
+                android:src="@drawable/ic_add"
+                android:background="?attr/selectableItemBackground"
                 android:layout_width="24dp"
                 android:layout_height="24dp"
-                android:gravity="center"
-                android:layout_marginEnd="10dp"
-                android:layout_marginRight="10dp"
-                android:src="@drawable/ic_camera"
+                android:layout_marginLeft="16dp"
+                android:layout_marginRight="16dp"
+                android:contentDescription="Upload file"
                 android:tint="@color/message_center_primary_dark"
-                android:layout_gravity="center_vertical" />
+                android:layout_gravity="center"/>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/send_message_edit_text_design"
+                    android:layout_marginEnd="16dp"
+                    android:layout_marginRight="16dp"
+                    android:layout_alignParentStart="true"
+                    android:layout_alignParentLeft="true"
+                    android:layout_toStartOf="@+id/button_group_chat_send"
+                    android:layout_toLeftOf="@+id/button_group_chat_send"
+                    android:orientation="horizontal">
+
+                    <EditText
+                        android:id="@+id/edittext_group_chat_message"
+                        android:hint="@string/type_message_hint"
+                        android:layout_gravity="center"
+                        android:paddingRight="16dp"
+                        android:background="@android:color/transparent"
+                        android:paddingLeft="16dp"
+                        android:paddingTop="14dp"
+                        android:paddingBottom="14dp"
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:textSize="15sp"
+                        android:textColor="#000000"
+                        android:layout_height="wrap_content"
+                        android:maxLines="6"/>
+
+                    <ImageView
+                        android:id="@+id/button_camera_send"
+                        android:clickable="true"
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:gravity="center"
+                        android:layout_marginEnd="10dp"
+                        android:layout_marginRight="10dp"
+                        android:src="@drawable/ic_camera"
+                        android:tint="@color/message_center_primary_dark"
+                        android:layout_gravity="center_vertical" />
+
+                </LinearLayout>
+
+                <ImageView
+                    android:id="@+id/button_group_chat_send"
+                    android:clickable="true"
+                    android:layout_width="44dp"
+                    android:visibility="gone"
+                    android:layout_height="44dp"
+                    android:foreground="?attr/selectableItemBackground"
+                    android:padding="12dp"
+                    android:gravity="center"
+                    android:background="@drawable/circle"
+                    android:src="@drawable/ic_send"
+                    android:tint="@color/message_center_primary_dark"
+                    android:layout_marginRight="16dp"
+                    android:layout_marginEnd="16dp"
+                    android:layout_alignParentEnd="true"
+                    android:layout_alignParentRight="true"
+                    android:layout_gravity="center_vertical" />
+
+            </RelativeLayout>
 
         </LinearLayout>
 
