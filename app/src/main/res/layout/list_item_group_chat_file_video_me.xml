@@ -14,6 +14,7 @@
         android:layout_height="wrap_content"
         android:layout_alignParentRight="true"
         android:layout_alignParentTop="true"
+        android:layout_alignParentEnd="true"
         app:cardBackgroundColor="@color/message_center_chat_view_bubble_color"
         app:cardUseCompatPadding="true"
         app:cardCornerRadius="6dp"

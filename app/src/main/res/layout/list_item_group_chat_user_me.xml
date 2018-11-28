@@ -4,7 +4,8 @@
     android:layout_height="wrap_content"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:clickable="true"
-    android:paddingRight="8dp">
+    android:paddingRight="8dp"
+    android:paddingEnd="8dp">
 
     <View
         android:id="@+id/view_group_chat_padding"
@@ -17,6 +18,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
         android:layout_alignParentTop="true"
         app:cardBackgroundColor="@color/message_center_chat_view_bubble_color"
         app:cardUseCompatPadding="true"
