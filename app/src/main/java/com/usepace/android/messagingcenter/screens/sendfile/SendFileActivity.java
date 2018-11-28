@@ -2,7 +2,6 @@ package com.usepace.android.messagingcenter.screens.sendfile;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -13,19 +12,15 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
-
 import com.sendbird.android.SendBird;
 import com.usepace.android.messagingcenter.R;
-import com.usepace.android.messagingcenter.utils.FileUtils;
-import java.io.IOException;
 
 public class SendFileActivity extends AppCompatActivity {
 
     public static final int REQUEST_IMAGE_CAPTURE = 1;
     public static final int REQUEST_GALLERY_CAPTURE = 2;
 
-    private Bitmap currentBitmap = null;
-    private Uri currentData = null;
+    private Uri currentBitmap = null;
     private Toolbar toolbar;
     private ImageView mainImage;
     private EditText captionText;
@@ -69,12 +64,7 @@ public class SendFileActivity extends AppCompatActivity {
 
     private void sendImage() {
         Intent intent = new Intent();
-        if (currentData == null) {
-            intent.setData(FileUtils.getImageUri(this, currentBitmap));
-        }
-        else {
-            intent.setData(currentData);
-        }
+        intent.setData(currentBitmap);
         if (captionText.getText().toString().replaceAll("\n", "").replaceAll(" ", "").length() > 0) {
             intent.putExtra("CAPTION", captionText.getText().toString());
         }
@@ -99,7 +89,7 @@ public class SendFileActivity extends AppCompatActivity {
         if (mainImage == null) {
             mainImage = findViewById(R.id.main_image_view);
         }
-        mainImage.setImageBitmap(currentBitmap);
+        mainImage.setImageURI(currentBitmap);
     }
 
     @Override
@@ -109,19 +99,14 @@ public class SendFileActivity extends AppCompatActivity {
             if (data == null){
                 return;
             }
-            Bundle extras = data.getExtras();
-            currentBitmap = (Bitmap) extras.get("data");
+            currentBitmap = data.getData();
             loadImage();
         }
         else if (requestCode == REQUEST_GALLERY_CAPTURE && resultCode == RESULT_OK) {
             if (data == null) {
                 return;
             }
-            try {
-                currentBitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), data.getData());
-            }
-            catch (IOException e) {}
-            currentData = data.getData();
+            currentBitmap = data.getData();
             loadImage();
         }
         else {

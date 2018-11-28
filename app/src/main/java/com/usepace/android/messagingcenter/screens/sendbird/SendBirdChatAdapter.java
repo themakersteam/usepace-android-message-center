@@ -724,7 +724,6 @@ class SendBirdChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         TextView messageText, editedText, timeText;
         ImageView readReceipt;
         ViewGroup urlPreviewContainer;
-        TextView urlPreviewSiteNameText, urlPreviewTitleText, urlPreviewDescriptionText;
         ImageView urlPreviewMainImageView;
         View padding;
 
@@ -737,9 +736,6 @@ class SendBirdChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
             readReceipt = (ImageView) itemView.findViewById(R.id.img_group_chat_read_receipt);
 
             urlPreviewContainer = (ViewGroup) itemView.findViewById(R.id.url_preview_container);
-            urlPreviewSiteNameText = (TextView) itemView.findViewById(R.id.text_url_preview_site_name);
-            urlPreviewTitleText = (TextView) itemView.findViewById(R.id.text_url_preview_title);
-            urlPreviewDescriptionText = (TextView) itemView.findViewById(R.id.text_url_preview_description);
             urlPreviewMainImageView = (ImageView) itemView.findViewById(R.id.image_url_preview_main);
 
             // Dynamic padding that can be hidden or shown based on whether the message is continuous.
@@ -772,9 +768,6 @@ class SendBirdChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
                 try {
                     urlPreviewContainer.setVisibility(View.VISIBLE);
                     final UrlPreviewInfo previewInfo = new UrlPreviewInfo(message.getData());
-                    urlPreviewSiteNameText.setText("@" + previewInfo.getSiteName());
-                    urlPreviewTitleText.setText(previewInfo.getTitle());
-                    urlPreviewDescriptionText.setText(previewInfo.getDescription());
                     ImageUtils.displayImageFromUrl(context, previewInfo.getImageUrl(), urlPreviewMainImageView, null);
                 } catch (JSONException e) {
                     urlPreviewContainer.setVisibility(View.GONE);
@@ -787,9 +780,6 @@ class SendBirdChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
                     protected void onPostExecute(UrlPreviewInfo info) {
                         if (info != null) {
                             urlPreviewContainer.setVisibility(View.VISIBLE);
-                            urlPreviewSiteNameText.setText("@" + info.getSiteName() != null ? info.getSiteName() : "");
-                            urlPreviewTitleText.setText(info.getTitle());
-                            urlPreviewDescriptionText.setText(info.getDescription());
                             ImageUtils.displayImageFromUrl(context, info.getImageUrl(), urlPreviewMainImageView, null);
                         }
                     }
@@ -822,7 +812,6 @@ class SendBirdChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         TextView messageText, editedText, timeText;
 
         ViewGroup urlPreviewContainer;
-        TextView urlPreviewSiteNameText, urlPreviewTitleText, urlPreviewDescriptionText;
         ImageView urlPreviewMainImageView;
 
         public OtherUserMessageHolder(View itemView) {
@@ -833,9 +822,6 @@ class SendBirdChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
             timeText = (TextView) itemView.findViewById(R.id.text_group_chat_time);
 
             urlPreviewContainer = (ViewGroup) itemView.findViewById(R.id.url_preview_container);
-            urlPreviewSiteNameText = (TextView) itemView.findViewById(R.id.text_url_preview_site_name);
-            urlPreviewTitleText = (TextView) itemView.findViewById(R.id.text_url_preview_title);
-            urlPreviewDescriptionText = (TextView) itemView.findViewById(R.id.text_url_preview_description);
             urlPreviewMainImageView = (ImageView) itemView.findViewById(R.id.image_url_preview_main);
         }
 
@@ -856,9 +842,6 @@ class SendBirdChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
                 try {
                     urlPreviewContainer.setVisibility(View.VISIBLE);
                     UrlPreviewInfo previewInfo = new UrlPreviewInfo(message.getData());
-                    urlPreviewSiteNameText.setText("@" + previewInfo.getSiteName());
-                    urlPreviewTitleText.setText(previewInfo.getTitle());
-                    urlPreviewDescriptionText.setText(previewInfo.getDescription());
                     ImageUtils.displayImageFromUrl(context, previewInfo.getImageUrl(), urlPreviewMainImageView, null);
                 } catch (JSONException e) {
                     urlPreviewContainer.setVisibility(View.GONE);
@@ -871,9 +854,6 @@ class SendBirdChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
                     protected void onPostExecute(UrlPreviewInfo info) {
                         if (info != null) {
                             urlPreviewContainer.setVisibility(View.VISIBLE);
-                            urlPreviewSiteNameText.setText("@" + info.getSiteName() != null ? info.getSiteName() : "");
-                            urlPreviewTitleText.setText(info.getTitle());
-                            urlPreviewDescriptionText.setText(info.getDescription());
                             ImageUtils.displayImageFromUrl(context, info.getImageUrl(), urlPreviewMainImageView, null);
                         }
                     }
