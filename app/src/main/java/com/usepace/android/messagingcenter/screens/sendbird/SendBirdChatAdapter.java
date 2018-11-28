@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.util.Base64;
 import android.view.LayoutInflater;
@@ -627,10 +628,12 @@ class SendBirdChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
      * @param isFailedMessage
      * @param isTempMessage
      */
-    private void processReadReceipt(ImageView readReceiptImg, boolean isFailedMessage, boolean isTempMessage, GroupChannel channel, UserMessage message) {
+    private void processReadReceipt(ImageView readReceiptImg, TextView chatTime, boolean isFailedMessage, boolean isTempMessage, GroupChannel channel, UserMessage message) {
         if (isFailedMessage) {
-            readReceiptImg.setImageResource(R.drawable.ic_msgsent);
+            readReceiptImg.setImageResource(R.drawable.ic_sendfail);
             readReceiptImg.setColorFilter(Color.parseColor("#FFDD2C00"));
+            chatTime.setTextColor(Color.parseColor("#fb2b2b"));
+            chatTime.setText(mContext.getString(R.string.ms_chat_failed_to_send));
         }
         else if (isTempMessage) {
             readReceiptImg.setImageResource(R.drawable.ic_msgsent);
@@ -659,12 +662,13 @@ class SendBirdChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
      * @param channel
      * @param message
      */
-    private void processReadReceiptForFile(CircleProgressBar circleProgressBar, ImageView readReceiptImg, boolean isFailedMessage, boolean isTempMessage, GroupChannel channel, FileMessage message) {
+    private void processReadReceiptForFile(CircleProgressBar circleProgressBar, ImageView readReceiptImg, TextView chat_time,  boolean isFailedMessage, boolean isTempMessage, GroupChannel channel, FileMessage message) {
         if (isFailedMessage) {
-            readReceiptImg.setImageResource(R.drawable.ic_msgsent);
-            readReceiptImg.setColorFilter(Color.parseColor("#FFDD2C00"));
+            readReceiptImg.setImageResource(R.drawable.ic_sendfail);
             circleProgressBar.setVisibility(View.GONE);
             mFileMessageMap.remove(message);
+            chat_time.setTextColor(Color.parseColor("#fb2b2b"));
+            chat_time.setText(mContext.getString(R.string.ms_chat_failed_to_send));
         }
         else if (isTempMessage) {
             readReceiptImg.setImageResource(R.drawable.ic_msgsent);
@@ -746,6 +750,7 @@ class SendBirdChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
             String mMessage = TextUtils.getLocationUrlMessageIfExists(message.getMessage());
             messageText.setText(mMessage);
             timeText.setText(DateUtils.formatTime(message.getCreatedAt()));
+            timeText.setTextColor(Color.parseColor("#9b9b9b"));
 
             if (message.getUpdatedAt() > 0) {
                 editedText.setVisibility(View.VISIBLE);
@@ -753,7 +758,7 @@ class SendBirdChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
                 editedText.setVisibility(View.GONE);
             }
 
-            processReadReceipt(readReceipt, isFailedMessage, isTempMessage, channel, message);
+            processReadReceipt(readReceipt, timeText, isFailedMessage, isTempMessage, channel, message);
 
             // If continuous from previous message, remove extra padding.
             if (isContinuous) {
@@ -912,8 +917,9 @@ class SendBirdChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         void bind(Context context, final FileMessage message, GroupChannel channel, boolean isNewDay, boolean isTempMessage, boolean isFailedMessage, Uri tempFileMessageUri, final OnItemClickListener listener) {
             fileNameText.setText(message.getName());
             timeText.setText(DateUtils.formatTime(message.getCreatedAt()));
+            timeText.setTextColor(Color.parseColor("#9b9b9b"));
 
-            processReadReceiptForFile(circleProgressBar, readReceipt, isFailedMessage, isTempMessage, channel, message);
+            processReadReceiptForFile(circleProgressBar, readReceipt, timeText, isFailedMessage, isTempMessage, channel, message);
 
             if (listener != null) {
                 itemView.setOnClickListener(new View.OnClickListener() {
@@ -972,8 +978,9 @@ class SendBirdChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
 
         void bind(Context context, final FileMessage message, GroupChannel channel, boolean isNewDay, boolean isTempMessage, boolean isFailedMessage, Uri tempFileMessageUri, final OnItemClickListener listener) {
             timeText.setText(DateUtils.formatTime(message.getCreatedAt()));
+            timeText.setTextColor(Color.parseColor("#9b9b9b"));
 
-            processReadReceiptForFile(circleProgressBar, readReceipt, isFailedMessage, isTempMessage, channel, message);
+            processReadReceiptForFile(circleProgressBar, readReceipt, timeText, isFailedMessage, isTempMessage, channel, message);
 
             if (isTempMessage && tempFileMessageUri != null) {
                 ImageUtils.displayImageFromUrl(context, tempFileMessageUri.toString(), fileThumbnailImage, null);
@@ -1072,8 +1079,9 @@ class SendBirdChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
 
         void bind(Context context, final FileMessage message, GroupChannel channel, boolean isNewDay, boolean isTempMessage, boolean isFailedMessage, Uri tempFileMessageUri, final OnItemClickListener listener) {
             timeText.setText(DateUtils.formatTime(message.getCreatedAt()));
+            timeText.setTextColor(Color.parseColor("#9b9b9b"));
 
-            processReadReceiptForFile(circleProgressBar, readReceiptText, isFailedMessage, isTempMessage, channel, message);
+            processReadReceiptForFile(circleProgressBar, readReceiptText, timeText,  isFailedMessage, isTempMessage, channel, message);
 
             if (isTempMessage && tempFileMessageUri != null) {
                 ImageUtils.displayImageFromUrl(context, tempFileMessageUri.toString(), fileThumbnailImage, null);

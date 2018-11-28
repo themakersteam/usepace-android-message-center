@@ -598,14 +598,6 @@ public class SendBirdChatFragment extends Fragment {
                             mChatAdapter.removeFailedMessage(message);
                         }
                     }
-                })
-                .setNegativeButton(R.string.delete_message, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        if (which == DialogInterface.BUTTON_NEGATIVE) {
-                            mChatAdapter.removeFailedMessage(message);
-                        }
-                    }
                 }).show();
     }
 

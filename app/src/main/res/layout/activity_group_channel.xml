@@ -21,6 +21,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="40dp"
                 android:background="?attr/colorPrimary"
+                app:navigationIcon="@drawable/arrow_back"
                 app:titleTextAppearance="@style/ChatView.TitleText"
                 android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
                 app:popupTheme="@style/ThemeOverlay.AppCompat.Light"/>
