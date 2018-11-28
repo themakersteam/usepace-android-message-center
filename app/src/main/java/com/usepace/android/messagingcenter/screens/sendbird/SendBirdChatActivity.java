@@ -93,7 +93,12 @@ public class SendBirdChatActivity extends AppCompatActivity{
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        SendBird.setAutoBackgroundDetection(false);
+        SendBird.disconnect(new SendBird.DisconnectHandler() {
+            @Override
+            public void onDisconnected() {
+
+            }
+        });
     }
 
     @Override
