@@ -119,7 +119,7 @@ public class LocationUtils
             LatLng homeLocation = new LatLng(lat, lng);
 
             if(googleMap != null) {
-                googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(homeLocation, 13.0f));
+                googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(homeLocation, 15.0f));
             }
         } catch (Exception ex) {
             ex.printStackTrace();

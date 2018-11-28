@@ -32,5 +32,8 @@
     <string name="send_location">ارسال موقعك الحالي</string>
     <string name="share_location">شارك الموقع</string>
     <string name="need_gps_permission">الرجاء اعطاء صلاحية GPS للاستمرار</string>
+    <string name="send_current_location">Send current location</string>
+    <string name="text_satellite">Satellite</string>
+    <string name="text_map">Map</string>
 
 </resources>
