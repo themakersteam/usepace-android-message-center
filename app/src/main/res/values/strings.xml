@@ -28,6 +28,7 @@
     <string name="ms_camera">Camera</string>
     <string name="ms_photos">Photos</string>
     <string name="ms_location">Location</string>
+    <string name="ms_chat_failed_to_send">Not sent! Tap to retry</string>
 
     <!-- Global Strings -->
     <string name="message_center_toolbar_title">Message Center</string>

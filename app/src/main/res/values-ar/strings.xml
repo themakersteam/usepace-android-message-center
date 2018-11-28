@@ -25,6 +25,7 @@
     <string name="ms_camera">الكاميرا</string>
     <string name="ms_photos">الصور</string>
     <string name="ms_location">الموقع</string>
+    <string name="ms_chat_failed_to_send">لم ترسل! انقر لاعادة المحاولة</string>
 
     <!-- Global Strings -->
     <string name="message_center_toolbar_title">مركز الرسائل</string>
