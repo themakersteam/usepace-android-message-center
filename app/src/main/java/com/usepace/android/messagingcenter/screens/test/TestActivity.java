@@ -6,6 +6,7 @@ import android.support.v7.app.AppCompatActivity;
 import com.usepace.android.messagingcenter.clients.connection_client.MessageCenter;
 import com.usepace.android.messagingcenter.exceptions.MessageCenterException;
 import com.usepace.android.messagingcenter.interfaces.ConnectionInterface;
+import com.usepace.android.messagingcenter.interfaces.OpenChatViewInterface;
 import com.usepace.android.messagingcenter.model.ConnectionRequest;
 import com.usepace.android.messagingcenter.model.Theme;
 
@@ -20,7 +21,12 @@ public class TestActivity extends AppCompatActivity{
         MessageCenter.connect(this, prepareCustomerRequest(), new ConnectionInterface() {
             @Override
             public void onMessageCenterConnected() {
-                MessageCenter.openChatView(TestActivity.this, chat_id, new Theme("Test Title", "#12345678 • Provider name", ":"));
+                MessageCenter.openChatView(TestActivity.this, chat_id, new Theme("Test Title", "#12345678 • Provider name", ":"), new OpenChatViewInterface() {
+                    @Override
+                    public void onError(MessageCenterException messageCenterException) {
+
+                    }
+                });
             }
 
             @Override
