@@ -59,13 +59,13 @@ public class ImageUtils {
                 .placeholder(placeholderDrawable);
 
         if (listener != null) {
-            Glide.with(context)
+            Glide.with(context.getApplicationContext())
                     .load(url)
                     .apply(myOptions)
                     .listener(listener)
                     .into(imageView);
         } else {
-            Glide.with(context)
+            Glide.with(context.getApplicationContext())
                     .load(url)
                     .apply(myOptions)
                     .listener(listener)
