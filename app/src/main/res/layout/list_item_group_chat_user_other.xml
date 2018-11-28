@@ -69,52 +69,18 @@
                     android:background="@android:color/darker_gray"
                     android:layout_marginBottom="8dp"
                     />
-                <TextView
-                    android:id="@+id/text_url_preview_site_name"
-                    android:paddingLeft="12dp"
-                    android:paddingRight="12dp"
-                    android:maxLines="1"
-                    android:ellipsize="end"
-                    android:textSize="12sp"
-                    android:text="\@Reddit"
-                    android:textColor="@color/groupChatTextOther"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:maxWidth="260dp"
-                    android:layout_gravity="center_horizontal"
-                    android:gravity="center_horizontal"
-                    />
-                <TextView
-                    android:id="@+id/text_url_preview_title"
-                    android:paddingLeft="12dp"
-                    android:paddingRight="12dp"
-                    android:maxLines="1"
-                    android:ellipsize="end"
-                    android:textSize="16sp"
-                    android:text="Title will be here."
-                    android:textColor="@color/groupChatTextOther"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_horizontal"
-                    android:gravity="center_horizontal"
-                    android:maxWidth="260dp"
-                    />
-                <TextView
-                    android:id="@+id/text_url_preview_description"
-                    android:paddingLeft="12dp"
-                    android:paddingRight="12dp"
-                    android:paddingBottom="4dp"
-                    android:maxLines="3"
-                    android:ellipsize="end"
-                    android:textSize="12sp"
-                    android:text="Description will be here. Blah Blah WWW Blah Wl Blah W WW WW ABCD EFG WW WW WW W Third Line. WWW Z XCVB QWER"
-                    android:textColor="@color/groupChatTextOther"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:maxWidth="260dp"
-                    android:layout_gravity="center_horizontal"
-                    android:gravity="center_horizontal"
-                    />
+
+                <android.support.v7.widget.CardView
+                    android:layout_width="match_parent"
+                    android:layout_height="148dp"
+                    app:cardBackgroundColor="@color/message_center_chat_view_bubble_color"
+                    app:cardUseCompatPadding="true"
+                    app:cardCornerRadius="6dp"
+                    app:cardElevation="0dp"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginRight="10dp"
+                    app:cardPreventCornerOverlap="false">
+
                 <ImageView
                     android:id="@+id/image_url_preview_main"
                     android:layout_width="match_parent"
@@ -122,8 +88,9 @@
                     android:scaleType="centerCrop"
                     android:adjustViewBounds="true"
                     android:layout_gravity="center_horizontal"
-                    android:gravity="center_horizontal"
-                    />
+                    android:gravity="center_horizontal" />
+
+                </android.support.v7.widget.CardView>
 
             </LinearLayout>
 

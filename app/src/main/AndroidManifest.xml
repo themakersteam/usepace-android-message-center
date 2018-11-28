@@ -48,8 +48,9 @@
 
         <activity
             android:name="com.usepace.android.messagingcenter.screens.sendfile.SendFileActivity"
-            android:configChanges="orientation|screenSize|keyboardHidden|screenLayout"
+            android:configChanges="screenSize|keyboardHidden|screenLayout"
             android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustResize"
             android:theme="@style/ChatTheme"/>
 
         <activity
