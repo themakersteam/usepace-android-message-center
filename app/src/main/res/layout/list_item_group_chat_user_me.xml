@@ -61,9 +61,11 @@
 
             <LinearLayout
                 android:id="@+id/url_preview_container"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
+                android:layout_gravity="center_horizontal"
+                android:gravity="center_horizontal"
                 >
                 <View
                     android:maxWidth="260dp"
@@ -73,6 +75,8 @@
                     android:layout_marginRight="12dp"
                     android:background="@android:color/darker_gray"
                     android:layout_marginBottom="8dp"
+                    android:layout_gravity="center_horizontal"
+                    android:gravity="center_horizontal"
                     />
                 <TextView
                     android:id="@+id/text_url_preview_site_name"
@@ -86,6 +90,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:maxWidth="260dp"
+                    android:layout_gravity="center_horizontal"
+                    android:gravity="center_horizontal"
                     />
                 <TextView
                     android:id="@+id/text_url_preview_title"
@@ -99,6 +105,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:maxWidth="260dp"
+                    android:layout_gravity="center_horizontal"
+                    android:gravity="center_horizontal"
                     />
                 <TextView
                     android:id="@+id/text_url_preview_description"
@@ -113,6 +121,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:maxWidth="260dp"
+                    android:layout_gravity="center_horizontal"
+                    android:gravity="center_horizontal"
                     />
                 <ImageView
                     android:id="@+id/image_url_preview_main"
@@ -121,6 +131,10 @@
                     android:layout_height="148dp"
                     android:scaleType="centerCrop"
                     android:adjustViewBounds="true"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_marginLeft="16dp"
+                    android:layout_marginRight="16dp"
+                    android:gravity="center_horizontal"
                     />
 
             </LinearLayout>

@@ -20,14 +20,29 @@
         app:cardPreventCornerOverlap="false"
         android:layout_marginTop="8dp">
 
-        <ImageView
-            android:id="@+id/image_group_chat_file_thumbnail"
+
+        <android.support.v7.widget.CardView
             android:layout_width="228dp"
             android:layout_height="148dp"
-            android:scaleType="centerCrop"
-            android:adjustViewBounds="true"
+            app:cardBackgroundColor="@color/message_center_chat_view_bubble_color"
+            app:cardUseCompatPadding="true"
+            app:cardCornerRadius="6dp"
+            app:cardElevation="0dp"
+            app:cardPreventCornerOverlap="false"
             android:layout_marginBottom="20dp"
-            />
+            android:layout_marginLeft="2dp"
+            android:layout_marginRight="2dp"
+            android:layout_marginTop="2dp">
+
+            <ImageView
+                android:id="@+id/image_group_chat_file_thumbnail"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:scaleType="centerCrop"
+                android:adjustViewBounds="true"
+                />
+
+        </android.support.v7.widget.CardView>
 
         <LinearLayout
             android:id="@+id/time"
