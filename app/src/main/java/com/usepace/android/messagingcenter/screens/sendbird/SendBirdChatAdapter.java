@@ -779,17 +779,13 @@ class SendBirdChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
                 }
             }
             else if (message.getMessage().startsWith("location://")){
-                new WebUtils.UrlPreviewAsyncTask() {
-                    @Override
-                    protected void onPostExecute(UrlPreviewInfo info) {
-                        if (info != null && info.getImageUrl() != null) {
-                            urlPreviewContainer.setVisibility(View.VISIBLE);
-                            ImageUtils.displayImageFromUrl(context, info.getImageUrl(), urlPreviewMainImageView, null);
-                        } else {
-                            urlPreviewContainer.setVisibility(View.GONE);
-                        }
-                    }
-                }.execute(mMessage);
+                try {
+                    String locationUrl = getLocationUrl(context, message.getMessage());
+                    urlPreviewContainer.setVisibility(View.VISIBLE);
+                    ImageUtils.displayImageFromUrl(context, locationUrl, urlPreviewMainImageView, null);
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                }
             } else {
                 urlPreviewContainer.setVisibility(View.GONE);
             }
@@ -861,17 +857,14 @@ class SendBirdChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
                 }
             }
             else if (message.getMessage().startsWith("location://")){
-                new WebUtils.UrlPreviewAsyncTask() {
-                    @Override
-                    protected void onPostExecute(UrlPreviewInfo info) {
-                        if (info != null && info.getImageUrl() != null) {
-                            urlPreviewContainer.setVisibility(View.VISIBLE);
-                            ImageUtils.displayImageFromUrl(context, info.getImageUrl(), urlPreviewMainImageView, null);
-                        } else {
-                            urlPreviewContainer.setVisibility(View.GONE);
-                        }
-                    }
-                }.execute(mMessage);
+
+                try {
+                    String locationUrl = getLocationUrl(context, message.getMessage());
+                    urlPreviewContainer.setVisibility(View.VISIBLE);
+                    ImageUtils.displayImageFromUrl(context, locationUrl, urlPreviewMainImageView, null);
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                }
             } else {
                 urlPreviewContainer.setVisibility(View.GONE);
             }
@@ -894,6 +887,26 @@ class SendBirdChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
                 });
             }
         }
+    }
+
+    private String getLocationUrl(Context context, String message) {
+        String locationUrl = "";
+        try {
+            String[] latLng = message.split("=");
+            String[] latStr = latLng[1].split("&");
+
+            double lat = Double.parseDouble(latStr[0]);
+            double lng = Double.parseDouble(latLng[2]);
+
+            locationUrl = "https://maps.googleapis.com/maps/api/staticmap?center="+lat + "," + lng
+                    +"&zoom=18&size=650x450&maptype=roadmap" + "&markers=color:red%7C"+lat + "," + lng+
+                    "&key="+context.getString(R.string.google_maps_key);
+
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+
+        return locationUrl;
     }
 
     private class MyFileMessageHolder extends RecyclerView.ViewHolder {
