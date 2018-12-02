@@ -39,6 +39,7 @@ public class NotificationUtil {
                 .setPriority(NotificationCompat.PRIORITY_HIGH)   // heads-up
                 .setContentIntent(pendingIntent)
                 .setStyle(compactStyle(messages))
+                .setAutoCancel(true)
                 .build();
 
         NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);

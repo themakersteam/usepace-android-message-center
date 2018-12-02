@@ -766,9 +766,13 @@ class SendBirdChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
             urlPreviewContainer.setVisibility(View.GONE);
             if (message.getCustomType().equals(URL_PREVIEW_CUSTOM_TYPE)) {
                 try {
-                    urlPreviewContainer.setVisibility(View.VISIBLE);
                     final UrlPreviewInfo previewInfo = new UrlPreviewInfo(message.getData());
-                    ImageUtils.displayImageFromUrl(context, previewInfo.getImageUrl(), urlPreviewMainImageView, null);
+                    if (previewInfo.getImageUrl() != null) {
+                        urlPreviewContainer.setVisibility(View.VISIBLE);
+                        ImageUtils.displayImageFromUrl(context, previewInfo.getImageUrl(), urlPreviewMainImageView, null);
+                    } else {
+                        urlPreviewContainer.setVisibility(View.GONE);
+                    }
                 } catch (JSONException e) {
                     urlPreviewContainer.setVisibility(View.GONE);
                     e.printStackTrace();
@@ -778,12 +782,16 @@ class SendBirdChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
                 new WebUtils.UrlPreviewAsyncTask() {
                     @Override
                     protected void onPostExecute(UrlPreviewInfo info) {
-                        if (info != null) {
+                        if (info != null && info.getImageUrl() != null) {
                             urlPreviewContainer.setVisibility(View.VISIBLE);
                             ImageUtils.displayImageFromUrl(context, info.getImageUrl(), urlPreviewMainImageView, null);
+                        } else {
+                            urlPreviewContainer.setVisibility(View.GONE);
                         }
                     }
                 }.execute(mMessage);
+            } else {
+                urlPreviewContainer.setVisibility(View.GONE);
             }
 
             if (clickListener != null) {
@@ -840,9 +848,13 @@ class SendBirdChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
             urlPreviewContainer.setVisibility(View.GONE);
             if (message.getCustomType().equals(URL_PREVIEW_CUSTOM_TYPE)) {
                 try {
-                    urlPreviewContainer.setVisibility(View.VISIBLE);
                     UrlPreviewInfo previewInfo = new UrlPreviewInfo(message.getData());
-                    ImageUtils.displayImageFromUrl(context, previewInfo.getImageUrl(), urlPreviewMainImageView, null);
+                    if (previewInfo.getImageUrl() != null) {
+                        urlPreviewContainer.setVisibility(View.VISIBLE);
+                        ImageUtils.displayImageFromUrl(context, previewInfo.getImageUrl(), urlPreviewMainImageView, null);
+                    } else {
+                        urlPreviewContainer.setVisibility(View.GONE);
+                    }
                 } catch (JSONException e) {
                     urlPreviewContainer.setVisibility(View.GONE);
                     e.printStackTrace();
@@ -852,12 +864,16 @@ class SendBirdChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
                 new WebUtils.UrlPreviewAsyncTask() {
                     @Override
                     protected void onPostExecute(UrlPreviewInfo info) {
-                        if (info != null) {
+                        if (info != null && info.getImageUrl() != null) {
                             urlPreviewContainer.setVisibility(View.VISIBLE);
                             ImageUtils.displayImageFromUrl(context, info.getImageUrl(), urlPreviewMainImageView, null);
+                        } else {
+                            urlPreviewContainer.setVisibility(View.GONE);
                         }
                     }
                 }.execute(mMessage);
+            } else {
+                urlPreviewContainer.setVisibility(View.GONE);
             }
 
             if (clickListener != null) {
