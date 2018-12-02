@@ -6,8 +6,13 @@
     android:id="@+id/layout_group_chat_root"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/pattern"
     app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:src="@drawable/pattern"
+        android:scaleType="center"/>
 
     <LinearLayout
         android:id="@+id/layout_group_chat_chatbox"
@@ -21,16 +26,16 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:layout_marginTop="10dp"
-            android:layout_marginBottom="10dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginBottom="5dp"
             android:minHeight="48dp">
 
             <ImageButton
                 android:id="@+id/button_group_chat_upload"
                 android:src="@drawable/ic_add"
                 android:background="?attr/selectableItemBackground"
-                android:layout_width="24dp"
-                android:layout_height="24dp"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
                 android:layout_marginLeft="16dp"
                 android:layout_marginRight="16dp"
                 android:contentDescription="Upload file"
@@ -39,7 +44,9 @@
 
             <RelativeLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:gravity="center_vertical">
 
 
                 <LinearLayout
@@ -61,8 +68,8 @@
                         android:paddingRight="16dp"
                         android:background="@android:color/transparent"
                         android:paddingLeft="16dp"
-                        android:paddingTop="14dp"
-                        android:paddingBottom="14dp"
+                        android:paddingTop="7dp"
+                        android:paddingBottom="7dp"
                         android:layout_width="0dp"
                         android:layout_weight="1"
                         android:textSize="15sp"
@@ -87,11 +94,11 @@
                 <ImageView
                     android:id="@+id/button_group_chat_send"
                     android:clickable="true"
-                    android:layout_width="44dp"
+                    android:layout_width="35dp"
                     android:visibility="gone"
-                    android:layout_height="44dp"
+                    android:layout_height="35dp"
                     android:foreground="?attr/selectableItemBackground"
-                    android:padding="12dp"
+                    android:padding="8dp"
                     android:gravity="center"
                     android:background="@drawable/circle"
                     android:src="@drawable/ic_send"
