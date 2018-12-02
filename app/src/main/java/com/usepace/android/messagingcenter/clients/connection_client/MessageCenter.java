@@ -53,12 +53,13 @@ public class MessageCenter {
 
     /**
      *
+     * @param context
      * @param chat_id
      * @param unReadMessagesInterface
      */
-    public static void getUnReadMessagesCount(String chat_id, UnReadMessagesInterface unReadMessagesInterface) {
+    public static void getUnReadMessagesCount(Context context, String chat_id, UnReadMessagesInterface unReadMessagesInterface) {
         try {
-            client().getClient(LAST_CLIENT).getUnReadMessagesCount(chat_id, unReadMessagesInterface);
+            client().getClient(LAST_CLIENT).getUnReadMessagesCount(context, chat_id, unReadMessagesInterface);
         }
         catch (MessageCenterException e) {
             unReadMessagesInterface.onErrorRetrievingMessages(e);

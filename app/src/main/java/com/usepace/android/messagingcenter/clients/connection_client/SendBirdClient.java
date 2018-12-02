@@ -65,34 +65,27 @@ class SendBirdClient extends ClientInterface {
     }
 
     @Override
-    public void getUnReadMessagesCount(String chat_id, final UnReadMessagesInterface unReadMessagesInterface) {
+    public void getUnReadMessagesCount(Context context, final String chat_id, final UnReadMessagesInterface unReadMessagesInterface) {
         if (unReadMessagesInterface == null)
             return;
-        if (chat_id == null) {
-            SendBird.getTotalUnreadMessageCount(new GroupChannel.GroupChannelTotalUnreadMessageCountHandler() {
+        if (!isConnected() && lastConnecitonRequest != null) {
+            connect(context, lastConnecitonRequest, new ConnectionInterface() {
                 @Override
-                public void onResult(int i, SendBirdException e) {
-                    if (e != null) {
-                        unReadMessagesInterface.onErrorRetrievingMessages(new MessageCenterException(e.getMessage()));
-                    }
-                    else {
-                        unReadMessagesInterface.onUnreadMessages(i);
-                    }
+                public void onMessageCenterConnected() {
+                    getUnReadMessagesCount(chat_id, unReadMessagesInterface);
+                }
+
+                @Override
+                public void onMessageCenterConnectionError(int code, MessageCenterException e) {
+                    unReadMessagesInterface.onErrorRetrievingMessages(e);
                 }
             });
         }
+        else if (isConnected()) {
+            getUnReadMessagesCount(chat_id, unReadMessagesInterface);
+        }
         else {
-            GroupChannel.getChannel(chat_id, new GroupChannel.GroupChannelGetHandler() {
-                @Override
-                public void onResult(GroupChannel groupChannel, SendBirdException e) {
-                    if (e != null) {
-                        unReadMessagesInterface.onErrorRetrievingMessages(new MessageCenterException(e.getMessage()));
-                    }
-                    else {
-                        unReadMessagesInterface.onUnreadMessages(groupChannel.getUnreadMessageCount());
-                    }
-                }
-            });
+            unReadMessagesInterface.onErrorRetrievingMessages(new MessageCenterException("You have to be connected to be able to join Chat view !", 302));
         }
     }
 
@@ -210,6 +203,35 @@ class SendBirdClient extends ClientInterface {
             if (disconnectInterface != null) {
                 disconnectInterface.onMessageCenterDisconnected();
             }
+        }
+    }
+
+    private void getUnReadMessagesCount(String chat_id,final UnReadMessagesInterface unReadMessagesInterface) {
+        if (chat_id == null) {
+            SendBird.getTotalUnreadMessageCount(new GroupChannel.GroupChannelTotalUnreadMessageCountHandler() {
+                @Override
+                public void onResult(int i, SendBirdException e) {
+                    if (e != null) {
+                        unReadMessagesInterface.onErrorRetrievingMessages(new MessageCenterException(e.getMessage()));
+                    }
+                    else {
+                        unReadMessagesInterface.onUnreadMessages(i);
+                    }
+                }
+            });
+        }
+        else {
+            GroupChannel.getChannel(chat_id, new GroupChannel.GroupChannelGetHandler() {
+                @Override
+                public void onResult(GroupChannel groupChannel, SendBirdException e) {
+                    if (e != null) {
+                        unReadMessagesInterface.onErrorRetrievingMessages(new MessageCenterException(e.getMessage()));
+                    }
+                    else {
+                        unReadMessagesInterface.onUnreadMessages(groupChannel.getUnreadMessageCount());
+                    }
+                }
+            });
         }
     }
 
