@@ -17,7 +17,7 @@ abstract class ClientInterface {
 
     abstract public void connect(Context context, ConnectionRequest connectionRequest, ConnectionInterface connectionInterface);
     abstract public boolean isConnected();
-    abstract public void getUnReadMessagesCount(String chat_id, UnReadMessagesInterface unReadMessagesInterface);
+    abstract public void getUnReadMessagesCount(Context context, String chat_id, UnReadMessagesInterface unReadMessagesInterface);
     abstract public void openChatView(Context context, String chat_id, Theme theme, OpenChatViewInterface openChatViewInterface);
     abstract public void closeChatView(Context context, CloseChatViewInterface closeChatViewInterface);
     abstract public void sdkHandleNotification(Context context,Class next,  int icon, String title, RemoteMessage remoteMessage, List<String> messages);

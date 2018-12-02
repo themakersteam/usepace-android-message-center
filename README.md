@@ -102,13 +102,13 @@
  * Getting Total of Unread Messages 
  
       ```bash
-     MessageCenter.getUnReadMessagesCount(String chat_id, UnReadMessagesInterface unread_message_interface)
+     MessageCenter.getUnReadMessagesCount(Context context, String chat_id, UnReadMessagesInterface unread_message_interface)
       ```
  * if chat_id is not provided, the sdk will retrieve the total unread messages for all channels 
  * if chat_id is provided, the sdk will retrieve the total unread messages for the provided channel
  * Sample code for retrieving the count 
     ```bash
-    MessageCenter.getUnReadMessagesCount(chat_id: "channel_sample", new UnReadMessagesInterface() {
+    MessageCenter.getUnReadMessagesCount(Context: context, chat_id: "channel_sample", new UnReadMessagesInterface() {
                       @Override
                       public void onUnreadMessages(int count) {
                               
