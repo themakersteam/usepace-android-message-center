@@ -8,6 +8,7 @@ import com.usepace.android.messagingcenter.interfaces.CloseChatViewInterface;
 import com.usepace.android.messagingcenter.interfaces.ConnectionInterface;
 import com.usepace.android.messagingcenter.interfaces.DisconnectInterface;
 import com.usepace.android.messagingcenter.interfaces.OpenChatViewInterface;
+import com.usepace.android.messagingcenter.interfaces.SdkHandleNotificationInterface;
 import com.usepace.android.messagingcenter.interfaces.UnReadMessagesInterface;
 import com.usepace.android.messagingcenter.model.ConnectionRequest;
 import com.usepace.android.messagingcenter.model.Theme;
@@ -109,11 +110,11 @@ public class MessageCenter {
     /**
      *
      */
-    public static void sdkHandleNotification(Context context, Class next, int icon, String title, RemoteMessage remoteMessage) {
+    public static void sdkHandleNotification(Context context, Class next, int icon, String title, RemoteMessage remoteMessage, SdkHandleNotificationInterface sdkHandleNotificationInterface) {
         try {
             if (notificationInboxMessages == null)
                 notificationInboxMessages = new ArrayList<>();
-            client().getClient(LAST_CLIENT).sdkHandleNotification(context, next, icon, title, remoteMessage, notificationInboxMessages);
+            client().getClient(LAST_CLIENT).sdkHandleNotification(context, next, icon, title, remoteMessage, notificationInboxMessages, sdkHandleNotificationInterface);
         }
         catch (MessageCenterException e) {
 
