@@ -128,12 +128,17 @@ class SendBirdClient extends ClientInterface {
     @Override
     public void disconnect(final DisconnectInterface disconnectInterface) {
         lastConnecitonRequest = null;
-        SendBird.unregisterPushTokenAllForCurrentUser(new SendBird.UnregisterPushTokenHandler() {
-            @Override
-            public void onUnregistered(SendBirdException e) {
-                disconnectApp(disconnectInterface);
-            }
-        });
+        try {
+            SendBird.unregisterPushTokenAllForCurrentUser(new SendBird.UnregisterPushTokenHandler() {
+                @Override
+                public void onUnregistered(SendBirdException e) {
+                    disconnectApp(disconnectInterface);
+                }
+            });
+        }
+        catch (Exception e) { // SendBird instance hasn't been initialized.
+            disconnectInterface.onMessageCenterDisconnected();
+        }
     }
 
     @Override
