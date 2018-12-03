@@ -126,12 +126,13 @@
  * Joining the chat by url(id) provided
  * Sample code for joining a conversation
     ```bash
-    MessageCenter.openChatView(context: this, chat_id: "sample_chat_id", theme: new Theme(toolbar: "title", toolbar_subtitle: "subtitle"), openChatViewInterface: OpenChatViewInterface); 
+    MessageCenter.openChatView(Activity: this, chat_id: "sample_chat_id", theme: new Theme(toolbar: "title", toolbar_subtitle: "subtitle"), openChatViewInterface: OpenChatViewInterface); 
     ```
  * if Theme object is not provided, the app will take the defaults 
  * Theme Object for android have (```toolbar```, ```toolbar_subtitle```, ```welcome_message```) ..
  * Executing this interface will open the chatting window 
  * an error callback will be triggered in case of error 
+ * onActivityResult will be triggered on the close of the Chat View with request_code: MessageCenter.OPEN_CHAT_VIEW_REQUEST_CODE, response_code: MessageCenter.OPEN_CHAT_VIEW_RESPONSE_CODE
  
  #### 4.4 closeChatView()
   * Closing the chat view from the app side

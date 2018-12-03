@@ -1,5 +1,6 @@
 package com.usepace.android.messagingcenter.clients.connection_client;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import com.google.firebase.messaging.RemoteMessage;
@@ -91,7 +92,7 @@ class SendBirdClient extends ClientInterface {
     }
 
     @Override
-    public void openChatView(final Context context, final String chat_id, final Theme theme, final OpenChatViewInterface openChatViewInterface) {
+    public void openChatView(final Activity context, final String chat_id, final Theme theme, final OpenChatViewInterface openChatViewInterface) {
         if (!isConnected() && lastConnecitonRequest != null) {
             connect(context, lastConnecitonRequest, new ConnectionInterface() {
                 @Override
@@ -181,8 +182,8 @@ class SendBirdClient extends ClientInterface {
         }
     }
 
-    private void openChatView(Context context, Theme theme, String chat_id) {
-        Intent a1 = new Intent(context, SendBirdChatActivity.class);
+    private void openChatView(Activity activity, Theme theme, String chat_id) {
+        Intent a1 = new Intent(activity, SendBirdChatActivity.class);
         if (theme != null) {
             if (theme.getToolbarTitle() != null) {
                 a1.putExtra("TITLE", theme.getToolbarTitle());
@@ -195,7 +196,7 @@ class SendBirdClient extends ClientInterface {
             }
         }
         a1.putExtra("CHANNEL_URL", chat_id);
-        context.startActivity(a1);
+        activity.startActivityForResult(a1, MessageCenter.OPEN_CHAT_VIEW_REQUEST_CODE);
     }
 
     private void disconnectApp(final DisconnectInterface disconnectInterface) {

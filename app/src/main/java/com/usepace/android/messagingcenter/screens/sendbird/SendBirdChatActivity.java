@@ -93,6 +93,7 @@ public class SendBirdChatActivity extends AppCompatActivity{
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        setResult(MessageCenter.OPEN_CHAT_VIEW_RESPONSE_CODE);
         SendBird.disconnect(new SendBird.DisconnectHandler() {
             @Override
             public void onDisconnected() {
