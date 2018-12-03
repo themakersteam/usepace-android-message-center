@@ -1,5 +1,6 @@
 package com.usepace.android.messagingcenter.clients.connection_client;
 
+import android.app.Activity;
 import android.content.Context;
 import com.google.firebase.messaging.RemoteMessage;
 import com.usepace.android.messagingcenter.exceptions.MessageCenterException;
@@ -18,6 +19,8 @@ import java.util.List;
 public class MessageCenter {
 
     public static final String CLIENT_SENDBIRD = "sendbird";
+    public static final Integer OPEN_CHAT_VIEW_REQUEST_CODE = 234;
+    public static final Integer OPEN_CHAT_VIEW_RESPONSE_CODE = 232;
 
     private static Client client;
     private static String LAST_CLIENT = CLIENT_SENDBIRD;
@@ -71,7 +74,7 @@ public class MessageCenter {
      *
      * @param chat_id
      */
-    public static void openChatView(Context context, String chat_id, Theme theme, OpenChatViewInterface openChatViewInterface) {
+    public static void openChatView(Activity context, String chat_id, Theme theme, OpenChatViewInterface openChatViewInterface) {
         try {
             client().getClient(LAST_CLIENT).openChatView(context, chat_id, theme, openChatViewInterface);
         }
