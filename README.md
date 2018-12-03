@@ -147,7 +147,12 @@
  
  * Sample code for Handling MessageCenter Notification 
     ```bash
-    MessageCenter.sdkHandleNotification(context: context,class: Class next, icon: R.mipmap.notifcation, title: "Message App", remotemessage: remoteMessage); 
+    MessageCenter.sdkHandleNotification(context: context,class: Class next, icon: R.mipmap.notifcation, title: "Message App", remotemessage: remoteMessage, new SdkHandleNotificaitonInterface() {
+                    @Override
+                    public void onMatched(String channel_url) {      
+                    }
+    }
+    ); 
     ```
  * if app was opened from notification you will get 2 extra fields with the intent 
     * CHANNEL_URL : a string url of the channel a message sent to 

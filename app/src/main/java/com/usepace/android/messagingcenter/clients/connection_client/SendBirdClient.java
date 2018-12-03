@@ -13,6 +13,7 @@ import com.usepace.android.messagingcenter.interfaces.CloseChatViewInterface;
 import com.usepace.android.messagingcenter.interfaces.ConnectionInterface;
 import com.usepace.android.messagingcenter.interfaces.DisconnectInterface;
 import com.usepace.android.messagingcenter.interfaces.OpenChatViewInterface;
+import com.usepace.android.messagingcenter.interfaces.SdkHandleNotificationInterface;
 import com.usepace.android.messagingcenter.interfaces.UnReadMessagesInterface;
 import com.usepace.android.messagingcenter.model.ConnectionRequest;
 import com.usepace.android.messagingcenter.model.Theme;
@@ -137,7 +138,7 @@ class SendBirdClient extends ClientInterface {
     }
 
     @Override
-    public void sdkHandleNotification(Context context, Class next, int icon, String title, RemoteMessage remoteMessage, List<String> messages) {
+    public void sdkHandleNotification(Context context, Class next, int icon, String title, RemoteMessage remoteMessage, List<String> messages, SdkHandleNotificationInterface sdkHandleNotificationInterface) {
         if (remoteMessage.getData().containsKey("sendbird")) {
             try {
                 JSONObject jsonObject = new JSONObject(remoteMessage.getData().get("sendbird"));
@@ -146,6 +147,9 @@ class SendBirdClient extends ClientInterface {
                 Intent pendingIntent = new Intent(context, next);
                 pendingIntent.putExtra("CHANNEL_URL", jsonObject.getJSONObject("channel").getString("channel_url"));
                 pendingIntent.putExtra("FROM_NOTIFICATION", true);
+                if (sdkHandleNotificationInterface != null) {
+                    sdkHandleNotificationInterface.onMatched(jsonObject.getJSONObject("channel").getString("channel_url"));
+                }
                 new NotificationUtil().generateOne(context, pendingIntent, icon, title, message, messages);
             }
             catch (Exception e){
