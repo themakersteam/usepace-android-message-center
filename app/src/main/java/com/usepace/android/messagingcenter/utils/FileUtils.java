@@ -3,6 +3,7 @@ package com.usepace.android.messagingcenter.utils;
 import android.annotation.TargetApi;
 import android.app.DownloadManager;
 import android.content.ContentUris;
+import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.graphics.Bitmap;
@@ -14,7 +15,6 @@ import android.provider.DocumentsContract;
 import android.provider.MediaStore;
 import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -202,6 +202,36 @@ public class FileUtils {
         return Uri.parse(path);
     }
 
+    /**
+     *
+     * @param context
+     * @param imageFile
+     * @return
+     */
+    public static Uri getImageContentUri(Context context, File imageFile) {
+        String filePath = imageFile.getAbsolutePath();
+        Cursor cursor = context.getContentResolver().query(
+                MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
+                new String[] { MediaStore.Images.Media._ID },
+                MediaStore.Images.Media.DATA + "=? ",
+                new String[] { filePath }, null);
+
+        if (cursor != null && cursor.moveToFirst()) {
+            int id = cursor.getInt(cursor
+                    .getColumnIndex(MediaStore.MediaColumns._ID));
+            Uri baseUri = Uri.parse("content://media/external/images/media");
+            return Uri.withAppendedPath(baseUri, "" + id);
+        } else {
+            if (imageFile.exists()) {
+                ContentValues values = new ContentValues();
+                values.put(MediaStore.Images.Media.DATA, filePath);
+                return context.getContentResolver().insert(
+                        MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values);
+            } else {
+                return null;
+            }
+        }
+    }
 
     /**
      * Downloads a file using DownloadManager.

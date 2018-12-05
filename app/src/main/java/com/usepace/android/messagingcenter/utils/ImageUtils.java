@@ -3,6 +3,7 @@ package com.usepace.android.messagingcenter.utils;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
+import android.os.Environment;
 import android.support.v4.graphics.drawable.RoundedBitmapDrawable;
 import android.support.v4.graphics.drawable.RoundedBitmapDrawableFactory;
 import android.widget.ImageView;
@@ -11,6 +12,10 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.RequestOptions;
 import com.bumptech.glide.request.target.BitmapImageViewTarget;
+import java.io.File;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 
 public class ImageUtils {
@@ -18,6 +23,25 @@ public class ImageUtils {
     // Prevent instantiation
     private ImageUtils() {
 
+    }
+
+    /**
+     *
+     * @param context
+     * @return
+     * @throws IOException
+     */
+    public static File createImageFile(Context context) throws IOException {
+        // Create an image file name
+        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+        String imageFileName = "JPEG_" + timeStamp + "_";
+        File storageDir = context.getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+        File image = File.createTempFile(
+                imageFileName,  /* prefix */
+                ".jpg",         /* suffix */
+                storageDir      /* directory */
+        );
+        return image;
     }
 
     /**
