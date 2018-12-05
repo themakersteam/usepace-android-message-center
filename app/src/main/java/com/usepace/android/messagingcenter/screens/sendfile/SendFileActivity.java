@@ -6,14 +6,20 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.annotation.Nullable;
+import android.support.v4.content.FileProvider;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.Toast;
 import com.sendbird.android.SendBird;
 import com.usepace.android.messagingcenter.R;
+import com.usepace.android.messagingcenter.utils.FileUtils;
+import com.usepace.android.messagingcenter.utils.ImageUtils;
+import java.io.File;
+import java.io.IOException;
 
 public class SendFileActivity extends AppCompatActivity {
 
@@ -21,6 +27,7 @@ public class SendFileActivity extends AppCompatActivity {
     public static final int REQUEST_GALLERY_CAPTURE = 2;
 
     private Uri currentBitmap = null;
+    private String currentPhotoPath = null;
     private Toolbar toolbar;
     private ImageView mainImage;
     private EditText captionText;
@@ -75,7 +82,26 @@ public class SendFileActivity extends AppCompatActivity {
     private void dispatchTakePictureIntent() {
         Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
-            startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
+            // Create the File where the photo should go
+            File photoFile = null;
+            try {
+                photoFile = ImageUtils.createImageFile(this);
+                currentPhotoPath = photoFile.getAbsolutePath();
+            } catch (IOException ex) {
+                // Error occurred while creating the File
+            }
+            // Continue only if the File was successfully created
+            if (photoFile != null) {
+                Uri photoURI = FileProvider.getUriForFile(this,
+                        "com.usepace.android.messagingcenter.fileprovider",
+                        photoFile);
+                takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
+                startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
+            }
+            else {
+                Toast.makeText(this, "Camera Error ! ", Toast.LENGTH_SHORT).show();
+                finish();
+            }
         }
     }
 
@@ -96,11 +122,16 @@ public class SendFileActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         SendBird.setAutoBackgroundDetection(true);
         if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
-            if (data == null){
-                return;
+            if (currentPhotoPath != null) {
+                File file = new File(currentPhotoPath);
+                currentBitmap = FileUtils.getImageContentUri(this, file);
+                if (currentBitmap != null) {
+                    loadImage();
+                }
+                else {
+                    finish();
+                }
             }
-            currentBitmap = data.getData();
-            loadImage();
         }
         else if (requestCode == REQUEST_GALLERY_CAPTURE && resultCode == RESULT_OK) {
             if (data == null) {
