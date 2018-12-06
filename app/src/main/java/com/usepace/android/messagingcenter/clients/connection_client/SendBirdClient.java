@@ -196,6 +196,7 @@ class SendBirdClient extends ClientInterface {
             }
         }
         a1.putExtra("CHANNEL_URL", chat_id);
+        a1.putExtra("PACKAGE_NAME", activity.getPackageName());
         activity.startActivityForResult(a1, MessageCenter.OPEN_CHAT_VIEW_REQUEST_CODE);
     }
 

@@ -21,6 +21,7 @@ public class SendBirdChatActivity extends AppCompatActivity{
     private onBackPressedListener mOnBackPressedListener;
     private Toolbar toolbar;
     private TextView toolbarSubtitle;
+    public static String PACKAGE_NAME;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -62,6 +63,7 @@ public class SendBirdChatActivity extends AppCompatActivity{
             getSupportActionBar().setTitle(getIntent().hasExtra("TITLE") ? getIntent().getStringExtra("TITLE") : getString(R.string.message_center_toolbar_title));
         }
         toolbarSubtitle.setText(getIntent().hasExtra("SUBTITLE") ? getIntent().getStringExtra("SUBTITLE") : "");
+        PACKAGE_NAME = getIntent().getStringExtra("PACKAGE_NAME");
     }
 
     public void setOnBackPressedListener(onBackPressedListener listener) {
