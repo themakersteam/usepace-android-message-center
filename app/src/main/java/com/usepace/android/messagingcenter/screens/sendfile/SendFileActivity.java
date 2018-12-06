@@ -15,6 +15,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
 import com.sendbird.android.SendBird;
+import com.usepace.android.messagingcenter.BuildConfig;
 import com.usepace.android.messagingcenter.R;
 import com.usepace.android.messagingcenter.utils.FileUtils;
 import com.usepace.android.messagingcenter.utils.ImageUtils;
@@ -93,7 +94,7 @@ public class SendFileActivity extends AppCompatActivity {
             // Continue only if the File was successfully created
             if (photoFile != null) {
                 Uri photoURI = FileProvider.getUriForFile(this,
-                        "com.usepace.android.messagingcenter.fileprovider",
+                        BuildConfig.APPLICATION_ID + ".fileprovider",
                         photoFile);
                 takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
                 startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
