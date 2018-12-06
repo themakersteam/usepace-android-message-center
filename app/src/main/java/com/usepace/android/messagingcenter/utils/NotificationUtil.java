@@ -6,7 +6,10 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.os.Build;
+import android.provider.Settings;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.NotificationManagerCompat;
 import java.util.List;
@@ -39,6 +42,11 @@ public class NotificationUtil {
                 .setPriority(NotificationCompat.PRIORITY_HIGH)   // heads-up
                 .setContentIntent(pendingIntent)
                 .setStyle(compactStyle(messages))
+                .setSmallIcon(icon)
+                .setLights(Color.YELLOW, 500, 500)
+                .setLargeIcon(BitmapFactory.decodeResource(context.getResources(), icon))
+                .setAutoCancel(true)
+                .setSound(Settings.System.DEFAULT_NOTIFICATION_URI)
                 .setAutoCancel(true)
                 .build();
 
@@ -56,7 +64,7 @@ public class NotificationUtil {
         if (messages != null) {
             int more = 0;
             for (int i = 0; i < messages.size(); i++) {
-                if (i < 2) {
+                if (i < 4) {
                     style.addLine(messages.get(i));
                 }
                 else {

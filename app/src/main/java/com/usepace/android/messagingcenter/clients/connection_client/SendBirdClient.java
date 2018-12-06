@@ -148,7 +148,7 @@ class SendBirdClient extends ClientInterface {
         if (remoteMessage.getData().containsKey("sendbird")) {
             try {
                 JSONObject jsonObject = new JSONObject(remoteMessage.getData().get("sendbird"));
-                String message = jsonObject.getString("message");
+                String message = remoteMessage.getData().get("message");
                 messages.add(message);
                 Intent pendingIntent = new Intent(context, next);
                 pendingIntent.putExtra("CHANNEL_URL", jsonObject.getJSONObject("channel").getString("channel_url"));
