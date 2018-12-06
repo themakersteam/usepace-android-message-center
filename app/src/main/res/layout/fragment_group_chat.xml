@@ -33,12 +33,13 @@
             <ImageButton
                 android:id="@+id/button_group_chat_upload"
                 android:src="@drawable/ic_add"
-                android:background="?attr/selectableItemBackground"
+                android:foreground="?attr/selectableItemBackground"
                 android:layout_width="20dp"
                 android:layout_height="20dp"
                 android:layout_marginLeft="16dp"
                 android:layout_marginRight="16dp"
                 android:contentDescription="Upload file"
+                android:background="#FFFFFF"
                 android:tint="@color/message_center_primary_dark"
                 android:layout_gravity="center"/>
 

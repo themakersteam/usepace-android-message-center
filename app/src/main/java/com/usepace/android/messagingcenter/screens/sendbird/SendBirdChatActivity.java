@@ -84,6 +84,7 @@ public class SendBirdChatActivity extends AppCompatActivity{
 
     @Override
     public void onBackPressed() {
+        setResult(MessageCenter.OPEN_CHAT_VIEW_RESPONSE_CODE);
         if (mOnBackPressedListener != null && mOnBackPressedListener.onBack()) {
             return;
         }
@@ -91,9 +92,15 @@ public class SendBirdChatActivity extends AppCompatActivity{
     }
 
     @Override
-    protected void onDestroy() {
-        super.onDestroy();
+    public void finish() {
+        super.finish();
         setResult(MessageCenter.OPEN_CHAT_VIEW_RESPONSE_CODE);
+    }
+
+    @Override
+    protected void onDestroy() {
+        setResult(MessageCenter.OPEN_CHAT_VIEW_RESPONSE_CODE);
+        super.onDestroy();
         SendBird.disconnect(new SendBird.DisconnectHandler() {
             @Override
             public void onDisconnected() {
