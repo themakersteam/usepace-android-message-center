@@ -32,7 +32,7 @@
 
             <ImageButton
                 android:id="@+id/button_group_chat_upload"
-                android:src="@drawable/ic_add"
+                android:src="@drawable/msg_cntr_ic_add"
                 android:foreground="?attr/selectableItemBackground"
                 android:layout_width="20dp"
                 android:layout_height="20dp"
