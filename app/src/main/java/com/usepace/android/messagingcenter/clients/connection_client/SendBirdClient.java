@@ -228,6 +228,7 @@ class SendBirdClient extends ClientInterface {
                     else {
                         unReadMessagesInterface.onUnreadMessages(i);
                     }
+                    SendBird.disconnect(new SendBird.DisconnectHandler() {public void onDisconnected(){}});
                 }
             });
         }
@@ -241,6 +242,7 @@ class SendBirdClient extends ClientInterface {
                     else {
                         unReadMessagesInterface.onUnreadMessages(groupChannel.getUnreadMessageCount());
                     }
+                    SendBird.disconnect(new SendBird.DisconnectHandler() {public void onDisconnected(){}});
                 }
             });
         }
