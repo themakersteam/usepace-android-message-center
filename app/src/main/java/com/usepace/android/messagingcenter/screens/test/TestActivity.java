@@ -23,6 +23,11 @@ public class TestActivity extends AppCompatActivity{
             public void onMessageCenterConnected() {
                 MessageCenter.openChatView(TestActivity.this, chat_id, new Theme("Test Title", "#12345678 • Provider name", ":"), new OpenChatViewInterface() {
                     @Override
+                    public void onViewWillStart() {
+
+                    }
+
+                    @Override
                     public void onError(MessageCenterException messageCenterException) {
 
                     }
