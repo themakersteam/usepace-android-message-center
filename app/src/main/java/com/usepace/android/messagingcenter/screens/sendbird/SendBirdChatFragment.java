@@ -7,7 +7,6 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -53,6 +52,7 @@ import com.usepace.android.messagingcenter.utils.ConnectionManager;
 import com.usepace.android.messagingcenter.utils.FileUtils;
 import com.usepace.android.messagingcenter.utils.TextUtils;
 import com.usepace.android.messagingcenter.utils.UrlPreviewInfo;
+import com.usepace.android.messagingcenter.utils.ViewUtils;
 import com.usepace.android.messagingcenter.utils.WebUtils;
 import org.json.JSONException;
 import java.io.File;
@@ -237,11 +237,7 @@ public class SendBirdChatFragment extends Fragment {
 
     private void freeze() {
         mMessageEditText.setText(getString(R.string.message_center_channel_is_frozen));
-        mMessageEditText.setTextColor(Color.parseColor("#686868"));
-        for (int i = 0; i < groupChatBox.getChildCount(); i++) {
-            View child = groupChatBox.getChildAt(i);
-            child.setEnabled(false);
-        }
+        ViewUtils.disable(mUploadFileButton, mMessageEditText, mMessageCameraButton, mMessageSendButton);
     }
 
     private void openSendFileScreen(int action) {
