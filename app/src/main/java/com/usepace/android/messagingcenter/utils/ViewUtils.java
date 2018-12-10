@@ -3,6 +3,7 @@ package com.usepace.android.messagingcenter.utils;
 import android.content.Context;
 import android.content.res.Resources;
 import android.util.TypedValue;
+import android.view.View;
 
 
 public final class ViewUtils {
@@ -25,4 +26,10 @@ public final class ViewUtils {
         return (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, value, context.getResources().getDisplayMetrics());
     }
 
+    public static void disable(View... views) {
+        for (View view : views) {
+            view.setEnabled(false);
+            view.setAlpha(0.30f);
+        }
+    }
 }
