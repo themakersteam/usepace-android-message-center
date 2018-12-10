@@ -7,6 +7,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -29,6 +30,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -91,6 +93,7 @@ public class SendBirdChatFragment extends Fragment {
     private ImageButton mUploadFileButton;
     private View mCurrentEventLayout;
     private TextView mCurrentEventText;
+    private LinearLayout groupChatBox;
 
     private GroupChannel mChannel;
     private String mChannelUrl;
@@ -99,6 +102,8 @@ public class SendBirdChatFragment extends Fragment {
 
     private int mCurrentState = STATE_NORMAL;
     private BaseMessage mEditingMessage = null;
+
+    private final int channel_frozen_key = 900050;
 
 
     /**
@@ -148,6 +153,7 @@ public class SendBirdChatFragment extends Fragment {
         mMessageSendButton = (ImageView) rootView.findViewById(R.id.button_group_chat_send);
         mMessageCameraButton = (ImageView)rootView.findViewById(R.id.button_camera_send);
         mUploadFileButton = (ImageButton) rootView.findViewById(R.id.button_group_chat_upload);
+        groupChatBox = rootView.findViewById(R.id.layout_group_chat_chatbox);
 
         mMessageEditText.addTextChangedListener(new TextWatcher() {
             @Override
@@ -229,6 +235,12 @@ public class SendBirdChatFragment extends Fragment {
         return rootView;
     }
 
+    private void freeze() {
+        groupChatBox.setEnabled(false);
+        mMessageEditText.setText(getString(R.string.message_center_channel_is_frozen));
+        mMessageEditText.setTextColor(Color.parseColor("#686868"));
+    }
+
     private void openSendFileScreen(int action) {
         startActivityForResult(new Intent(getActivity(), SendFileActivity.class).putExtra("ACTION", action), SEND_FILE_ACTIVITY_RESULT);
     }
@@ -243,7 +255,9 @@ public class SendBirdChatFragment extends Fragment {
                         e.printStackTrace();
                         return;
                     }
-
+                    if (groupChannel.isFrozen()) {
+                        freeze();
+                    }
                     mChannel = groupChannel;
                     mChannel.setPushPreference(true, null);
                     mChatAdapter.setChannel(mChannel);
@@ -711,9 +725,6 @@ public class SendBirdChatFragment extends Fragment {
                         if (e != null) {
                             // Error!
                             Log.e(LOG_TAG, e.toString());
-                            Toast.makeText(
-                                    getActivity(), e.getMessage(), Toast.LENGTH_SHORT)
-                                    .show();
                             mChatAdapter.markMessageFailed(userMessage.getRequestId());
                             return;
                         }
@@ -752,9 +763,9 @@ public class SendBirdChatFragment extends Fragment {
                 if (e != null) {
                     // Error!
                     Log.e(LOG_TAG, e.toString());
-                    Toast.makeText(
-                            getActivity(), e.getMessage(), Toast.LENGTH_SHORT)
-                            .show();
+                    if (e.getCode() == channel_frozen_key) {
+                        freeze();
+                    }
                     mChatAdapter.markMessageFailed(userMessage.getRequestId());
                     return;
                 }
