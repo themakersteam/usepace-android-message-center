@@ -236,9 +236,12 @@ public class SendBirdChatFragment extends Fragment {
     }
 
     private void freeze() {
-        groupChatBox.setEnabled(false);
         mMessageEditText.setText(getString(R.string.message_center_channel_is_frozen));
         mMessageEditText.setTextColor(Color.parseColor("#686868"));
+        for (int i = 0; i < groupChatBox.getChildCount(); i++) {
+            View child = groupChatBox.getChildAt(i);
+            child.setEnabled(false);
+        }
     }
 
     private void openSendFileScreen(int action) {
