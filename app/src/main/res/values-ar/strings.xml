@@ -29,6 +29,7 @@
 
     <!-- Global Strings -->
     <string name="message_center_toolbar_title">مركز الرسائل</string>
+    <string name="message_center_channel_is_frozen">تم تجميد المحادثة</string>
     <string name="send_location">ارسال موقعك الحالي</string>
     <string name="share_location">شارك الموقع</string>
     <string name="need_gps_permission">الرجاء اعطاء صلاحية GPS للاستمرار</string>

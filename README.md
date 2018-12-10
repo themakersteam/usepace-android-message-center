@@ -50,6 +50,7 @@
  
     ```bash
      <string name="message_center_toolbar_title">Title</string>
+     <string name="message_center_channel_is_frozen">Frozen Channel Title</string>
     ```
  * For colors styling override to colors.xml 
  
