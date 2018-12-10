@@ -132,6 +132,7 @@
  * Theme Object for android have (```toolbar```, ```toolbar_subtitle```, ```welcome_message```) ..
  * Executing this interface will open the chatting window 
  * an error callback will be triggered in case of error 
+ * a viewWillStart callback will be triggered before the launch of the chat activity
  * onActivityResult will be triggered on the close of the Chat View with request_code: MessageCenter.OPEN_CHAT_VIEW_REQUEST_CODE, response_code: MessageCenter.OPEN_CHAT_VIEW_RESPONSE_CODE
  
  #### 4.4 closeChatView()

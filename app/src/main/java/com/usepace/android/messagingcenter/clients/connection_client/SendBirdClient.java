@@ -97,7 +97,7 @@ class SendBirdClient extends ClientInterface {
             connect(context, lastConnecitonRequest, new ConnectionInterface() {
                 @Override
                 public void onMessageCenterConnected() {
-                    openChatView(context, theme, chat_id);
+                    openChatView(context, theme, chat_id, openChatViewInterface);
                 }
                 @Override
                 public void onMessageCenterConnectionError(int code, MessageCenterException e) {
@@ -108,7 +108,7 @@ class SendBirdClient extends ClientInterface {
             });
         }
         else if (isConnected()) {
-            openChatView(context, theme, chat_id);
+            openChatView(context, theme, chat_id, openChatViewInterface);
         }
         else {
             if (openChatViewInterface != null) {
@@ -182,7 +182,10 @@ class SendBirdClient extends ClientInterface {
         }
     }
 
-    private void openChatView(Activity activity, Theme theme, String chat_id) {
+    private void openChatView(Activity activity, Theme theme, String chat_id, OpenChatViewInterface openChatViewInterface) {
+        if (openChatViewInterface != null) {
+            openChatViewInterface.onViewWillStart();
+        }
         Intent a1 = new Intent(activity, SendBirdChatActivity.class);
         if (theme != null) {
             if (theme.getToolbarTitle() != null) {
