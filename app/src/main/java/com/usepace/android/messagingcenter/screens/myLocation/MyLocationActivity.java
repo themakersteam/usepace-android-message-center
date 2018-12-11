@@ -158,7 +158,7 @@ public class MyLocationActivity extends AppCompatActivity implements OnMapReadyC
         setSupportActionBar(toolbar);
         if (getSupportActionBar() != null) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-            getSupportActionBar().setTitle(getString(R.string.share_location));
+            getSupportActionBar().setTitle(getString(R.string.message_center_send_location_title));
         }
     }
 
@@ -357,17 +357,14 @@ public class MyLocationActivity extends AppCompatActivity implements OnMapReadyC
             geocodeLocation = LocationUtils.getAddress(this, latLng);
 
             if(mCurrentLocation == null) {
-                tv_send_location.setText(getString(R.string.send_location));
+                tv_send_location.setText(getString(R.string.message_center_send_current_location));
                 return;
             }
 
-//            tv_address.setVisibility(View.VISIBLE);
-//            tv_address.setText(geocodeLocation);
-
             if(mCurrentLocation.equals(latLng)) {
-                tv_send_location.setText(getString(R.string.send_current_location));
+                tv_send_location.setText(getString(R.string.message_center_send_your_location));
             } else {
-                tv_send_location.setText(getString(R.string.send_location));
+                tv_send_location.setText(getString(R.string.message_center_send_current_location));
             }
         } catch (Exception ex) {
             ex.printStackTrace();

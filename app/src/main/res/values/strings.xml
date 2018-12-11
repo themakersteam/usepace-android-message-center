@@ -18,7 +18,7 @@
     <string name="ok">Ok</string>
     <string name="storage_access_permission_needed">Storage access permissions are required to upload/download files.</string>
     <string name="select_media">Select Media</string>
-    <string name="is_typing"> is typing</string>
+    <string name="is_typing"> is typing...</string>
     <string name="multiple_users_are_typing">Multiple users are typing</string>
     <string name="retry">Retry?</string>
     <string name="edit_message">Edit message</string>
@@ -33,8 +33,9 @@
     <!-- Global Strings -->
     <string name="message_center_toolbar_title">Message Center</string>
     <string name="message_center_channel_is_frozen">Chat is frozen !</string>
-    <string name="send_location">Send this location</string>
-    <string name="share_location">Share Location</string>
+    <string name="message_center_send_location_title">Send Location</string>
+    <string name="message_center_send_current_location">Send your current location</string>
+    <string name="message_center_send_your_location">Send this location</string>
     <string name="need_gps_permission">Need GPS permission for getting your location</string>
     <string name="send_current_location">Send current location</string>
     <string name="text_satellite">Satellite</string>
