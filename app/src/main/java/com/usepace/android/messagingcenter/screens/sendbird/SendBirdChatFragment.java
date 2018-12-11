@@ -10,6 +10,7 @@ import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Vibrator;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
@@ -315,6 +316,7 @@ public class SendBirdChatFragment extends Fragment {
                     mChatAdapter.addFirst(baseMessage);
                 }
                 else {
+                    ((Vibrator) getActivity().getSystemService(Context.VIBRATOR_SERVICE)).vibrate(150);
                     String user_name = "";
                     if (baseMessage instanceof UserMessage) {
                         user_name = ((UserMessage) baseMessage).getSender().getNickname();
