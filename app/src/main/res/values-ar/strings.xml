@@ -33,6 +33,7 @@
     <string name="message_center_send_location_title">إرسال الموقع</string>
     <string name="message_center_send_current_location">إرسال موقعي الحالي</string>
     <string name="message_center_send_your_location">إرسال هذا الموقع</string>
+    <string name="message_center_new_message_from">لديك رسالة جديدة من: </string>
     <string name="need_gps_permission">الرجاء اعطاء صلاحية GPS للاستمرار</string>
     <string name="send_current_location">ارسال الموقع الحالي</string>
     <string name="text_satellite">قمر صناعي</string>
