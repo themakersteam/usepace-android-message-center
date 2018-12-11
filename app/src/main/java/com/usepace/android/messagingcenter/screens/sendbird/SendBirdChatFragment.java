@@ -314,6 +314,17 @@ public class SendBirdChatFragment extends Fragment {
                     // Add new message to view
                     mChatAdapter.addFirst(baseMessage);
                 }
+                else {
+                    String user_name = "";
+                    if (baseMessage instanceof UserMessage) {
+                        user_name = ((UserMessage) baseMessage).getSender().getNickname();
+                    } else if (baseMessage instanceof FileMessage) {
+                        user_name = ((UserMessage) baseMessage).getSender().getNickname();
+                    }
+                    Snackbar.make(mRootLayout, getString(R.string.message_center_new_message_from) + " " + user_name,
+                            Snackbar.LENGTH_LONG)
+                            .show();
+                }
             }
 
             @Override

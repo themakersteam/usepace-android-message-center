@@ -36,6 +36,7 @@
     <string name="message_center_send_location_title">Send Location</string>
     <string name="message_center_send_current_location">Send your current location</string>
     <string name="message_center_send_your_location">Send this location</string>
+    <string name="message_center_new_message_from">New Message From: </string>
     <string name="need_gps_permission">Need GPS permission for getting your location</string>
     <string name="send_current_location">Send current location</string>
     <string name="text_satellite">Satellite</string>
