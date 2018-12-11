@@ -151,7 +151,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@color/groupChatTextMe"
-            android:text="@string/send_location"
+            android:text="@string/message_center_send_your_location"
             android:textAllCaps="true"
             android:visibility="visible"
             android:gravity="start|center_vertical"
