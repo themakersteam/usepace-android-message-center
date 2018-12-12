@@ -77,6 +77,7 @@ public class SendBirdChatFragment extends Fragment {
     private static final String STATE_CHANNEL_URL = "STATE_CHANNEL_URL";
     private static final int INTENT_REQUEST_CHOOSE_MEDIA = 301;
     private static final int PERMISSION_WRITE_EXTERNAL_STORAGE = 13;
+    private static final int PERMISSION_CAMERA = 14;
     private static final int SEND_FILE_ACTIVITY_RESULT = 101;
     private static final int OPEN_LOCATION_ACTIVITY_RESULT = 102;
 
@@ -660,7 +661,13 @@ public class SendBirdChatFragment extends Fragment {
         if (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.WRITE_EXTERNAL_STORAGE)
                 != PackageManager.PERMISSION_GRANTED) {
             requestStoragePermissions();
-        } else {
+        }
+        else if (request == SendFileActivity.REQUEST_IMAGE_CAPTURE &&
+                ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.CAMERA)
+                != PackageManager.PERMISSION_GRANTED) {
+                requestCameraPermissions();
+        }
+        else {
             openSendFileScreen(request);
         }
     }
@@ -685,6 +692,26 @@ public class SendBirdChatFragment extends Fragment {
             // Permission has not been granted yet. Request it directly.
             requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
                     PERMISSION_WRITE_EXTERNAL_STORAGE);
+        }
+    }
+
+
+    private void requestCameraPermissions() {
+        if (ActivityCompat.shouldShowRequestPermissionRationale(getActivity(), Manifest.permission.CAMERA)) {
+            Snackbar.make(mRootLayout, getString(R.string.camera_access_permission_needed),
+                    Snackbar.LENGTH_LONG)
+                    .setAction(getString(R.string.ok), new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            requestPermissions(new String[]{Manifest.permission.CAMERA},
+                                    PERMISSION_CAMERA);
+                        }
+                    })
+                    .show();
+        } else {
+            // Permission has not been granted yet. Request it directly.
+            requestPermissions(new String[]{Manifest.permission.CAMERA},
+                    PERMISSION_CAMERA);
         }
     }
 
