@@ -12,6 +12,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import com.bumptech.glide.Glide;
 import com.dinuscxj.progressbar.CircleProgressBar;
 import com.sendbird.android.AdminMessage;
 import com.sendbird.android.BaseChannel;
@@ -780,9 +782,10 @@ class SendBirdChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
             }
             else if (message.getMessage().startsWith("location://")){
                 try {
-                    String locationUrl = getLocationUrl(context, message.getMessage());
+                    //String locationUrl = getLocationUrl(context, message.getMessage()); //todo : enable when location is static map
+                    //ImageUtils.displayImageFromUrl(context, locationUrl, urlPreviewMainImageView, null); //todo : enable when location is static map
                     urlPreviewContainer.setVisibility(View.VISIBLE);
-                    ImageUtils.displayImageFromUrl(context, locationUrl, urlPreviewMainImageView, null);
+                    Glide.with(context).load(R.drawable.map_place_holder).into(urlPreviewMainImageView);
                 } catch (Exception ex) {
                     ex.printStackTrace();
                 }
@@ -859,9 +862,10 @@ class SendBirdChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
             else if (message.getMessage().startsWith("location://")){
 
                 try {
-                    String locationUrl = getLocationUrl(context, message.getMessage());
+                    //String locationUrl = getLocationUrl(context, message.getMessage()); //todo : enable when location is static map
+                    //ImageUtils.displayImageFromUrl(context, locationUrl, urlPreviewMainImageView, null); //todo : enable when location is static map
                     urlPreviewContainer.setVisibility(View.VISIBLE);
-                    ImageUtils.displayImageFromUrl(context, locationUrl, urlPreviewMainImageView, null);
+                    Glide.with(context).load(R.drawable.map_place_holder).into(urlPreviewMainImageView);
                 } catch (Exception ex) {
                     ex.printStackTrace();
                 }
