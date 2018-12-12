@@ -703,14 +703,14 @@ public class SendBirdChatFragment extends Fragment {
                     .setAction(getString(R.string.ok), new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
-                            requestPermissions(new String[]{Manifest.permission.CAMERA},
+                            requestPermissions(new String[]{Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE},
                                     PERMISSION_CAMERA);
                         }
                     })
                     .show();
         } else {
             // Permission has not been granted yet. Request it directly.
-            requestPermissions(new String[]{Manifest.permission.CAMERA},
+            requestPermissions(new String[]{Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE},
                     PERMISSION_CAMERA);
         }
     }
