@@ -12,6 +12,7 @@ import android.widget.TextView;
 import com.sendbird.android.SendBird;
 import com.usepace.android.messagingcenter.R;
 import com.usepace.android.messagingcenter.clients.connection_client.MessageCenter;
+import com.usepace.android.messagingcenter.instances.SendBirdInstances;
 import com.usepace.android.messagingcenter.utils.PreferenceUtils;
 
 
@@ -86,6 +87,7 @@ public class SendBirdChatActivity extends AppCompatActivity{
 
     @Override
     public void onBackPressed() {
+        SendBirdInstances.instance().chatViewClosed();
         setResult(MessageCenter.OPEN_CHAT_VIEW_RESPONSE_CODE);
         if (mOnBackPressedListener != null && mOnBackPressedListener.onBack()) {
             return;
@@ -96,6 +98,7 @@ public class SendBirdChatActivity extends AppCompatActivity{
     @Override
     public void finish() {
         super.finish();
+        SendBirdInstances.instance().chatViewClosed();
         setResult(MessageCenter.OPEN_CHAT_VIEW_RESPONSE_CODE);
     }
 
@@ -103,6 +106,7 @@ public class SendBirdChatActivity extends AppCompatActivity{
     protected void onDestroy() {
         setResult(MessageCenter.OPEN_CHAT_VIEW_RESPONSE_CODE);
         super.onDestroy();
+        SendBirdInstances.instance().chatViewClosed();
         SendBird.disconnect(new SendBird.DisconnectHandler() {
             @Override
             public void onDisconnected() {
