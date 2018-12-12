@@ -658,7 +658,7 @@ public class SendBirdChatFragment extends Fragment {
     }
 
     private void requestMedia(int request) {
-        if (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.WRITE_EXTERNAL_STORAGE)
+        if (request == SendFileActivity.REQUEST_GALLERY_CAPTURE && ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.WRITE_EXTERNAL_STORAGE)
                 != PackageManager.PERMISSION_GRANTED) {
             requestStoragePermissions();
         }
