@@ -256,9 +256,6 @@ public class SendBirdChatFragment extends Fragment {
                         e.printStackTrace();
                         return;
                     }
-                    if (groupChannel.isFrozen()) {
-                        freeze();
-                    }
                     mChannel = groupChannel;
                     mChannel.setPushPreference(true, null);
                     mChatAdapter.setChannel(mChannel);
@@ -268,6 +265,9 @@ public class SendBirdChatFragment extends Fragment {
                             mChatAdapter.markAllMessagesAsRead();
                         }
                     });
+                    if (mChannel.isFrozen()) {
+                        freeze();
+                    }
                 }
             });
         } else {
@@ -279,13 +279,15 @@ public class SendBirdChatFragment extends Fragment {
                         e.printStackTrace();
                         return;
                     }
-
                     mChatAdapter.loadLatestMessages(CHANNEL_LIST_LIMIT, new BaseChannel.GetMessagesHandler() {
                         @Override
                         public void onResult(List<BaseMessage> list, SendBirdException e) {
                             mChatAdapter.markAllMessagesAsRead();
                         }
                     });
+                    if (mChannel.isFrozen()) {
+                        freeze();
+                    }
                 }
             });
         }
@@ -868,22 +870,25 @@ public class SendBirdChatFragment extends Fragment {
             BaseChannel.SendFileMessageWithProgressHandler progressHandler = new BaseChannel.SendFileMessageWithProgressHandler() {
                 @Override
                 public void onProgress(int bytesSent, int totalBytesSent, int totalBytesToSend) {
-                    FileMessage fileMessage = mFileProgressHandlerMap.get(this);
-                    if (fileMessage != null && totalBytesToSend > 0) {
-                        int percent = (totalBytesSent * 100) / totalBytesToSend;
-                        mChatAdapter.setFileProgressPercent(fileMessage, percent);
+                    if (getActivity() != null && isVisible()) {
+                        FileMessage fileMessage = mFileProgressHandlerMap.get(this);
+                        if (fileMessage != null && totalBytesToSend > 0) {
+                            int percent = (totalBytesSent * 100) / totalBytesToSend;
+                            mChatAdapter.setFileProgressPercent(fileMessage, percent);
+                        }
                     }
                 }
 
                 @Override
                 public void onSent(FileMessage fileMessage, SendBirdException e) {
-                    if (e != null) {
-                        Toast.makeText(getActivity(), "" + e.getCode() + ":" + e.getMessage(), Toast.LENGTH_SHORT).show();
-                        mChatAdapter.markMessageFailed(fileMessage.getRequestId());
-                        return;
+                    if (getActivity() != null && isVisible()) {
+                        if (e != null) {
+                            Toast.makeText(getActivity(), "" + e.getCode() + ":" + e.getMessage(), Toast.LENGTH_SHORT).show();
+                            mChatAdapter.markMessageFailed(fileMessage.getRequestId());
+                            return;
+                        }
+                        mChatAdapter.markMessageSent(new SendBirdMessage(fileMessage));
                     }
-
-                    mChatAdapter.markMessageSent(new SendBirdMessage(fileMessage));
                 }
             };
 
