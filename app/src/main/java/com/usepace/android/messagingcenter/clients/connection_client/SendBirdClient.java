@@ -133,7 +133,6 @@ class SendBirdClient extends ClientInterface {
 
     @Override
     public void disconnect(final DisconnectInterface disconnectInterface) {
-        lastConnecitonRequest = null;
         try {
             SendBird.unregisterPushTokenAllForCurrentUser(new SendBird.UnregisterPushTokenHandler() {
                 @Override
