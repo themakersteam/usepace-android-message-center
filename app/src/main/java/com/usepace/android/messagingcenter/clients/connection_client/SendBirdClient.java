@@ -4,12 +4,10 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import com.google.firebase.messaging.RemoteMessage;
-import com.sendbird.android.GroupChannel;
 import com.sendbird.android.SendBird;
 import com.sendbird.android.SendBirdException;
 import com.sendbird.android.User;
 import com.usepace.android.messagingcenter.exceptions.MessageCenterException;
-import com.usepace.android.messagingcenter.instances.SendBirdInstances;
 import com.usepace.android.messagingcenter.interfaces.AppHandleNotificationInterface;
 import com.usepace.android.messagingcenter.interfaces.CloseChatViewInterface;
 import com.usepace.android.messagingcenter.interfaces.ConnectionInterface;
@@ -19,6 +17,8 @@ import com.usepace.android.messagingcenter.interfaces.SdkHandleNotificationInter
 import com.usepace.android.messagingcenter.interfaces.UnReadMessagesInterface;
 import com.usepace.android.messagingcenter.model.ConnectionRequest;
 import com.usepace.android.messagingcenter.model.Theme;
+import com.usepace.android.messagingcenter.network.sendbird.SendBirdPlatformApi;
+import com.usepace.android.messagingcenter.network.sendbird.SendBirdPlatformApiCallbackInterface;
 import com.usepace.android.messagingcenter.screens.sendbird.SendBirdChatActivity;
 import com.usepace.android.messagingcenter.utils.NotificationUtil;
 import org.json.JSONObject;
@@ -35,14 +35,17 @@ class SendBirdClient extends ClientInterface {
         SendBird.init(connectionRequest.getAppId(), context);
         SendBird.connect(connectionRequest.getUserId() != null ? connectionRequest.getUserId() : "", connectionRequest.getAccessToken(), new SendBird.ConnectHandler() {
             @Override
-            public void onConnected(User user, SendBirdException e) {
-                if (connectionInterface != null) {
-                    if (e != null) {
-                        connectionInterface.onMessageCenterConnectionError(e.getCode(), new MessageCenterException(e.getMessage()));
-                    } else {
-                        if (connectionRequest.getFcmToken() == null) return;
-                        SendBird.registerPushTokenForCurrentUser(connectionRequest.getFcmToken(),
-                                new SendBird.RegisterPushTokenWithStatusHandler() {
+            public void onConnected(User user,final SendBirdException e) {
+                SendBirdPlatformApi.Instance().login(connectionRequest, new SendBirdPlatformApiCallbackInterface<String>() {
+                    @Override
+                    public void onSuccess(String result) {
+                        if (connectionInterface != null) {
+                            if (e != null) {
+                                connectionInterface.onMessageCenterConnectionError(e.getCode(), new MessageCenterException(e.getMessage()));
+                            } else {
+                                if (connectionRequest.getFcmToken() == null) return;
+                                SendBird.registerPushTokenForCurrentUser(connectionRequest.getFcmToken(),
+                                        new SendBird.RegisterPushTokenWithStatusHandler() {
                                     @Override
                                     public void onRegistered(SendBird.PushTokenRegistrationStatus status, SendBirdException e) {
                                         if (e != null) {    // Error.
@@ -53,8 +56,16 @@ class SendBirdClient extends ClientInterface {
                                         }
                                     }
                                 });
+                            }
+                        }
                     }
-                }
+                    @Override
+                    public void onError(String error) {
+                        if (connectionInterface != null) {
+                            connectionInterface.onMessageCenterConnectionError(102, new MessageCenterException(error));
+                        }
+                    }
+                });
             }
         });
     }
@@ -71,30 +82,21 @@ class SendBirdClient extends ClientInterface {
     public void getUnReadMessagesCount(Context context, final String chat_id, final UnReadMessagesInterface unReadMessagesInterface) {
         if (unReadMessagesInterface == null)
             return;
-        if (!isConnected() && lastConnecitonRequest != null) {
-            connect(context, lastConnecitonRequest, new ConnectionInterface() {
-                @Override
-                public void onMessageCenterConnected() {
-                    getUnReadMessagesCount(chat_id, unReadMessagesInterface);
-                }
+        SendBirdPlatformApi.Instance().getTotalUnReadMessageCount(lastConnecitonRequest, chat_id, new SendBirdPlatformApiCallbackInterface<Integer>() {
+            @Override
+            public void onSuccess(Integer result) {
+                unReadMessagesInterface.onUnreadMessages(result);
+            }
 
-                @Override
-                public void onMessageCenterConnectionError(int code, MessageCenterException e) {
-                    unReadMessagesInterface.onErrorRetrievingMessages(e);
-                }
-            });
-        }
-        else if (isConnected()) {
-            getUnReadMessagesCount(chat_id, unReadMessagesInterface);
-        }
-        else {
-            unReadMessagesInterface.onErrorRetrievingMessages(new MessageCenterException("You have to be connected to be able to join Chat view !", 302));
-        }
+            @Override
+            public void onError(String error) {
+                unReadMessagesInterface.onErrorRetrievingMessages(new MessageCenterException(error));
+            }
+        });
     }
 
     @Override
     public void openChatView(final Activity context, final String chat_id, final Theme theme, final OpenChatViewInterface openChatViewInterface) {
-        SendBirdInstances.instance().chatViewOpened();
         if (!isConnected() && lastConnecitonRequest != null) {
             connect(context, lastConnecitonRequest, new ConnectionInterface() {
                 @Override
@@ -106,7 +108,6 @@ class SendBirdClient extends ClientInterface {
                     if (openChatViewInterface != null) {
                         openChatViewInterface.onError(e);
                     }
-                    SendBirdInstances.instance().chatViewClosed();
                 }
             });
         }
@@ -114,7 +115,6 @@ class SendBirdClient extends ClientInterface {
             openChatView(context, theme, chat_id, openChatViewInterface);
         }
         else {
-            SendBirdInstances.instance().chatViewClosed();
             if (openChatViewInterface != null) {
                 openChatViewInterface.onError(new MessageCenterException("You have to be connected to be able to join Chat view !", 302));
             }
@@ -123,7 +123,6 @@ class SendBirdClient extends ClientInterface {
 
     @Override
     public void closeChatView(Context context, CloseChatViewInterface closeChatViewInterface) {
-        SendBirdInstances.instance().chatViewClosed();
         Intent i = new Intent(context, SendBirdChatActivity.class);
         i.putExtra("close",true);
         context.startActivity(i);
@@ -222,47 +221,6 @@ class SendBirdClient extends ClientInterface {
             if (disconnectInterface != null) {
                 disconnectInterface.onMessageCenterDisconnected();
             }
-        }
-    }
-
-    private void getUnReadMessagesCount(String chat_id,final UnReadMessagesInterface unReadMessagesInterface) {
-        if (chat_id == null) {
-            SendBird.getTotalUnreadMessageCount(new GroupChannel.GroupChannelTotalUnreadMessageCountHandler() {
-                @Override
-                public void onResult(int i, SendBirdException e) {
-                    if (e != null) {
-                        unReadMessagesInterface.onErrorRetrievingMessages(new MessageCenterException(e.getMessage()));
-                    }
-                    else {
-                        unReadMessagesInterface.onUnreadMessages(i);
-                    }
-                    if (!SendBirdInstances.instance().isChatViewOpened()) {
-                        SendBird.disconnect(new SendBird.DisconnectHandler() {
-                            public void onDisconnected() {
-                            }
-                        });
-                    }
-                }
-            });
-        }
-        else {
-            GroupChannel.getChannel(chat_id, new GroupChannel.GroupChannelGetHandler() {
-                @Override
-                public void onResult(GroupChannel groupChannel, SendBirdException e) {
-                    if (e != null) {
-                        unReadMessagesInterface.onErrorRetrievingMessages(new MessageCenterException(e.getMessage()));
-                    }
-                    else {
-                        unReadMessagesInterface.onUnreadMessages(groupChannel.getUnreadMessageCount());
-                    }
-                    if (!SendBirdInstances.instance().isChatViewOpened()) {
-                        SendBird.disconnect(new SendBird.DisconnectHandler() {
-                            public void onDisconnected() {
-                            }
-                        });
-                    }
-                }
-            });
         }
     }
 
