@@ -53,13 +53,6 @@ class SendBirdClient extends ClientInterface {
                                             connectionInterface.onMessageCenterConnectionError(e.getCode(), new MessageCenterException(e.getMessage()));
                                         }
                                         else {
-                                            //Disconnecting for receiving push notifications
-                                            SendBird.disconnect(new SendBird.DisconnectHandler() {
-                                                @Override
-                                                public void onDisconnected() {
-
-                                                }
-                                            });
                                             connectionInterface.onMessageCenterConnected();
                                         }
                                     }
