@@ -24,5 +24,5 @@ abstract class ClientInterface {
     abstract public void closeChatView(Context context, CloseChatViewInterface closeChatViewInterface);
     abstract public void sdkHandleNotification(Context context, Class next, int icon, String title, RemoteMessage remoteMessage, List<String> messages, SdkHandleNotificationInterface sdkHandleNotificationInterface);
     abstract public void appHandleNotification(RemoteMessage remoteMessage, AppHandleNotificationInterface appHandleNotificationInterface);
-    abstract public void disconnect(DisconnectInterface disconnectInterface);
+    abstract public void disconnect(Context context, DisconnectInterface disconnectInterface);
 }

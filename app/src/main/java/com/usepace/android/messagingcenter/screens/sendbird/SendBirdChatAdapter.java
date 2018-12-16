@@ -97,7 +97,7 @@ class SendBirdChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         mContext = context;
     }
 
-    public void load(String channelUrl) {
+    public boolean load(String channelUrl) {
         try {
             File appDir = new File(mContext.getCacheDir(), SendBird.getApplicationId());
             appDir.mkdirs();
@@ -108,7 +108,6 @@ class SendBirdChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
             String [] dataArray = content.split("\n");
 
             mChannel = (GroupChannel) GroupChannel.buildFromSerializedData(Base64.decode(dataArray[0], Base64.DEFAULT | Base64.NO_WRAP));
-
             // Reset message list, then add cached messages.
             mMessageList.clear();
             for(int i = 1; i < dataArray.length; i++) {
@@ -119,9 +118,11 @@ class SendBirdChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
             }
 
             notifyDataSetChanged();
+            return !mChannel.isFrozen();
         } catch(Exception e) {
             // Nothing to load.
         }
+        return true;
     }
 
     public void save() {

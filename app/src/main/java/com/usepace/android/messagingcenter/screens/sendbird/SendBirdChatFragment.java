@@ -135,7 +135,10 @@ public class SendBirdChatFragment extends Fragment {
         setUpChatListAdapter();
 
         // Load messages from cache.
-        mChatAdapter.load(mChannelUrl);
+        boolean isChannelValid = mChatAdapter.load(mChannelUrl);
+        if (!isChannelValid) {
+            freeze();
+        }
     }
 
     @Nullable
@@ -254,6 +257,9 @@ public class SendBirdChatFragment extends Fragment {
                     if (e != null) {
                         // Error!
                         e.printStackTrace();
+                        if (e.getCode() == channel_frozen_key) {
+                            freeze();
+                        }
                         return;
                     }
                     mChannel = groupChannel;
@@ -277,6 +283,9 @@ public class SendBirdChatFragment extends Fragment {
                     if (e != null) {
                         // Error!
                         e.printStackTrace();
+                        if (e.getCode() == channel_frozen_key) {
+                            freeze();
+                        }
                         return;
                     }
                     mChatAdapter.loadLatestMessages(CHANNEL_LIST_LIMIT, new BaseChannel.GetMessagesHandler() {

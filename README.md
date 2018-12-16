@@ -199,7 +199,7 @@
  
  * Sample code for disconnecting
     ```bash
-    MessageCenter.disconnect(new DisconnectInterface() {
+    MessageCenter.disconnect(Context context, new DisconnectInterface() {
                 @Override
                 public void onMessageCenterDisconnected() {
                     

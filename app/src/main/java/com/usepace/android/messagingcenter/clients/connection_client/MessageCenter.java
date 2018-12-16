@@ -102,9 +102,9 @@ public class MessageCenter {
      *
      * @param disconnectInterface
      */
-    public static void disconnect(DisconnectInterface disconnectInterface) {
+    public static void disconnect(Context context, DisconnectInterface disconnectInterface) {
         try {
-            client().getClient(LAST_CLIENT).disconnect(disconnectInterface);
+            client().getClient(LAST_CLIENT).disconnect(context, disconnectInterface);
         }
         catch (MessageCenterException e) {
         }
