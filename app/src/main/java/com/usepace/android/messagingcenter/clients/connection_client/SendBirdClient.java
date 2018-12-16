@@ -1,6 +1,7 @@
 package com.usepace.android.messagingcenter.clients.connection_client;
 
 import android.app.Activity;
+import android.app.NotificationManager;
 import android.content.Context;
 import android.content.Intent;
 import com.google.firebase.messaging.RemoteMessage;
@@ -132,8 +133,10 @@ class SendBirdClient extends ClientInterface {
     }
 
     @Override
-    public void disconnect(final DisconnectInterface disconnectInterface) {
+    public void disconnect(Context context, final DisconnectInterface disconnectInterface) {
         lastConnecitonRequest = null;
+        NotificationManager notificationManager = (NotificationManager)context.getSystemService(Context.NOTIFICATION_SERVICE);
+        notificationManager.cancelAll();
         try {
             SendBird.unregisterPushTokenAllForCurrentUser(new SendBird.UnregisterPushTokenHandler() {
                 @Override
