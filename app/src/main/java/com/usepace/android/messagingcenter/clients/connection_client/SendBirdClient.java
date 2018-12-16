@@ -53,6 +53,7 @@ class SendBirdClient extends ClientInterface {
                                             connectionInterface.onMessageCenterConnectionError(e.getCode(), new MessageCenterException(e.getMessage()));
                                         }
                                         else {
+                                            SendBird.disconnect(null);
                                             connectionInterface.onMessageCenterConnected();
                                         }
                                     }
@@ -99,16 +100,10 @@ class SendBirdClient extends ClientInterface {
     @Override
     public void openChatView(final Activity context, final String chat_id, final Theme theme, final OpenChatViewInterface openChatViewInterface) {
         if (!isConnected() && lastConnecitonRequest != null) {
-            connect(context, lastConnecitonRequest, new ConnectionInterface() {
+            SendBird.connect(lastConnecitonRequest.getUserId() != null ? lastConnecitonRequest.getUserId() : "", lastConnecitonRequest.getAccessToken(), new SendBird.ConnectHandler() {
                 @Override
-                public void onMessageCenterConnected() {
+                public void onConnected(User user, SendBirdException e) {
                     openChatView(context, theme, chat_id, openChatViewInterface);
-                }
-                @Override
-                public void onMessageCenterConnectionError(int code, MessageCenterException e) {
-                    if (openChatViewInterface != null) {
-                        openChatViewInterface.onError(e);
-                    }
                 }
             });
         }
