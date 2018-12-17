@@ -171,8 +171,8 @@ public class SendBirdChatFragment extends Fragment {
 
             @Override
             public void afterTextChanged(Editable s) {
-                mMessageSendButton.setVisibility(s.length() > 0 ? View.VISIBLE : View.GONE);
-                mMessageCameraButton.setVisibility(s.length() > 0 ? View.GONE : View.VISIBLE);
+                mMessageSendButton.setVisibility(s.toString().replaceAll(" ", "").replaceAll("\n", "").length() > 0 ? View.VISIBLE : View.GONE);
+                mMessageCameraButton.setVisibility(s.toString().replaceAll(" ", "").replaceAll("\n", "").length() > 0 ? View.GONE : View.VISIBLE);
             }
         });
 
