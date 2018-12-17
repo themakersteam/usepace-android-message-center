@@ -241,8 +241,10 @@ public class SendBirdChatFragment extends Fragment {
     }
 
     private void freeze() {
-        mMessageEditText.setText(getString(R.string.message_center_channel_is_frozen));
-        ViewUtils.disable(mUploadFileButton, mMessageEditText, mMessageCameraButton, mMessageSendButton);
+        if (mMessageEditText != null && mUploadFileButton != null && mMessageCameraButton != null && mMessageSendButton != null) {
+            mMessageEditText.setText(getString(R.string.message_center_channel_is_frozen));
+            ViewUtils.disable(mUploadFileButton, mMessageEditText, mMessageCameraButton, mMessageSendButton);
+        }
     }
 
     private void openSendFileScreen(int action) {
