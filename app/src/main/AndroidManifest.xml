@@ -19,7 +19,7 @@
         android:supportsRtl="true">
 
         <!-- todo: Uncomment for testing -->
-        <activity
+        <!-- <activity
             android:name=".screens.test.TestActivity"
             android:configChanges="orientation|screenSize|keyboardHidden|screenLayout"
             android:launchMode="singleTask"
@@ -32,7 +32,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
 
-        </activity>
+        </activity> -->
 
         <activity android:name="com.usepace.android.messagingcenter.screens.sendbird.SendBirdChatActivity"
             android:configChanges="screenSize|keyboardHidden|screenLayout"
