@@ -53,7 +53,6 @@ import com.usepace.android.messagingcenter.utils.ConnectionManager;
 import com.usepace.android.messagingcenter.utils.FileUtils;
 import com.usepace.android.messagingcenter.utils.TextUtils;
 import com.usepace.android.messagingcenter.utils.UrlPreviewInfo;
-import com.usepace.android.messagingcenter.utils.ViewUtils;
 import com.usepace.android.messagingcenter.utils.WebUtils;
 import org.json.JSONException;
 import java.io.File;
@@ -241,9 +240,8 @@ public class SendBirdChatFragment extends Fragment {
     }
 
     private void freeze() {
-        if (mMessageEditText != null && mUploadFileButton != null && mMessageCameraButton != null && mMessageSendButton != null) {
-            mMessageEditText.setText(getString(R.string.message_center_channel_is_frozen));
-            ViewUtils.disable(mUploadFileButton, mMessageEditText, mMessageCameraButton, mMessageSendButton);
+        if (groupChatBox != null) {
+            groupChatBox.setVisibility(View.GONE);
         }
     }
 
