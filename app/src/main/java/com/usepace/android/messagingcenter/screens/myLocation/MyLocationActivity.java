@@ -9,55 +9,38 @@ import android.graphics.Color;
 import android.location.Location;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
-import android.widget.Button;
-import android.widget.CompoundButton;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.RelativeLayout;
-import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
-import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.common.api.PendingResult;
 import com.google.android.gms.common.api.ResolvableApiException;
-import com.google.android.gms.common.api.ResultCallback;
-import com.google.android.gms.common.api.Status;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.location.LocationSettingsRequest;
 import com.google.android.gms.location.LocationSettingsResponse;
-import com.google.android.gms.location.LocationSettingsResult;
-import com.google.android.gms.location.LocationSettingsStatusCodes;
 import com.google.android.gms.location.SettingsClient;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
-import com.google.android.gms.maps.UiSettings;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.usepace.android.messagingcenter.R;
 import com.usepace.android.messagingcenter.utils.LocationUtils;
-import com.usepace.android.messagingcenter.utils.PermissionUtils;
 import com.usepace.android.messagingcenter.utils.ViewUtils;
-
-import java.util.ArrayList;
 
 public class MyLocationActivity extends AppCompatActivity implements OnMapReadyCallback {
 
@@ -86,7 +69,7 @@ public class MyLocationActivity extends AppCompatActivity implements OnMapReadyC
     private double latitude;
     private double longitude;
 
-    private LatLng mCurrentLocation;
+    private Location mCurrentLocation;
 
     @Override
     public void onCreate(Bundle icicle) {
@@ -204,7 +187,6 @@ public class MyLocationActivity extends AppCompatActivity implements OnMapReadyC
     @Override
     public void onMapReady(final GoogleMap googleMap) {
         this.mGoogleMap = googleMap;
-
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
                 && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this,
@@ -244,8 +226,12 @@ public class MyLocationActivity extends AppCompatActivity implements OnMapReadyC
                             @Override
                             public void onCameraIdle() {
                                 LatLng position = mGoogleMap.getCameraPosition().target;
-
-                                showGeoLocation(position);
+                                Location location = new Location("");
+                                if (position != null) {
+                                    location.setLatitude(position.latitude);
+                                    location.setLongitude(position.longitude);
+                                    showGeoLocation(location);
+                                }
                             }
                         });
                         mGoogleMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
@@ -290,6 +276,7 @@ public class MyLocationActivity extends AppCompatActivity implements OnMapReadyC
 
             }
             else {
+                mGoogleMap.setMyLocationEnabled(true);
                 mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
                 mFusedLocationClient.getLastLocation()
                         .addOnSuccessListener(MyLocationActivity.this, new OnSuccessListener<Location>() {
@@ -299,8 +286,7 @@ public class MyLocationActivity extends AppCompatActivity implements OnMapReadyC
                                 if (location != null) {
                                     latitude = location.getLatitude();
                                     longitude = location.getLongitude();
-
-                                    mCurrentLocation = new LatLng(latitude, longitude);
+                                    mCurrentLocation = location;
                                     showGeoLocation(mCurrentLocation);
                                     LocationUtils.setCameraToReceivedLocation(mGoogleMap, latitude, longitude);
                                 }
@@ -350,8 +336,9 @@ public class MyLocationActivity extends AppCompatActivity implements OnMapReadyC
         }
     }
 
-    private void showGeoLocation(LatLng latLng) {
+    private void showGeoLocation(Location location) {
         try {
+            LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
             latitude = latLng.latitude;
             longitude = latLng.longitude;
             geocodeLocation = LocationUtils.getAddress(this, latLng);
@@ -361,10 +348,10 @@ public class MyLocationActivity extends AppCompatActivity implements OnMapReadyC
                 return;
             }
 
-            if(mCurrentLocation.equals(latLng)) {
-                tv_send_location.setText(getString(R.string.message_center_send_your_location));
-            } else {
+            if(mCurrentLocation.distanceTo(location) <= 15) {
                 tv_send_location.setText(getString(R.string.message_center_send_current_location));
+            } else {
+                tv_send_location.setText(getString(R.string.message_center_send_your_location));
             }
         } catch (Exception ex) {
             ex.printStackTrace();
@@ -394,20 +381,4 @@ public class MyLocationActivity extends AppCompatActivity implements OnMapReadyC
     public void onBackPressed() {
         moveBack();
     }
-
-//    @Override
-//    public void onConnected(@Nullable Bundle bundle) {
-//        getLocation();
-//    }
-//
-//    @Override
-//    public void onConnectionSuspended(int i) {
-////        mGoogleApiClient.connect();
-//    }
-//
-//    @Override
-//    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
-//        Log.i(TAG, "Connection failed: ConnectionResult.getErrorCode() = "
-//                + connectionResult.getErrorCode());
-//    }
 }
