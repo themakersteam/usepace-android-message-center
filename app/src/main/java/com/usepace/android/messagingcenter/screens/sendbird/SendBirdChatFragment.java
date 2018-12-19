@@ -814,7 +814,7 @@ public class SendBirdChatFragment extends Fragment {
                     // Error!
                     Log.e(LOG_TAG, e.toString());
                     if (e.getCode() == channel_frozen_key) {
-                        freeze();
+                        getActivity().finish();
                     }
                     mChatAdapter.markMessageFailed(userMessage.getRequestId());
                     return;
