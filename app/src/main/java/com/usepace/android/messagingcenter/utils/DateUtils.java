@@ -19,7 +19,7 @@ public class DateUtils {
      * Gets timestamp in millis and converts it to HH:mm (e.g. 16:44).
      */
     public static String formatTime(long timeInMillis) {
-        SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm", Locale.getDefault());
+        SimpleDateFormat dateFormat = new SimpleDateFormat("hh:mm a", Locale.getDefault());
         return dateFormat.format(timeInMillis);
     }
 
