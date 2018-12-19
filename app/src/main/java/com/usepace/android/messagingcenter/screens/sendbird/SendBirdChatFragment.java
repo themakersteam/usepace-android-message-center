@@ -210,7 +210,6 @@ public class SendBirdChatFragment extends Fragment {
             }
         });
 
-        mIsTyping = false;
         mMessageEditText.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -219,12 +218,11 @@ public class SendBirdChatFragment extends Fragment {
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                if (!mIsTyping) {
-                    setTypingStatus(true);
-                }
-
                 if (s.length() == 0) {
                     setTypingStatus(false);
+                }
+                else {
+                    setTypingStatus(true);
                 }
             }
 
@@ -840,10 +838,8 @@ public class SendBirdChatFragment extends Fragment {
         }
 
         if (typing) {
-            mIsTyping = true;
             mChannel.startTyping();
         } else {
-            mIsTyping = false;
             mChannel.endTyping();
         }
     }
