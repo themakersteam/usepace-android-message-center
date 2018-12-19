@@ -956,4 +956,15 @@ public class SendBirdChatFragment extends Fragment {
             }
         });
     }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (grantResults.length > 0 && grantResults[0] != PackageManager.PERMISSION_GRANTED && requestCode == PERMISSION_WRITE_EXTERNAL_STORAGE) {
+            Snackbar.make(mRootLayout, getString(R.string.storage_access_permission_needed), Snackbar.LENGTH_LONG).show();
+        }
+        else if (grantResults.length > 0 && grantResults[0] != PackageManager.PERMISSION_GRANTED && requestCode == PERMISSION_CAMERA) {
+            Snackbar.make(mRootLayout, getString(R.string.camera_access_permission_needed), Snackbar.LENGTH_LONG).show();
+        }
+    }
 }
