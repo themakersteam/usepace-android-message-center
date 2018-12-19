@@ -23,6 +23,8 @@ import com.usepace.android.messagingcenter.network.sendbird.SendBirdPlatformApiC
 import com.usepace.android.messagingcenter.screens.sendbird.SendBirdChatActivity;
 import com.usepace.android.messagingcenter.utils.NotificationUtil;
 import org.json.JSONObject;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 class SendBirdClient extends ClientInterface {
@@ -146,19 +148,27 @@ class SendBirdClient extends ClientInterface {
     }
 
     @Override
-    public void sdkHandleNotification(Context context, Class next, int icon, String title, RemoteMessage remoteMessage, List<String> messages, SdkHandleNotificationInterface sdkHandleNotificationInterface) {
+    public void sdkHandleNotification(Context context, Class next, int icon, String title, RemoteMessage remoteMessage, HashMap<String, List<String>> messages, SdkHandleNotificationInterface sdkHandleNotificationInterface) {
         if (remoteMessage.getData().containsKey("sendbird")) {
             try {
                 JSONObject jsonObject = new JSONObject(remoteMessage.getData().get("sendbird"));
-                String message = remoteMessage.getData().get("message");
-                messages.add(message);
+                String message = jsonObject.getString("message");
+                String name = jsonObject.getJSONObject("sender").getString("name");
+                String channel = jsonObject.getJSONObject("channel").getString("channel_url");
+                if (messages.containsKey(channel)) {
+                    messages.get(channel).add(message);
+                }
+                else {
+                    messages.put(channel, new ArrayList<String>());
+                    messages.get(channel).add(message);
+                }
                 Intent pendingIntent = new Intent(context, next);
-                pendingIntent.putExtra("CHANNEL_URL", jsonObject.getJSONObject("channel").getString("channel_url"));
+                pendingIntent.putExtra("CHANNEL_URL", channel);
                 pendingIntent.putExtra("FROM_NOTIFICATION", true);
                 if (sdkHandleNotificationInterface != null) {
-                    sdkHandleNotificationInterface.onMatched(jsonObject.getJSONObject("channel").getString("channel_url"));
+                    sdkHandleNotificationInterface.onMatched(channel, name);
                 }
-                new NotificationUtil().generateOne(context, pendingIntent, icon, title, message, messages);
+                new NotificationUtil().generateOne(context,indexOfHashKey(messages, channel),  pendingIntent, icon, title, message, messages.get(channel));
             }
             catch (Exception e){
             }
@@ -220,6 +230,23 @@ class SendBirdClient extends ClientInterface {
                 disconnectInterface.onMessageCenterDisconnected();
             }
         }
+    }
+
+    /**
+     *
+     * @param messages
+     * @param channel
+     * @return
+     */
+    private int indexOfHashKey(HashMap<String, List<String>> messages, String channel) {
+        int index = 0;
+        for (String key : messages.keySet()) {
+            index++;
+            if (key.equals(channel)) {
+                return index;
+            }
+        }
+        return index;
     }
 
     /**

@@ -27,7 +27,6 @@ public class SendBirdChatActivity extends AppCompatActivity{
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_group_channel);
-        MessageCenter.clearNotificationInboxMessages();
         init();
     }
 
@@ -38,6 +37,7 @@ public class SendBirdChatActivity extends AppCompatActivity{
         String channelUrl = getIntent().getStringExtra("CHANNEL_URL");
 
         if(channelUrl != null) {
+            MessageCenter.clearNotificationInboxMessages(channelUrl);
             Fragment fragment = SendBirdChatFragment.newInstance(channelUrl);
             Bundle bundle = new Bundle();
             bundle.putString("CHANNEL_URL", channelUrl);
