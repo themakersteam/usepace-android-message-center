@@ -28,7 +28,7 @@ public class NotificationUtil {
      * @param message
      * @param messages
      */
-    public void generateOne(Context context, Intent intent, int icon, String title, String message, List<String> messages) {
+    public void generateOne(Context context,int index,  Intent intent, int icon, String title, String message, List<String> messages) {
         registerChannel(context);
         intent.addFlags(Intent.FLAG_ACTIVITY_BROUGHT_TO_FRONT);
         PendingIntent pendingIntent = PendingIntent.getActivity(context, 0 /* Request code */, intent, PendingIntent.FLAG_UPDATE_CURRENT);
@@ -51,7 +51,7 @@ public class NotificationUtil {
                 .build();
 
         NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);
-        notificationManager.notify(notification_id, notification);
+        notificationManager.notify(notification_id + index, notification);
     }
 
     /**

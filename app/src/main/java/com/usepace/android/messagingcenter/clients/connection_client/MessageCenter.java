@@ -14,6 +14,7 @@ import com.usepace.android.messagingcenter.interfaces.UnReadMessagesInterface;
 import com.usepace.android.messagingcenter.model.ConnectionRequest;
 import com.usepace.android.messagingcenter.model.Theme;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 public class MessageCenter {
@@ -24,7 +25,7 @@ public class MessageCenter {
 
     private static Client client;
     private static String LAST_CLIENT = CLIENT_SENDBIRD;
-    private static List<String> notificationInboxMessages;
+    private static HashMap<String, List<String>> notificationInboxMessages;
 
     /**
      *
@@ -116,7 +117,7 @@ public class MessageCenter {
     public static void sdkHandleNotification(Context context, Class next, int icon, String title, RemoteMessage remoteMessage, SdkHandleNotificationInterface sdkHandleNotificationInterface) {
         try {
             if (notificationInboxMessages == null)
-                notificationInboxMessages = new ArrayList<>();
+                notificationInboxMessages = new HashMap<>();
             client().getClient(LAST_CLIENT).sdkHandleNotification(context, next, icon, title, remoteMessage, notificationInboxMessages, sdkHandleNotificationInterface);
         }
         catch (MessageCenterException e) {
@@ -141,9 +142,9 @@ public class MessageCenter {
     /**
      * Clears Notification Inbox Messages
      */
-    public static void clearNotificationInboxMessages() {
-        if (notificationInboxMessages != null) {
-            notificationInboxMessages.clear();
+    public static void clearNotificationInboxMessages(String channel_url) {
+        if (notificationInboxMessages != null && notificationInboxMessages.containsKey(channel_url) && notificationInboxMessages.get(channel_url) != null) {
+            notificationInboxMessages.get(channel_url).clear();
         }
     }
 
