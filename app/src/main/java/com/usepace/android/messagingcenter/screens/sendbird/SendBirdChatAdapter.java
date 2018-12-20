@@ -4,7 +4,6 @@ import android.content.Context;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.util.Base64;
 import android.view.LayoutInflater;
@@ -12,7 +11,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-
 import com.bumptech.glide.Glide;
 import com.dinuscxj.progressbar.CircleProgressBar;
 import com.sendbird.android.AdminMessage;
@@ -31,8 +29,6 @@ import com.usepace.android.messagingcenter.utils.FileUtils;
 import com.usepace.android.messagingcenter.utils.ImageUtils;
 import com.usepace.android.messagingcenter.utils.TextUtils;
 import com.usepace.android.messagingcenter.utils.UrlPreviewInfo;
-import com.usepace.android.messagingcenter.utils.WebUtils;
-
 import org.json.JSONException;
 import java.io.File;
 import java.io.IOException;
@@ -376,14 +372,23 @@ class SendBirdChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     public void removeFailedMessage(BaseMessage message) {
         if (message instanceof UserMessage) {
             mFailedMessageIdList.remove(((UserMessage) message).getRequestId());
-            mMessageList.remove(message);
+            removeMessageFromArrayList(message);
         } else if (message instanceof FileMessage) {
             mFailedMessageIdList.remove(((FileMessage) message).getRequestId());
             mTempFileMessageUriTable.remove(((FileMessage) message).getRequestId());
-            mMessageList.remove(message);
+            removeMessageFromArrayList(message);
         }
 
         notifyDataSetChanged();
+    }
+
+    private boolean removeMessageFromArrayList(BaseMessage baseMessage) {
+        for (SendBirdMessage sendBirdMessage : mMessageList) {
+            if (sendBirdMessage.getBase().equals(baseMessage)) {
+                return mMessageList.remove(sendBirdMessage);
+            }
+        }
+        return false;
     }
 
     public void setFileProgressPercent(FileMessage message, int percent) {
