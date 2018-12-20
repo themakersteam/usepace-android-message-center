@@ -7,6 +7,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -34,6 +35,8 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.androidadvance.topsnackbar.TSnackbar;
 import com.sendbird.android.AdminMessage;
 import com.sendbird.android.BaseChannel;
 import com.sendbird.android.BaseMessage;
@@ -95,9 +98,11 @@ public class SendBirdChatFragment extends Fragment {
     private View mCurrentEventLayout;
     private TextView mCurrentEventText;
     private LinearLayout groupChatBox;
+    private TextView welcomeMessage;
 
     private GroupChannel mChannel;
     private String mChannelUrl;
+    private boolean showWelcome = true;
 
     private boolean mIsTyping;
 
@@ -157,6 +162,16 @@ public class SendBirdChatFragment extends Fragment {
         mMessageSendButton = (ImageView) rootView.findViewById(R.id.button_group_chat_send);
         mMessageCameraButton = (ImageView)rootView.findViewById(R.id.button_camera_send);
         mUploadFileButton = (ImageButton) rootView.findViewById(R.id.button_group_chat_upload);
+        welcomeMessage = (TextView) rootView.findViewById(R.id.text_group_chat_welcome);
+
+        if (getArguments() != null && getArguments().containsKey("WELCOME_MESSAGE")) {
+            welcomeMessage.setText(getArguments().getString("WELCOME_MESSAGE"));
+        }
+        else {
+            welcomeMessage.setVisibility(View.GONE);
+            showWelcome = false;
+        }
+
         groupChatBox = rootView.findViewById(R.id.layout_group_chat_chatbox);
 
         mMessageEditText.addTextChangedListener(new TextWatcher() {
@@ -320,22 +335,20 @@ public class SendBirdChatFragment extends Fragment {
         SendBird.addChannelHandler(CHANNEL_HANDLER_ID, new SendBird.ChannelHandler() {
             @Override
             public void onMessageReceived(BaseChannel baseChannel, BaseMessage baseMessage) {
+                ((Vibrator) getActivity().getSystemService(Context.VIBRATOR_SERVICE)).vibrate(150);
                 if (baseChannel.getUrl().equals(mChannelUrl)) {
                     mChatAdapter.markAllMessagesAsRead();
                     // Add new message to view
                     mChatAdapter.addFirst(baseMessage);
                 }
                 else {
-                    ((Vibrator) getActivity().getSystemService(Context.VIBRATOR_SERVICE)).vibrate(150);
                     String user_name = "";
                     if (baseMessage instanceof UserMessage) {
                         user_name = ((UserMessage) baseMessage).getSender().getNickname();
                     } else if (baseMessage instanceof FileMessage) {
                         user_name = ((UserMessage) baseMessage).getSender().getNickname();
                     }
-                    Snackbar.make(mRootLayout, getString(R.string.message_center_new_message_from) + " " + user_name,
-                            Snackbar.LENGTH_LONG)
-                            .show();
+                    showOtherChannelMessageSnack(getString(R.string.message_center_new_message_from) + " " + user_name);
                 }
             }
 
@@ -431,6 +444,17 @@ public class SendBirdChatFragment extends Fragment {
         mRecyclerView.setLayoutManager(mLayoutManager);
         mRecyclerView.setAdapter(mChatAdapter);
         mRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+                if (mChatAdapter.getItemCount() >= 10 && mLayoutManager.findFirstVisibleItemPosition() == 0 && showWelcome) {
+                    welcomeMessage.setVisibility(View.GONE);
+                }
+                else if (showWelcome){
+                    welcomeMessage.setVisibility(View.VISIBLE);
+                }
+            }
+
             @Override
             public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
                 if (mLayoutManager.findLastVisibleItemPosition() == mChatAdapter.getItemCount() - 1) {
@@ -951,6 +975,20 @@ public class SendBirdChatFragment extends Fragment {
                 });
             }
         });
+    }
+
+    /**
+     *
+     * @param message
+     */
+    private void showOtherChannelMessageSnack(String message) {
+        TSnackbar snackbar = TSnackbar.make(getActivity().findViewById(android.R.id.content), message, TSnackbar.LENGTH_LONG);
+        snackbar.setActionTextColor(ContextCompat.getColor(getContext(), R.color.message_center_primary));
+        View snackbarView = snackbar.getView();
+        snackbarView.setBackgroundColor(Color.WHITE);
+        TextView textView = (TextView) snackbarView.findViewById(com.androidadvance.topsnackbar.R.id.snackbar_text);
+        textView.setTextColor(ContextCompat.getColor(getContext(), R.color.message_center_primary));
+        snackbar.show();
     }
 
     @Override
