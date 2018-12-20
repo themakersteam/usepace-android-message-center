@@ -1,4 +1,4 @@
-apply plugin: 'com.android.library' //Replace with library to application for testing
+apply plugin: 'com.android.application' //Replace with library to application for testing
 apply plugin: 'com.github.dcendents.android-maven'
 
 group='com.github.usepace'
@@ -63,6 +63,9 @@ dependencies {
     implementation 'com.squareup.retrofit2:retrofit:2.1.0'
     implementation 'com.squareup.retrofit2:converter-gson:2.1.0'
     implementation 'com.google.code.gson:gson:2.2.+'
+
+    //Top Snack bar
+    compile 'com.androidadvance:topsnackbar:1.1.1'
 
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'com.android.support.test:runner:1.0.2'

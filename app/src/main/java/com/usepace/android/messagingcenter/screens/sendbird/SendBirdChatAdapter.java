@@ -54,10 +54,8 @@ class SendBirdChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     private static final int VIEW_TYPE_FILE_MESSAGE_VIDEO_ME = 24;
     private static final int VIEW_TYPE_FILE_MESSAGE_VIDEO_OTHER = 25;
     private static final int VIEW_TYPE_ADMIN_MESSAGE = 30;
-    private static final int VIEW_TYPE_WELCOME_MESSAGE = 31;
 
     private Context mContext;
-    private SendBirdMessage welcome_message = null;
     private HashMap<FileMessage, CircleProgressBar> mFileMessageMap;
     private GroupChannel mChannel;
     private List<SendBirdMessage> mMessageList;
@@ -88,9 +86,6 @@ class SendBirdChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         mContext = context;
         mFileMessageMap = new HashMap<>();
         mMessageList = new ArrayList<>();
-        if (args != null && args.containsKey("WELCOME_MESSAGE")) {
-            welcome_message = new SendBirdMessage(args.getString("WELCOME_MESSAGE"));
-        }
     }
 
     public void setContext(Context context) {
@@ -112,9 +107,6 @@ class SendBirdChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
             mMessageList.clear();
             for(int i = 1; i < dataArray.length; i++) {
                 mMessageList.add(SendBirdMessage.buildFromSerializedData(Base64.decode(dataArray[i], Base64.DEFAULT | Base64.NO_WRAP)));
-            }
-            if (welcome_message != null) {
-                mMessageList.add(welcome_message);
             }
 
             notifyDataSetChanged();
@@ -175,10 +167,6 @@ class SendBirdChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
 
         switch (viewType) {
-            case VIEW_TYPE_WELCOME_MESSAGE:
-                View welcomeUserMsgView = LayoutInflater.from(parent.getContext())
-                        .inflate(R.layout.list_item_group_chat_welcome_message, parent, false);
-                return new WelcomeMessageHolder(welcomeUserMsgView);
             case VIEW_TYPE_USER_MESSAGE_ME:
                 View myUserMsgView = LayoutInflater.from(parent.getContext())
                         .inflate(R.layout.list_item_group_chat_user_me, parent, false);
@@ -258,9 +246,6 @@ class SendBirdChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         isFailedMessage = isFailedMessage(message);
 
         switch (holder.getItemViewType()) {
-            case VIEW_TYPE_WELCOME_MESSAGE:
-                ((WelcomeMessageHolder) holder).bind(mContext, message);
-                break;
             case VIEW_TYPE_USER_MESSAGE_ME:
                 ((MyUserMessageHolder) holder).bind(mContext, (UserMessage) message.getBase(), mChannel, isContinuous, isNewDay, isTempMessage, isFailedMessage, mItemClickListener, mItemLongClickListener, position);
                 break;
@@ -300,11 +285,7 @@ class SendBirdChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     public int getItemViewType(int position) {
 
         SendBirdMessage message = mMessageList.get(position);
-
-        if (message.getBase() == null) {
-            return VIEW_TYPE_WELCOME_MESSAGE;
-        }
-        else if (message.getBase() instanceof UserMessage) {
+        if (message.getBase() instanceof UserMessage) {
             UserMessage userMessage = (UserMessage) message.getBase();
             // If the sender is current user
             if (userMessage.getSender().getUserId().equals(SendBird.getCurrentUser().getUserId())) {
@@ -571,10 +552,6 @@ class SendBirdChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
                     mMessageList.add(new SendBirdMessage(message));
                 }
 
-                if (welcome_message != null) {
-                    mMessageList.add(welcome_message);
-                }
-
                 notifyDataSetChanged();
             }
         });
@@ -706,20 +683,6 @@ class SendBirdChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
 
         void bind(Context context, AdminMessage message, GroupChannel channel, boolean isNewDay) {
             messageText.setText(message.getMessage());
-        }
-    }
-
-
-    private class WelcomeMessageHolder extends RecyclerView.ViewHolder {
-        TextView messageText;
-
-        WelcomeMessageHolder(View itemView) {
-            super(itemView);
-            messageText = (TextView) itemView.findViewById(R.id.text_group_chat_welcome);
-        }
-
-        void bind(Context context, final SendBirdMessage message) {
-            messageText.setText(message.getWelcomeMessage());
         }
     }
 

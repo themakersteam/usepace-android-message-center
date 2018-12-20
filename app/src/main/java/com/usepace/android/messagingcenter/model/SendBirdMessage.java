@@ -4,20 +4,10 @@ import com.sendbird.android.BaseMessage;
 
 public class SendBirdMessage {
 
-    private String welcomeMessage = null;
     private BaseMessage baseMessage = null;
-
-    public SendBirdMessage(String welcomeMessage) {
-        this.welcomeMessage = welcomeMessage;
-    }
 
     public SendBirdMessage(BaseMessage baseMessage) {
         this.baseMessage = baseMessage;
-    }
-
-
-    public String getWelcomeMessage() {
-        return welcomeMessage;
     }
 
     public BaseMessage getBase() {
