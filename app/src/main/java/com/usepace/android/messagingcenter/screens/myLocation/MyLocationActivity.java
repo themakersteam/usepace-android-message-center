@@ -277,6 +277,7 @@ public class MyLocationActivity extends AppCompatActivity implements OnMapReadyC
             }
             else {
                 mGoogleMap.setMyLocationEnabled(true);
+                mGoogleMap.getUiSettings().setMyLocationButtonEnabled(false);
                 mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
                 mFusedLocationClient.getLastLocation()
                         .addOnSuccessListener(MyLocationActivity.this, new OnSuccessListener<Location>() {
