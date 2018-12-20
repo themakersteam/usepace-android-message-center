@@ -33,6 +33,7 @@ public class SendFileActivity extends AppCompatActivity {
     private ImageView mainImage;
     private EditText captionText;
     private ImageView send;
+    private int action = 0;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -40,11 +41,12 @@ public class SendFileActivity extends AppCompatActivity {
         setContentView(R.layout.activity_send_file);
         init();
         if (getIntent() != null && getIntent().hasExtra("ACTION")) {
-            if (getIntent().getIntExtra("ACTION", REQUEST_IMAGE_CAPTURE) == REQUEST_IMAGE_CAPTURE) {
+            action = getIntent().getIntExtra("ACTION", REQUEST_IMAGE_CAPTURE);
+            if (action == REQUEST_IMAGE_CAPTURE) {
                 dispatchTakePictureIntent();
                 SendBird.setAutoBackgroundDetection(false);
             }
-            else if (getIntent().getIntExtra("ACTION", REQUEST_IMAGE_CAPTURE) == REQUEST_GALLERY_CAPTURE) {
+            else if (action == REQUEST_GALLERY_CAPTURE) {
                 dispatchGalleryIntent();
                 SendBird.setAutoBackgroundDetection(false);
             }
@@ -156,5 +158,16 @@ public class SendFileActivity extends AppCompatActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (action == REQUEST_GALLERY_CAPTURE) {
+            dispatchGalleryIntent();
+            SendBird.setAutoBackgroundDetection(false);
+        }
+        else {
+            super.onBackPressed();
+        }
     }
 }
