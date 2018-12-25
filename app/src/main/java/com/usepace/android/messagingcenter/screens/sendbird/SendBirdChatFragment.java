@@ -35,7 +35,6 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import com.androidadvance.topsnackbar.TSnackbar;
 import com.sendbird.android.AdminMessage;
 import com.sendbird.android.BaseChannel;
@@ -828,27 +827,28 @@ public class SendBirdChatFragment extends Fragment {
             sendUserMessageWithUrl(text, urls.get(0));
             return;
         }
-
-        UserMessage tempUserMessage = mChannel.sendUserMessage(text, new BaseChannel.SendUserMessageHandler() {
-            @Override
-            public void onSent(UserMessage userMessage, SendBirdException e) {
-                if (e != null) {
-                    // Error!
-                    Log.e(LOG_TAG, e.toString());
-                    if (e.getCode() == channel_frozen_key) {
-                        getActivity().finish();
+        if (mChannel != null) {
+            UserMessage tempUserMessage = mChannel.sendUserMessage(text, new BaseChannel.SendUserMessageHandler() {
+                @Override
+                public void onSent(UserMessage userMessage, SendBirdException e) {
+                    if (e != null) {
+                        // Error!
+                        Log.e(LOG_TAG, e.toString());
+                        if (e.getCode() == channel_frozen_key) {
+                            getActivity().finish();
+                        }
+                        mChatAdapter.markMessageFailed(userMessage.getRequestId());
+                        return;
                     }
-                    mChatAdapter.markMessageFailed(userMessage.getRequestId());
-                    return;
+
+                    // Update a sent message to RecyclerView
+                    mChatAdapter.markMessageSent(new SendBirdMessage(userMessage));
                 }
+            });
 
-                // Update a sent message to RecyclerView
-                mChatAdapter.markMessageSent(new SendBirdMessage(userMessage));
-            }
-        });
-
-        // Display a user message to RecyclerView
-        mChatAdapter.addFirst(tempUserMessage);
+            // Display a user message to RecyclerView
+            mChatAdapter.addFirst(tempUserMessage);
+        }
     }
 
     /**
@@ -921,13 +921,15 @@ public class SendBirdChatFragment extends Fragment {
                 }
             };
 
-            // Send image with thumbnails in the specified dimensions
-            FileMessage tempFileMessage = mChannel.sendFileMessage(file, name, mime, size, "", null, thumbnailSizes, progressHandler);
+            if (mChannel != null) {
+                // Send image with thumbnails in the specified dimensions
+                FileMessage tempFileMessage = mChannel.sendFileMessage(file, name, mime, size, "", null, thumbnailSizes, progressHandler);
 
-            mFileProgressHandlerMap.put(progressHandler, tempFileMessage);
+                mFileProgressHandlerMap.put(progressHandler, tempFileMessage);
 
-            mChatAdapter.addTempFileMessageInfo(tempFileMessage, uri);
-            mChatAdapter.addFirst(tempFileMessage);
+                mChatAdapter.addTempFileMessageInfo(tempFileMessage, uri);
+                mChatAdapter.addFirst(tempFileMessage);
+            }
         }
     }
 
