@@ -26,7 +26,14 @@ public class SendBirdPlatformApi {
     private static SendBirdPlatformApi sendBirdPlatformApi;
 
     public SendBirdPlatformApi() {
-        Apilink = "https://api-" + SendBird.getApplicationId() + ".sendbird.com/v3/";
+        String applicationId;
+        try {
+            applicationId = SendBird.getApplicationId();
+        }
+        catch (Exception e ){
+            applicationId = "send";
+        }
+        Apilink = "https://api-" + applicationId + ".sendbird.com/v3/";
         apiInterface = getClient().create(SendBirdPlatformApiInterface.class);
     }
 
