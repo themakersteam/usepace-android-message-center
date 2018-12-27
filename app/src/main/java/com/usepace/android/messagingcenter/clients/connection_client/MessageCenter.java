@@ -13,7 +13,6 @@ import com.usepace.android.messagingcenter.interfaces.SdkHandleNotificationInter
 import com.usepace.android.messagingcenter.interfaces.UnReadMessagesInterface;
 import com.usepace.android.messagingcenter.model.ConnectionRequest;
 import com.usepace.android.messagingcenter.model.Theme;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -73,11 +72,15 @@ public class MessageCenter {
 
     /**
      *
+     * @param context
+     * @param optionalConnectionRequest
      * @param chat_id
+     * @param theme
+     * @param openChatViewInterface
      */
-    public static void openChatView(Activity context, String chat_id, Theme theme, OpenChatViewInterface openChatViewInterface) {
+    public static void openChatView(Activity context, ConnectionRequest optionalConnectionRequest, String chat_id, Theme theme, OpenChatViewInterface openChatViewInterface) {
         try {
-            client().getClient(LAST_CLIENT).openChatView(context, chat_id, theme, openChatViewInterface);
+            client().getClient(LAST_CLIENT).openChatView(context, optionalConnectionRequest, chat_id, theme, openChatViewInterface);
         }
         catch (MessageCenterException e) {
             if (openChatViewInterface != null) {

@@ -30,6 +30,9 @@
     <string name="ms_photos">Photos</string>
     <string name="ms_location">Location</string>
     <string name="ms_chat_failed_to_send">Not sent! Tap to retry</string>
+    <string name="ms_message_file_in_progress">Your image message is not sent, continue without sending?</string>
+    <string name="ms_message_failed_yes">Yes</string>
+    <string name="ms_message_failed_no">No</string>
 
     <!-- Global Strings -->
     <string name="message_center_toolbar_title">Message Center</string>

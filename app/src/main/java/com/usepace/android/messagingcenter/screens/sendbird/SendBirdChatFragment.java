@@ -84,6 +84,7 @@ public class SendBirdChatFragment extends Fragment {
 
     private InputMethodManager mIMM;
     private HashMap<BaseChannel.SendFileMessageWithProgressHandler, FileMessage> mFileProgressHandlerMap;
+    private HashMap<String, Boolean> inProgressMessages;
 
     private RelativeLayout mRootLayout;
     private FileOptionsBottomSheetAdapter mBottomSheetAdapter;
@@ -102,8 +103,6 @@ public class SendBirdChatFragment extends Fragment {
     private GroupChannel mChannel;
     private String mChannelUrl;
     private boolean showWelcome = true;
-
-    private boolean mIsTyping;
 
     private int mCurrentState = STATE_NORMAL;
     private BaseMessage mEditingMessage = null;
@@ -129,6 +128,7 @@ public class SendBirdChatFragment extends Fragment {
 
         mIMM = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
         mFileProgressHandlerMap = new HashMap<>();
+        inProgressMessages = new HashMap<>();
 
         mChannelUrl = getArguments().getString("CHANNEL_URL");
         CHANNEL_HANDLER_ID = mChannelUrl;
@@ -636,9 +636,14 @@ public class SendBirdChatFragment extends Fragment {
                     setState(STATE_NORMAL, null, -1);
                     return true;
                 }
-
-                mIMM.hideSoftInputFromWindow(mMessageEditText.getWindowToken(), 0);
-                return false;
+                else if (inProgressMessages != null && inProgressMessages.size() > 0) {
+                    showInProgressMessageAlert();
+                    return true;
+                }
+                else {
+                    mIMM.hideSoftInputFromWindow(mMessageEditText.getWindowToken(), 0);
+                    return false;
+                }
             }
         });
     }
@@ -902,6 +907,7 @@ public class SendBirdChatFragment extends Fragment {
                     if (getActivity() != null && isVisible()) {
                         FileMessage fileMessage = mFileProgressHandlerMap.get(this);
                         if (fileMessage != null && totalBytesToSend > 0) {
+                            inProgressMessages.put(fileMessage.getRequestId(), false);
                             int percent = (totalBytesSent * 100) / totalBytesToSend;
                             mChatAdapter.setFileProgressPercent(fileMessage, percent);
                         }
@@ -910,6 +916,10 @@ public class SendBirdChatFragment extends Fragment {
 
                 @Override
                 public void onSent(FileMessage fileMessage, SendBirdException e) {
+                    try {
+                        inProgressMessages.remove(fileMessage.getRequestId());
+                    }
+                    catch (Exception activity_is_killed) {}
                     if (getActivity() != null && isVisible()) {
                         if (e != null) {
                             Toast.makeText(getActivity(), "" + e.getCode() + ":" + e.getMessage(), Toast.LENGTH_SHORT).show();
@@ -991,6 +1001,24 @@ public class SendBirdChatFragment extends Fragment {
         TextView textView = (TextView) snackbarView.findViewById(com.androidadvance.topsnackbar.R.id.snackbar_text);
         textView.setTextColor(ContextCompat.getColor(getContext(), R.color.message_center_primary));
         snackbar.show();
+    }
+
+    private void showInProgressMessageAlert() {
+        try {
+            new AlertDialog.Builder(getContext()).setMessage(getString(R.string.ms_message_file_in_progress))
+                    .setNegativeButton(getString(R.string.ms_message_failed_no), null)
+                    .setPositiveButton(getString(R.string.ms_message_failed_yes), new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            if (inProgressMessages != null) {
+                                inProgressMessages.clear();
+                            }
+                            getActivity().onBackPressed();
+                        }
+                    })
+                    .create().show();
+        }
+        catch (Exception e) {}
     }
 
     @Override

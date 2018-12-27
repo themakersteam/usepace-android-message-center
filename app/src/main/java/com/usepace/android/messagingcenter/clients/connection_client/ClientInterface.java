@@ -22,7 +22,7 @@ abstract class ClientInterface {
     abstract public void connect(Context context, ConnectionRequest connectionRequest, ConnectionInterface connectionInterface);
     abstract public boolean isConnected();
     abstract public void getUnReadMessagesCount(Context context, String chat_id, UnReadMessagesInterface unReadMessagesInterface);
-    abstract public void openChatView(Activity context, String chat_id, Theme theme, OpenChatViewInterface openChatViewInterface);
+    abstract public void openChatView(Activity context, ConnectionRequest optionalConnectionRequest, String chat_id, Theme theme, OpenChatViewInterface openChatViewInterface);
     abstract public void closeChatView(Context context, CloseChatViewInterface closeChatViewInterface);
     abstract public void sdkHandleNotification(Context context, Class next, int icon, String title, RemoteMessage remoteMessage, HashMap<String, List<String>> messages, SdkHandleNotificationInterface sdkHandleNotificationInterface);
     abstract public void appHandleNotification(RemoteMessage remoteMessage, AppHandleNotificationInterface appHandleNotificationInterface);

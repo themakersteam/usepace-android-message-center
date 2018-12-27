@@ -127,8 +127,9 @@
  * Joining the chat by url(id) provided
  * Sample code for joining a conversation
     ```bash
-    MessageCenter.openChatView(Activity: this, chat_id: "sample_chat_id", theme: new Theme(toolbar: "title", toolbar_subtitle: "subtitle"), openChatViewInterface: OpenChatViewInterface); 
+    MessageCenter.openChatView(Activity: this, ConnectionRequest: optional_connection_request, chat_id: "sample_chat_id", theme: new Theme(toolbar: "title", toolbar_subtitle: "subtitle"), openChatViewInterface: OpenChatViewInterface); 
     ```
+ * Connection Request is optional, if you want to update your connection request values, else pass null
  * if Theme object is not provided, the app will take the defaults 
  * Theme Object for android have (```toolbar```, ```toolbar_subtitle```, ```welcome_message```) ..
  * Executing this interface will open the chatting window 
