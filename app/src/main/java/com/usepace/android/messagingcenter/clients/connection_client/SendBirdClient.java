@@ -100,12 +100,20 @@ class SendBirdClient extends ClientInterface {
     }
 
     @Override
-    public void openChatView(final Activity context, final String chat_id, final Theme theme, final OpenChatViewInterface openChatViewInterface) {
+    public void openChatView(final Activity context, ConnectionRequest optionalConnectionRequest, final String chat_id, final Theme theme, final OpenChatViewInterface openChatViewInterface) {
+        if (optionalConnectionRequest != null && optionalConnectionRequest.getAccessToken() != null) {
+            this.lastConnecitonRequest = optionalConnectionRequest;
+        }
         if (!isConnected() && lastConnecitonRequest != null) {
             SendBird.connect(lastConnecitonRequest.getUserId() != null ? lastConnecitonRequest.getUserId() : "", lastConnecitonRequest.getAccessToken(), new SendBird.ConnectHandler() {
                 @Override
                 public void onConnected(User user, SendBirdException e) {
-                    openChatView(context, theme, chat_id, openChatViewInterface);
+                    if (e != null) {
+                        openChatViewInterface.onError(new MessageCenterException("Failed to connect", 11));
+                    }
+                    else {
+                        openChatView(context, theme, chat_id, openChatViewInterface);
+                    }
                 }
             });
         }

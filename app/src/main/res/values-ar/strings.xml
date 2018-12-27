@@ -27,6 +27,9 @@
     <string name="ms_photos">الصور</string>
     <string name="ms_location">الموقع</string>
     <string name="ms_chat_failed_to_send">لم تصل! إضغط لإعادة المحاولة</string>
+    <string name="ms_message_file_in_progress">لم يتم إرسال الصور الخاصة بك، الاستمرار دون إرسال الصورة؟</string>
+    <string name="ms_message_failed_yes">استمرار</string>
+    <string name="ms_message_failed_no">الغاء</string>
 
     <!-- Global Strings -->
     <string name="message_center_toolbar_title">مركز الرسائل</string>
