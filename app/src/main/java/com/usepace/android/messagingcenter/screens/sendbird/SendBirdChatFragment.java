@@ -317,10 +317,12 @@ public class SendBirdChatFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
+        Toast.makeText(getContext(), "Resume Called from Fragment", Toast.LENGTH_SHORT).show();
         ConnectionManager.addConnectionManagementHandler(CONNECTION_HANDLER_ID, new ConnectionManager.ConnectionManagementHandler() {
             @Override
             public void onConnected(boolean reconnect) {
                 refresh();
+                Toast.makeText(getContext(), "Connected And refreshed", Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -455,9 +457,9 @@ public class SendBirdChatFragment extends Fragment {
 
             @Override
             public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
-//                if (mLayoutManager.findLastVisibleItemPosition() == mChatAdapter.getItemCount() - 1) {
-//                    mChatAdapter.loadPreviousMessages(CHANNEL_LIST_LIMIT, null);
-//                }
+                if (mLayoutManager.findLastVisibleItemPosition() == mChatAdapter.getItemCount() - 1) {
+                    mChatAdapter.loadPreviousMessages(CHANNEL_LIST_LIMIT, null);
+                }
             }
         });
     }
