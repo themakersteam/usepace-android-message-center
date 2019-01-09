@@ -4,6 +4,8 @@ import android.app.Activity;
 import android.app.NotificationManager;
 import android.content.Context;
 import android.content.Intent;
+import android.util.Log;
+
 import com.google.firebase.messaging.RemoteMessage;
 import com.sendbird.android.SendBird;
 import com.sendbird.android.SendBirdException;
@@ -101,8 +103,10 @@ class SendBirdClient extends ClientInterface {
 
     @Override
     public void openChatView(final Activity context, ConnectionRequest optionalConnectionRequest, final String chat_id, final Theme theme, final OpenChatViewInterface openChatViewInterface) {
+        Log.e("MESSAGE_CENTER", "Open Chat VIEW");
         if (optionalConnectionRequest != null && optionalConnectionRequest.getAccessToken() != null) {
             this.lastConnecitonRequest = optionalConnectionRequest;
+            Log.e("MESSAGE_CENTER", "Connection Request updated");
         }
         if (!isConnected() && lastConnecitonRequest != null) {
             SendBird.connect(lastConnecitonRequest.getUserId() != null ? lastConnecitonRequest.getUserId() : "", lastConnecitonRequest.getAccessToken(), new SendBird.ConnectHandler() {
@@ -112,12 +116,14 @@ class SendBirdClient extends ClientInterface {
                         openChatViewInterface.onError(new MessageCenterException("Failed to connect", 11));
                     }
                     else {
+                        Log.e("MESSAGE_CENTER", "Connected ");
                         openChatView(context, theme, chat_id, openChatViewInterface);
                     }
                 }
             });
         }
         else if (isConnected()) {
+            Log.e("MESSAGE_CENTER", "Connected And opening Opening Chat View");
             openChatView(context, theme, chat_id, openChatViewInterface);
         }
         else {
@@ -203,6 +209,7 @@ class SendBirdClient extends ClientInterface {
     }
 
     private void openChatView(Activity activity, Theme theme, String chat_id, OpenChatViewInterface openChatViewInterface) {
+        Log.e("MESSAGE_CENTER", "Opening Chat View");
         if (openChatViewInterface != null) {
             openChatViewInterface.onViewWillStart();
         }
@@ -219,6 +226,7 @@ class SendBirdClient extends ClientInterface {
             }
         }
         a1.putExtra("CHANNEL_URL", chat_id);
+        Log.e("MESSAGE_CENTER", "CHAT_ID : "+ chat_id);
         a1.putExtra("PACKAGE_NAME", activity.getPackageName());
         activity.startActivityForResult(a1, MessageCenter.OPEN_CHAT_VIEW_REQUEST_CODE);
     }
