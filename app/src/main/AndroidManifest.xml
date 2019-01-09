@@ -39,6 +39,7 @@
             android:configChanges="screenSize|keyboardHidden|screenLayout"
             android:theme="@style/ChatTheme"
             android:windowSoftInputMode="stateHidden"
+            android:launchMode="singleInstance"
             android:screenOrientation="portrait"
             />
 
