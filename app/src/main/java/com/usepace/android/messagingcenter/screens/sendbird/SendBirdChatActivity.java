@@ -7,7 +7,6 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.MenuItem;
 import android.widget.TextView;
 import com.sendbird.android.SendBird;
@@ -36,7 +35,7 @@ public class SendBirdChatActivity extends AppCompatActivity{
         PreferenceUtils.init(this);
         initToolBar();
         String channelUrl = getIntent().getStringExtra("CHANNEL_URL");
-        Log.e("MESSAGE_CENTER", "CHAT_ID : "+ channelUrl);
+
         if(channelUrl != null) {
             MessageCenter.clearNotificationInboxMessages(channelUrl);
             Fragment fragment = SendBirdChatFragment.newInstance(channelUrl);
