@@ -85,7 +85,7 @@ class SendBirdClient extends ClientInterface {
 
     @Override
     public boolean isConnected() {
-        if (didInitialConnect && SendBird.getConnectionState() != null) {
+        if (mainConnectCalled && SendBird.getConnectionState() != null) {
             return SendBird.getConnectionState().equals(SendBird.ConnectionState.OPEN) || SendBird.getConnectionState().equals(SendBird.ConnectionState.CONNECTING);
         }
         return false;
