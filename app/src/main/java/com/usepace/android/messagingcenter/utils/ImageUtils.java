@@ -82,18 +82,24 @@ public class ImageUtils {
                 .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
                 .placeholder(placeholderDrawable);
 
-        if (listener != null) {
+        if (listener != null && url != null) {
             Glide.with(context.getApplicationContext())
                     .load(url)
+                    .thumbnail(0.1f)
                     .apply(myOptions)
                     .listener(listener)
                     .into(imageView);
-        } else {
+        } else if (url != null) {
             Glide.with(context.getApplicationContext())
                     .load(url)
+                    .thumbnail(0.1f)
                     .apply(myOptions)
                     .listener(listener)
                     .into(imageView);
+        }
+        else {
+            Glide.with(context.getApplicationContext()).clear(imageView);
+            imageView.setImageDrawable(null);
         }
     }
 
