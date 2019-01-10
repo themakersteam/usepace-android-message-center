@@ -46,6 +46,7 @@ import com.sendbird.android.SendBird;
 import com.sendbird.android.SendBirdException;
 import com.sendbird.android.UserMessage;
 import com.usepace.android.messagingcenter.R;
+import com.usepace.android.messagingcenter.clients.connection_client.MessageCenter;
 import com.usepace.android.messagingcenter.model.SendBirdMessage;
 import com.usepace.android.messagingcenter.screens.mediaplayer.MediaPlayerActivity;
 import com.usepace.android.messagingcenter.screens.myLocation.MyLocationActivity;
@@ -383,6 +384,15 @@ public class SendBirdChatFragment extends Fragment {
             }
 
         });
+
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                if (isVisible() && !MessageCenter.isConnected()) {
+                    SendBird.reconnect();
+                }
+            }
+        }, 1700);
     }
 
     @Override

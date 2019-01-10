@@ -30,7 +30,7 @@ public class NotificationUtil {
      */
     public void generateOne(Context context,int index,  Intent intent, int icon, String title, String message, List<String> messages) {
         registerChannel(context);
-        intent.addFlags(Intent.FLAG_ACTIVITY_BROUGHT_TO_FRONT);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         PendingIntent pendingIntent = PendingIntent.getActivity(context, 0 /* Request code */, intent, PendingIntent.FLAG_UPDATE_CURRENT);
 
 
