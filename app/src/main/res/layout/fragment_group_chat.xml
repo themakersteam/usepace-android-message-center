@@ -30,18 +30,26 @@
             android:layout_marginBottom="5dp"
             android:minHeight="48dp">
 
-            <ImageButton
+            <RelativeLayout
                 android:id="@+id/button_group_chat_upload"
-                android:src="@drawable/msg_cntr_ic_add"
-                android:foreground="?attr/selectableItemBackground"
-                android:layout_width="20dp"
-                android:layout_height="20dp"
-                android:layout_marginLeft="16dp"
-                android:layout_marginRight="16dp"
-                android:contentDescription="Upload file"
-                android:background="#FFFFFF"
-                android:tint="@color/message_center_primary_dark"
-                android:layout_gravity="center"/>
+                android:layout_width="wrap_content"
+                android:layout_height="40dp"
+                android:layout_gravity="center">
+
+                <ImageButton
+                    android:src="@drawable/msg_cntr_ic_add"
+                    android:foreground="?attr/selectableItemBackground"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:layout_marginLeft="16dp"
+                    android:layout_marginRight="16dp"
+                    android:contentDescription="Upload file"
+                    android:layout_centerVertical="true"
+                    android:background="#FFFFFF"
+                    android:tint="@color/message_center_primary_dark"
+                    android:layout_gravity="center"/>
+
+            </RelativeLayout>
 
             <RelativeLayout
                 android:layout_width="match_parent"
