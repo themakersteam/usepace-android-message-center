@@ -95,7 +95,7 @@ public class SendBirdChatFragment extends Fragment {
     private EditText mMessageEditText;
     private ImageView mMessageSendButton;
     private ImageView mMessageCameraButton;
-    private ImageButton mUploadFileButton;
+    private RelativeLayout mUploadFileButton;
     private View mCurrentEventLayout;
     private TextView mCurrentEventText;
     private LinearLayout groupChatBox;
@@ -161,7 +161,7 @@ public class SendBirdChatFragment extends Fragment {
         mMessageEditText = (EditText) rootView.findViewById(R.id.edittext_group_chat_message);
         mMessageSendButton = (ImageView) rootView.findViewById(R.id.button_group_chat_send);
         mMessageCameraButton = (ImageView)rootView.findViewById(R.id.button_camera_send);
-        mUploadFileButton = (ImageButton) rootView.findViewById(R.id.button_group_chat_upload);
+        mUploadFileButton = (RelativeLayout) rootView.findViewById(R.id.button_group_chat_upload);
         welcomeMessage = (TextView) rootView.findViewById(R.id.text_group_chat_welcome);
 
         if (getArguments() != null && getArguments().containsKey("WELCOME_MESSAGE")) {
