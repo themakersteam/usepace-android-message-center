@@ -37,6 +37,8 @@ class SendBirdClient extends ClientInterface {
 
     @Override
     public void connect(Context context, final ConnectionRequest connectionRequest, final ConnectionInterface connectionInterface) {
+        if (mainConnectCalled)
+            return;
         mainConnectCalled = true;
         this.lastConnecitonRequest = connectionRequest;
         SendBird.init(connectionRequest.getAppId(), context);
