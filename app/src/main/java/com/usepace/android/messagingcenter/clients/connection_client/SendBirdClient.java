@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.NotificationManager;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Handler;
 import com.google.firebase.messaging.RemoteMessage;
 import com.sendbird.android.SendBird;
 import com.sendbird.android.SendBirdException;
@@ -31,14 +32,17 @@ class SendBirdClient extends ClientInterface {
 
     private ConnectionRequest lastConnecitonRequest;
     private static SendBirdClient sendbirdClient;
+    private boolean didInitialConnect = false;
+    private boolean mainConnectCalled = false;
 
     @Override
     public void connect(Context context, final ConnectionRequest connectionRequest, final ConnectionInterface connectionInterface) {
+        mainConnectCalled = true;
         this.lastConnecitonRequest = connectionRequest;
         SendBird.init(connectionRequest.getAppId(), context);
         SendBird.connect(connectionRequest.getUserId() != null ? connectionRequest.getUserId() : "", connectionRequest.getAccessToken(), new SendBird.ConnectHandler() {
             @Override
-            public void onConnected(User user,final SendBirdException e) {
+            public void onConnected(User user, final SendBirdException e) {
                 SendBirdPlatformApi.Instance().login(connectionRequest, new SendBirdPlatformApiCallbackInterface<String>() {
                     @Override
                     public void onSuccess(String result) {
@@ -55,8 +59,13 @@ class SendBirdClient extends ClientInterface {
                                             connectionInterface.onMessageCenterConnectionError(e.getCode(), new MessageCenterException(e.getMessage()));
                                         }
                                         else {
-                                            SendBird.disconnect(null);
-                                            connectionInterface.onMessageCenterConnected();
+                                            SendBird.disconnect(new SendBird.DisconnectHandler() {
+                                                @Override
+                                                public void onDisconnected() {
+                                                    connectionInterface.onMessageCenterConnected();
+                                                    didInitialConnect = true;
+                                                }
+                                            });
                                         }
                                     }
                                 });
@@ -101,29 +110,51 @@ class SendBirdClient extends ClientInterface {
 
     @Override
     public void openChatView(final Activity context, ConnectionRequest optionalConnectionRequest, final String chat_id, final Theme theme, final OpenChatViewInterface openChatViewInterface) {
-        if (optionalConnectionRequest != null && optionalConnectionRequest.getAccessToken() != null) {
-            this.lastConnecitonRequest = optionalConnectionRequest;
-        }
-        if (!isConnected() && lastConnecitonRequest != null) {
-            SendBird.connect(lastConnecitonRequest.getUserId() != null ? lastConnecitonRequest.getUserId() : "", lastConnecitonRequest.getAccessToken(), new SendBird.ConnectHandler() {
-                @Override
-                public void onConnected(User user, SendBirdException e) {
-                    if (e != null) {
-                        openChatViewInterface.onError(new MessageCenterException("Failed to connect", 11));
+        if (didInitialConnect) {
+            if (optionalConnectionRequest != null && optionalConnectionRequest.getAccessToken() != null) {
+                this.lastConnecitonRequest = optionalConnectionRequest;
+            }
+            if (!isConnected() && lastConnecitonRequest != null) {
+                SendBird.connect(lastConnecitonRequest.getUserId() != null ? lastConnecitonRequest.getUserId() : "", lastConnecitonRequest.getAccessToken(), new SendBird.ConnectHandler() {
+                    @Override
+                    public void onConnected(User user, SendBirdException e) {
+                        if (e != null) {
+                            openChatViewInterface.onError(new MessageCenterException("Failed to connect", 11));
+                        } else {
+                            openChatView(context, theme, chat_id, openChatViewInterface);
+                        }
                     }
-                    else {
-                        openChatView(context, theme, chat_id, openChatViewInterface);
+                });
+            } else if (isConnected()) {
+                openChatView(context, theme, chat_id, openChatViewInterface);
+            } else {
+                if (openChatViewInterface != null) {
+                    openChatViewInterface.onError(new MessageCenterException("You have to be connected to be able to join Chat view !", 302));
+                }
+            }
+        }
+        else if (mainConnectCalled == false) {
+            connect(context, optionalConnectionRequest, new ConnectionInterface() {
+                @Override
+                public void onMessageCenterConnected() {
+                    openChatView(context, lastConnecitonRequest, chat_id, theme, openChatViewInterface);
+                }
+
+                @Override
+                public void onMessageCenterConnectionError(int code, MessageCenterException e) {
+                    if (openChatViewInterface != null) {
+                        openChatViewInterface.onError(e);
                     }
                 }
             });
         }
-        else if (isConnected()) {
-            openChatView(context, theme, chat_id, openChatViewInterface);
-        }
         else {
-            if (openChatViewInterface != null) {
-                openChatViewInterface.onError(new MessageCenterException("You have to be connected to be able to join Chat view !", 302));
-            }
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    openChatView(context, lastConnecitonRequest, chat_id, theme, openChatViewInterface);
+                }
+            }, 500);
         }
     }
 
