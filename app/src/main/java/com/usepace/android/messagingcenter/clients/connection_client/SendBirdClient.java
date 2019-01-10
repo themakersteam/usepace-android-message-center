@@ -85,15 +85,15 @@ class SendBirdClient extends ClientInterface {
 
     @Override
     public boolean isConnected() {
-        if (SendBird.getConnectionState() != null) {
-            return SendBird.getConnectionState().equals(SendBird.ConnectionState.OPEN);
+        if (didInitialConnect && SendBird.getConnectionState() != null) {
+            return SendBird.getConnectionState().equals(SendBird.ConnectionState.OPEN) || SendBird.getConnectionState().equals(SendBird.ConnectionState.CONNECTING);
         }
         return false;
     }
 
     @Override
     public void getUnReadMessagesCount(Context context, final String chat_id, final UnReadMessagesInterface unReadMessagesInterface) {
-        if (unReadMessagesInterface == null)
+        if (unReadMessagesInterface == null || !mainConnectCalled)
             return;
         SendBirdPlatformApi.Instance().getTotalUnReadMessageCount(lastConnecitonRequest, chat_id, new SendBirdPlatformApiCallbackInterface<Integer>() {
             @Override
