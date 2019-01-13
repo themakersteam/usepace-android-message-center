@@ -50,8 +50,9 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:layout_gravity="bottom|end"
-            android:gravity="bottom|end"
+            android:layout_gravity="bottom|right"
+            android:gravity="bottom|right"
+            android:layoutDirection="ltr"
             android:layout_marginBottom="4dp"
             android:paddingLeft="12dp"
             android:paddingRight="12dp">
