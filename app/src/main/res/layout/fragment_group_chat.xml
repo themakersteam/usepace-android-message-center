@@ -28,11 +28,13 @@
             android:orientation="horizontal"
             android:layout_marginTop="5dp"
             android:layout_marginBottom="5dp"
+            android:weightSum="10"
             android:minHeight="48dp">
 
             <RelativeLayout
                 android:id="@+id/button_group_chat_upload"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
+                android:layout_weight="1.45"
                 android:layout_height="40dp"
                 android:layout_gravity="center">
 
@@ -53,7 +55,8 @@
             </RelativeLayout>
 
             <RelativeLayout
-                android:layout_width="match_parent"
+                android:layout_width="0dp"
+                android:layout_weight="8.55"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
                 android:gravity="center_vertical">
