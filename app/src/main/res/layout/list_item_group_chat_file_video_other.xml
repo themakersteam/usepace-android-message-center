@@ -1,6 +1,7 @@
 <RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/main_parent"
     android:layout_height="wrap_content"
     android:layout_width="match_parent"
     android:paddingLeft="8dp"
@@ -15,8 +16,6 @@
         android:layout_alignParentLeft="true"
         app:cardBackgroundColor="@color/groupChatBubbleOther"
         app:cardPreventCornerOverlap="false"
-        android:layout_marginTop="8dp"
-        android:layout_marginBottom="8dp"
         android:layout_marginRight="4dp"
         app:cardCornerRadius="6dp"
         app:cardElevation="1dp">
