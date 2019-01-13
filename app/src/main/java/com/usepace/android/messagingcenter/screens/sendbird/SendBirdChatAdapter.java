@@ -1,6 +1,7 @@
 package com.usepace.android.messagingcenter.screens.sendbird;
 
 import android.content.Context;
+import android.content.res.Resources;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
@@ -10,6 +11,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.dinuscxj.progressbar.CircleProgressBar;
@@ -252,19 +254,19 @@ class SendBirdChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
                 ((AdminMessageHolder) holder).bind(mContext, (AdminMessage) message.getBase(), mChannel, isNewDay);
                 break;
             case VIEW_TYPE_FILE_MESSAGE_ME:
-                ((MyFileMessageHolder) holder).bind(mContext, (FileMessage) message.getBase(), mChannel, isNewDay, isTempMessage, isFailedMessage, tempFileMessageUri, mItemClickListener);
+                ((MyFileMessageHolder) holder).bind(mContext, (FileMessage) message.getBase(), mChannel, isNewDay, isTempMessage, isFailedMessage, isContinuous, tempFileMessageUri, mItemClickListener);
                 break;
             case VIEW_TYPE_FILE_MESSAGE_OTHER:
                 ((OtherFileMessageHolder) holder).bind(mContext, (FileMessage) message.getBase(), mChannel, isNewDay, isContinuous, mItemClickListener);
                 break;
             case VIEW_TYPE_FILE_MESSAGE_IMAGE_ME:
-                ((MyImageFileMessageHolder) holder).bind(mContext, (FileMessage) message.getBase(), mChannel, isNewDay, isTempMessage, isFailedMessage, tempFileMessageUri, mItemClickListener);
+                ((MyImageFileMessageHolder) holder).bind(mContext, (FileMessage) message.getBase(), mChannel, isNewDay, isTempMessage, isFailedMessage, isContinuous, tempFileMessageUri, mItemClickListener);
                 break;
             case VIEW_TYPE_FILE_MESSAGE_IMAGE_OTHER:
                 ((OtherImageFileMessageHolder) holder).bind(mContext, (FileMessage) message.getBase(), mChannel, isNewDay, isContinuous, mItemClickListener);
                 break;
             case VIEW_TYPE_FILE_MESSAGE_VIDEO_ME:
-                ((MyVideoFileMessageHolder) holder).bind(mContext, (FileMessage) message.getBase(), mChannel, isNewDay, isTempMessage, isFailedMessage, tempFileMessageUri, mItemClickListener);
+                ((MyVideoFileMessageHolder) holder).bind(mContext, (FileMessage) message.getBase(), mChannel, isNewDay, isTempMessage, isFailedMessage,isContinuous, tempFileMessageUri, mItemClickListener);
                 break;
             case VIEW_TYPE_FILE_MESSAGE_VIDEO_OTHER:
                 ((OtherVideoFileMessageHolder) holder).bind(mContext, (FileMessage) message.getBase(), mChannel, isNewDay, isContinuous, mItemClickListener);
@@ -677,6 +679,16 @@ class SendBirdChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         }
     }
 
+    private int dpToPx(int dp) {
+        return (int) (dp * Resources.getSystem().getDisplayMetrics().density);
+    }
+
+    private void marginTopFirstMessage(RelativeLayout relativeLayout, boolean isContinuous) {
+        RecyclerView.LayoutParams params = (RecyclerView.LayoutParams)relativeLayout.getLayoutParams();
+        params.setMargins(0, isContinuous ? 0 : dpToPx(6), 0, 0);
+        relativeLayout.setLayoutParams(params);
+    }
+
     private class AdminMessageHolder extends RecyclerView.ViewHolder {
         private TextView messageText;
 
@@ -692,11 +704,11 @@ class SendBirdChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     }
 
     private class MyUserMessageHolder extends RecyclerView.ViewHolder {
+        RelativeLayout mainLayout;
         TextView messageText, editedText, timeText;
         ImageView readReceipt;
         ViewGroup urlPreviewContainer;
         ImageView urlPreviewMainImageView;
-        View padding;
 
         MyUserMessageHolder(View itemView) {
             super(itemView);
@@ -705,15 +717,14 @@ class SendBirdChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
             editedText = (TextView) itemView.findViewById(R.id.text_group_chat_edited);
             timeText = (TextView) itemView.findViewById(R.id.text_group_chat_time);
             readReceipt = (ImageView) itemView.findViewById(R.id.img_group_chat_read_receipt);
-
+            mainLayout = (RelativeLayout) itemView.findViewById(R.id.main_parent);
             urlPreviewContainer = (ViewGroup) itemView.findViewById(R.id.url_preview_container);
             urlPreviewMainImageView = (ImageView) itemView.findViewById(R.id.image_url_preview_main);
 
-            // Dynamic padding that can be hidden or shown based on whether the message is continuous.
-            padding = itemView.findViewById(R.id.view_group_chat_padding);
         }
 
         void bind(final Context context, final UserMessage message, GroupChannel channel, boolean isContinuous, boolean isNewDay, boolean isTempMessage, boolean isFailedMessage, final OnItemClickListener clickListener, final OnItemLongClickListener longClickListener, final int position) {
+            marginTopFirstMessage(mainLayout, isContinuous);
             String mMessage = TextUtils.getLocationUrlMessageIfExists(message.getMessage());
             messageText.setText(mMessage);
             timeText.setText(DateUtils.formatTime(message.getCreatedAt()));
@@ -726,14 +737,6 @@ class SendBirdChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
             }
 
             processReadReceipt(readReceipt, timeText, isFailedMessage, isTempMessage, channel, message);
-
-            // If continuous from previous message, remove extra padding.
-            if (isContinuous) {
-                padding.setVisibility(View.GONE);
-            } else {
-                padding.setVisibility(View.VISIBLE);
-            }
-
             urlPreviewContainer.setVisibility(View.GONE);
             if (message.getCustomType().equals(URL_PREVIEW_CUSTOM_TYPE)) {
                 try {
@@ -785,6 +788,7 @@ class SendBirdChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     }
 
     private class OtherUserMessageHolder extends RecyclerView.ViewHolder {
+        RelativeLayout mainLayout;
         TextView messageText, editedText, timeText;
 
         ViewGroup urlPreviewContainer;
@@ -796,13 +800,14 @@ class SendBirdChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
             messageText = (TextView) itemView.findViewById(R.id.text_group_chat_message);
             editedText = (TextView) itemView.findViewById(R.id.text_group_chat_edited);
             timeText = (TextView) itemView.findViewById(R.id.text_group_chat_time);
-
+            mainLayout = (RelativeLayout) itemView.findViewById(R.id.main_parent);
             urlPreviewContainer = (ViewGroup) itemView.findViewById(R.id.url_preview_container);
             urlPreviewMainImageView = (ImageView) itemView.findViewById(R.id.image_url_preview_main);
         }
 
 
         void bind(final Context context, final UserMessage message, GroupChannel channel, boolean isNewDay, boolean isContinuous, final OnItemClickListener clickListener, final OnItemLongClickListener longClickListener, final int position) {
+            marginTopFirstMessage(mainLayout, isContinuous);
             String mMessage = TextUtils.getLocationUrlMessageIfExists(message.getMessage());
             messageText.setText(mMessage);
             timeText.setText(DateUtils.formatTime(message.getCreatedAt()));
@@ -883,20 +888,22 @@ class SendBirdChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     }
 
     private class MyFileMessageHolder extends RecyclerView.ViewHolder {
+        RelativeLayout mainLayout;
         TextView fileNameText, timeText;
         CircleProgressBar circleProgressBar;
         ImageView readReceipt;
 
         public MyFileMessageHolder(View itemView) {
             super(itemView);
-
+            mainLayout = (RelativeLayout) itemView.findViewById(R.id.main_parent);
             timeText = (TextView) itemView.findViewById(R.id.text_group_chat_time);
             fileNameText = (TextView) itemView.findViewById(R.id.text_group_chat_file_name);
             readReceipt = (ImageView) itemView.findViewById(R.id.img_group_chat_read_receipt);
             circleProgressBar = (CircleProgressBar) itemView.findViewById(R.id.circle_progress);
         }
 
-        void bind(Context context, final FileMessage message, GroupChannel channel, boolean isNewDay, boolean isTempMessage, boolean isFailedMessage, Uri tempFileMessageUri, final OnItemClickListener listener) {
+        void bind(Context context, final FileMessage message, GroupChannel channel, boolean isNewDay, boolean isTempMessage, boolean isFailedMessage, boolean isContinuous, Uri tempFileMessageUri, final OnItemClickListener listener) {
+            marginTopFirstMessage(mainLayout, isContinuous);
             fileNameText.setText(message.getName());
             timeText.setText(DateUtils.formatTime(message.getCreatedAt()));
             timeText.setTextColor(Color.parseColor("#9b9b9b"));
@@ -915,17 +922,19 @@ class SendBirdChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     }
 
     private class OtherFileMessageHolder extends RecyclerView.ViewHolder {
+        RelativeLayout mainLayout;
         TextView timeText, fileNameText;
 
         public OtherFileMessageHolder(View itemView) {
             super(itemView);
-
+            mainLayout = (RelativeLayout) itemView.findViewById(R.id.main_parent);
             timeText = (TextView) itemView.findViewById(R.id.text_group_chat_time);
             fileNameText = (TextView) itemView.findViewById(R.id.text_group_chat_file_name);
 
         }
 
         void bind(Context context, final FileMessage message, GroupChannel channel, boolean isNewDay, boolean isContinuous, final OnItemClickListener listener) {
+            marginTopFirstMessage(mainLayout, isContinuous);
             fileNameText.setText(message.getName());
             timeText.setText(DateUtils.formatTime(message.getCreatedAt()));
 
@@ -945,20 +954,22 @@ class SendBirdChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
      * Displays only the image thumbnail.
      */
     private class MyImageFileMessageHolder extends RecyclerView.ViewHolder {
+        RelativeLayout mainLayout;
         TextView timeText;
         ImageView fileThumbnailImage, readReceipt;
         CircleProgressBar circleProgressBar;
 
         public MyImageFileMessageHolder(View itemView) {
             super(itemView);
-
+            mainLayout = (RelativeLayout) itemView.findViewById(R.id.main_parent);
             timeText = (TextView) itemView.findViewById(R.id.text_group_chat_time);
             fileThumbnailImage = (ImageView) itemView.findViewById(R.id.image_group_chat_file_thumbnail);
             readReceipt = (ImageView) itemView.findViewById(R.id.img_group_chat_read_receipt);
             circleProgressBar = (CircleProgressBar) itemView.findViewById(R.id.circle_progress);
         }
 
-        void bind(Context context, final FileMessage message, GroupChannel channel, boolean isNewDay, boolean isTempMessage, boolean isFailedMessage, Uri tempFileMessageUri, final OnItemClickListener listener) {
+        void bind(Context context, final FileMessage message, GroupChannel channel, boolean isNewDay, boolean isTempMessage, boolean isFailedMessage, boolean isContinuous, Uri tempFileMessageUri, final OnItemClickListener listener) {
+            marginTopFirstMessage(mainLayout, isContinuous);
             timeText.setText(DateUtils.formatTime(message.getCreatedAt()));
             timeText.setTextColor(Color.parseColor("#9b9b9b"));
 
@@ -998,18 +1009,19 @@ class SendBirdChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     }
 
     private class OtherImageFileMessageHolder extends RecyclerView.ViewHolder {
-
+        RelativeLayout mainLayout;
         TextView timeText;
         ImageView fileThumbnailImage;
 
         public OtherImageFileMessageHolder(View itemView) {
             super(itemView);
-
+            mainLayout = (RelativeLayout) itemView.findViewById(R.id.main_parent);
             timeText = (TextView) itemView.findViewById(R.id.text_group_chat_time);
             fileThumbnailImage = (ImageView) itemView.findViewById(R.id.image_group_chat_file_thumbnail);
         }
 
         void bind(Context context, final FileMessage message, GroupChannel channel, boolean isNewDay, boolean isContinuous, final OnItemClickListener listener) {
+            marginTopFirstMessage(mainLayout, isContinuous);
             timeText.setText(DateUtils.formatTime(message.getCreatedAt()));
 
             // Get thumbnails from FileMessage
@@ -1046,20 +1058,22 @@ class SendBirdChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
      * Displays only the video thumbnail.
      */
     private class MyVideoFileMessageHolder extends RecyclerView.ViewHolder {
+        RelativeLayout mainLayout;
         TextView timeText;
         ImageView fileThumbnailImage, readReceiptText;
         CircleProgressBar circleProgressBar;
 
         public MyVideoFileMessageHolder(View itemView) {
             super(itemView);
-
+            mainLayout = (RelativeLayout) itemView.findViewById(R.id.main_parent);
             timeText = (TextView) itemView.findViewById(R.id.text_group_chat_time);
             fileThumbnailImage = (ImageView) itemView.findViewById(R.id.image_group_chat_file_thumbnail);
             readReceiptText = (ImageView) itemView.findViewById(R.id.img_group_chat_read_receipt);
             circleProgressBar = (CircleProgressBar) itemView.findViewById(R.id.circle_progress);
         }
 
-        void bind(Context context, final FileMessage message, GroupChannel channel, boolean isNewDay, boolean isTempMessage, boolean isFailedMessage, Uri tempFileMessageUri, final OnItemClickListener listener) {
+        void bind(Context context, final FileMessage message, GroupChannel channel, boolean isNewDay, boolean isTempMessage, boolean isFailedMessage, boolean isContinuous, Uri tempFileMessageUri, final OnItemClickListener listener) {
+            marginTopFirstMessage(mainLayout, isContinuous);
             timeText.setText(DateUtils.formatTime(message.getCreatedAt()));
             timeText.setTextColor(Color.parseColor("#9b9b9b"));
 
@@ -1089,18 +1103,19 @@ class SendBirdChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     }
 
     private class OtherVideoFileMessageHolder extends RecyclerView.ViewHolder {
-
+        RelativeLayout mainLayout;
         TextView timeText;
         ImageView  fileThumbnailImage;
 
         public OtherVideoFileMessageHolder(View itemView) {
             super(itemView);
-
+            mainLayout = (RelativeLayout) itemView.findViewById(R.id.main_parent);
             timeText = (TextView) itemView.findViewById(R.id.text_group_chat_time);
             fileThumbnailImage = (ImageView) itemView.findViewById(R.id.image_group_chat_file_thumbnail);
         }
 
         void bind(Context context, final FileMessage message, GroupChannel channel, boolean isNewDay, boolean isContinuous, final OnItemClickListener listener) {
+            marginTopFirstMessage(mainLayout, isContinuous);
             timeText.setText(DateUtils.formatTime(message.getCreatedAt()));
 
             // Get thumbnails from FileMessage

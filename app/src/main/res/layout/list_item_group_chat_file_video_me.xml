@@ -2,6 +2,7 @@
 
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/main_parent"
     android:layout_height="wrap_content"
     android:layout_width="match_parent"
     android:paddingRight="8dp"
@@ -19,8 +20,7 @@
         app:cardUseCompatPadding="true"
         app:cardCornerRadius="6dp"
         app:cardElevation="1dp"
-        app:cardPreventCornerOverlap="false"
-        android:layout_marginTop="8dp">
+        app:cardPreventCornerOverlap="false">
 
         <ImageView
             android:id="@+id/image_group_chat_file_thumbnail"
