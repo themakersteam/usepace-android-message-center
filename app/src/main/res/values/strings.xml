@@ -19,7 +19,8 @@
     <string name="storage_access_permission_needed">Storage access permissions are required to upload/download files.</string>
     <string name="camera_access_permission_needed">Camera access permissions are required to take pictures.</string>
     <string name="select_media">Select Media</string>
-    <string name="is_typing"> is typing...</string>
+    <string name="is_typing">%1$s is typing...</string>
+    <string name="two_typing">%1$s, %2$s is typing...</string>
     <string name="multiple_users_are_typing">Multiple users are typing</string>
     <string name="retry">Retry?</string>
     <string name="edit_message">Edit message</string>

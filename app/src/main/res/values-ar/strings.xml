@@ -16,7 +16,8 @@
     <string name="storage_access_permission_needed">لتتمكن من ارسال/تحميل الملفات الرجاء اعطاء الصلاحية</string>
     <string name="camera_access_permission_needed">لتتمكن من ارسال الصور الرجاء اعطاء الصلاحية</string>
     <string name="select_media">اختيار الملف</string>
-    <string name="is_typing"> يكتب...</string>
+    <string name="is_typing">%1$s يكتب...</string>
+    <string name="two_typing">%1$s, %2$s يكتب...</string>
     <string name="multiple_users_are_typing">اكثر من شخص يكتب...</string>
     <string name="retry">اعادة المحاولة؟</string>
     <string name="edit_message">تعديل الرسالة</string>
