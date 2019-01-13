@@ -29,7 +29,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
@@ -430,15 +429,7 @@ public class SendBirdChatFragment extends Fragment {
                 Log.d(LOG_TAG, "data is null!");
                 return;
             }
-            sendFileWithThumbnail(data.getData());
-            if (data.hasExtra("CAPTION")) {
-                new Handler().postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        sendUserMessage(data.getStringExtra("CAPTION"));
-                    }
-                }, 750);
-            }
+            sendFileWithThumbnail(data.getData(), data.getStringExtra("CAPTION"));
         }
         else if (requestCode == OPEN_LOCATION_ACTIVITY_RESULT && resultCode == Activity.RESULT_OK) {
             if (data != null && data.hasExtra("lat") && data.hasExtra("lng")) {
@@ -670,7 +661,7 @@ public class SendBirdChatFragment extends Fragment {
                                 sendUserMessage(userInput);
                             } else if (message instanceof FileMessage) {
                                 Uri uri = mChatAdapter.getTempFileMessageUri(new SendBirdMessage(message));
-                                sendFileWithThumbnail(uri);
+                                sendFileWithThumbnail(uri, null);
                             }
                             mChatAdapter.removeFailedMessage(message);
                         }
@@ -888,7 +879,7 @@ public class SendBirdChatFragment extends Fragment {
      *
      * @param uri The URI of the image, which in this case is received through an Intent request.
      */
-    private void sendFileWithThumbnail(Uri uri) {
+    private void sendFileWithThumbnail(Uri uri, final String caption) {
         // Specify two dimensions of thumbnails to generate
         List<FileMessage.ThumbnailSize> thumbnailSizes = new ArrayList<>();
         thumbnailSizes.add(new FileMessage.ThumbnailSize(240, 240));
@@ -934,6 +925,9 @@ public class SendBirdChatFragment extends Fragment {
                             Toast.makeText(getActivity(), "" + e.getCode() + ":" + e.getMessage(), Toast.LENGTH_SHORT).show();
                             mChatAdapter.markMessageFailed(fileMessage.getRequestId());
                             return;
+                        }
+                        if (caption != null && !caption.isEmpty()) {
+                            sendUserMessage(caption);
                         }
                         mChatAdapter.markMessageSent(new SendBirdMessage(fileMessage));
                     }
