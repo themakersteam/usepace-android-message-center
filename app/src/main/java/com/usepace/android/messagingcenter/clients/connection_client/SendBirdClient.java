@@ -37,52 +37,57 @@ class SendBirdClient extends ClientInterface {
 
     @Override
     public void connect(Context context, final ConnectionRequest connectionRequest, final ConnectionInterface connectionInterface) {
-        if (mainConnectCalled)
-            return;
-        mainConnectCalled = true;
-        this.lastConnecitonRequest = connectionRequest;
-        SendBird.init(connectionRequest.getAppId(), context);
-        SendBird.connect(connectionRequest.getUserId() != null ? connectionRequest.getUserId() : "", connectionRequest.getAccessToken(), new SendBird.ConnectHandler() {
-            @Override
-            public void onConnected(User user, final SendBirdException e) {
-                SendBirdPlatformApi.Instance().login(connectionRequest, new SendBirdPlatformApiCallbackInterface<String>() {
-                    @Override
-                    public void onSuccess(String result) {
-                        if (connectionInterface != null) {
-                            if (e != null) {
-                                connectionInterface.onMessageCenterConnectionError(e.getCode(), new MessageCenterException(e.getMessage()));
-                            } else {
-                                if (connectionRequest.getFcmToken() == null) return;
-                                SendBird.registerPushTokenForCurrentUser(connectionRequest.getFcmToken(),
-                                        new SendBird.RegisterPushTokenWithStatusHandler() {
-                                    @Override
-                                    public void onRegistered(SendBird.PushTokenRegistrationStatus status, SendBirdException e) {
-                                        if (e != null) {    // Error.
-                                            connectionInterface.onMessageCenterConnectionError(e.getCode(), new MessageCenterException(e.getMessage()));
-                                        }
-                                        else {
-                                            SendBird.disconnect(new SendBird.DisconnectHandler() {
+        if (mainConnectCalled) {
+            if (connectionInterface != null) {
+                connectionInterface.onMessageCenterConnected();
+            }
+        }
+        else {
+            mainConnectCalled = true;
+            this.lastConnecitonRequest = connectionRequest;
+            SendBird.init(connectionRequest.getAppId(), context);
+            SendBird.connect(connectionRequest.getUserId() != null ? connectionRequest.getUserId() : "", connectionRequest.getAccessToken(), new SendBird.ConnectHandler() {
+                @Override
+                public void onConnected(User user, final SendBirdException e) {
+                    SendBirdPlatformApi.Instance().login(connectionRequest, new SendBirdPlatformApiCallbackInterface<String>() {
+                        @Override
+                        public void onSuccess(String result) {
+                            if (connectionInterface != null) {
+                                if (e != null) {
+                                    connectionInterface.onMessageCenterConnectionError(e.getCode(), new MessageCenterException(e.getMessage()));
+                                } else {
+                                    if (connectionRequest.getFcmToken() == null) return;
+                                    SendBird.registerPushTokenForCurrentUser(connectionRequest.getFcmToken(),
+                                            new SendBird.RegisterPushTokenWithStatusHandler() {
                                                 @Override
-                                                public void onDisconnected() {
-                                                    connectionInterface.onMessageCenterConnected();
-                                                    didInitialConnect = true;
+                                                public void onRegistered(SendBird.PushTokenRegistrationStatus status, SendBirdException e) {
+                                                    if (e != null) {    // Error.
+                                                        connectionInterface.onMessageCenterConnectionError(e.getCode(), new MessageCenterException(e.getMessage()));
+                                                    } else {
+                                                        SendBird.disconnect(new SendBird.DisconnectHandler() {
+                                                            @Override
+                                                            public void onDisconnected() {
+                                                                connectionInterface.onMessageCenterConnected();
+                                                                didInitialConnect = true;
+                                                            }
+                                                        });
+                                                    }
                                                 }
                                             });
-                                        }
-                                    }
-                                });
+                                }
                             }
                         }
-                    }
-                    @Override
-                    public void onError(String error) {
-                        if (connectionInterface != null) {
-                            connectionInterface.onMessageCenterConnectionError(102, new MessageCenterException(error));
+
+                        @Override
+                        public void onError(String error) {
+                            if (connectionInterface != null) {
+                                connectionInterface.onMessageCenterConnectionError(102, new MessageCenterException(error));
+                            }
                         }
-                    }
-                });
-            }
-        });
+                    });
+                }
+            });
+        }
     }
 
     @Override
