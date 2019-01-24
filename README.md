@@ -127,7 +127,7 @@
  * Joining the chat by url(id) provided
  * Sample code for joining a conversation
     ```bash
-    MessageCenter.openChatView(Activity: this, ConnectionRequest: optional_connection_request, chat_id: "sample_chat_id", theme: new Theme(toolbar: "title", toolbar_subtitle: "subtitle"), openChatViewInterface: OpenChatViewInterface); 
+    MessageCenter.openChatView(Activity: this, ConnectionRequest: optional_connection_request, chat_id: "sample_chat_id", theme: new Theme(toolbar: "title", toolbar_subtitle: "subtitle"), openChatViewInterface: OpenChatViewInterface, optionalSdkCallbacks : sdkCallbacks); 
     ```
  * Connection Request is optional, if you want to update your connection request values, else pass null
  * if Theme object is not provided, the app will take the defaults 
@@ -136,6 +136,11 @@
  * an error callback will be triggered in case of error 
  * a viewWillStart callback will be triggered before the launch of the chat activity
  * onActivityResult will be triggered on the close of the Chat View with request_code: MessageCenter.OPEN_CHAT_VIEW_REQUEST_CODE, response_code: MessageCenter.OPEN_CHAT_VIEW_RESPONSE_CODE
+ * SdkCallBacks Are Optional(Null can be passed), SdkCallBacks will notify the App with any Event that happens with the sdk
+ * Available SdkCallbacks:
+   ```bash
+    - void onCallButtonClicked(OnCallButtonClickedResult onCallButtonClickedResult); 
+   ```
  
  #### 4.4 closeChatView()
   * Closing the chat view from the app side

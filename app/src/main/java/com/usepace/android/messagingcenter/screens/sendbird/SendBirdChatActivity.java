@@ -1,20 +1,28 @@
 package com.usepace.android.messagingcenter.screens.sendbird;
 
+import android.Manifest;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.TextView;
+import android.widget.Toast;
 import com.sendbird.android.SendBird;
 import com.usepace.android.messagingcenter.R;
 import com.usepace.android.messagingcenter.clients.connection_client.MessageCenter;
+import com.usepace.android.messagingcenter.interfaces.OnCallButtonClickedResult;
 import com.usepace.android.messagingcenter.model.Theme;
+import com.usepace.android.messagingcenter.utils.DeviceUtils;
+import com.usepace.android.messagingcenter.utils.LoadingUtils;
 import com.usepace.android.messagingcenter.utils.PreferenceUtils;
 
 
@@ -26,6 +34,7 @@ public class SendBirdChatActivity extends AppCompatActivity{
     private TextView toolbarSubtitle;
     private Theme theme;
     private Menu menu;
+    private LoadingUtils loadingUtils;
     public static String PACKAGE_NAME;
 
     @Override
@@ -37,6 +46,7 @@ public class SendBirdChatActivity extends AppCompatActivity{
 
     private void init() {
         theme = getIntent().hasExtra("THEME") ? (Theme) getIntent().getExtras().getParcelable("THEME") : null;
+        loadingUtils = new LoadingUtils(this);
         SendBird.setAutoBackgroundDetection(true);
         PreferenceUtils.init(this);
         initToolBar();
@@ -80,6 +90,42 @@ public class SendBirdChatActivity extends AppCompatActivity{
         if (menu != null && menu.findItem(R.id.menu_action_call) != null && theme != null && theme.isCallEnabled()) {
             menu.findItem(R.id.menu_action_call).setIcon(ContextCompat.getDrawable(this, R.drawable.ic_calldisabled));
         }
+    }
+
+    private void callRequested() {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
+            ((SendBirdChatFragment)getSupportFragmentManager().findFragmentById(R.id.container_group_channel)).requestCallPermissions();
+        }
+        else {
+            showCallDialog();
+        }
+    }
+
+    private void showCallDialog() {
+        new AlertDialog.Builder(this)
+                .setMessage(getString(R.string.ms_call_message))
+                .setPositiveButton(R.string.ms_call, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        if (MessageCenter.sdkCallbacks == null)
+                            return;
+                        loadingUtils.showOnScreenLoading();
+                        MessageCenter.sdkCallbacks.onCallButtonClicked(new OnCallButtonClickedResult() {
+                            @Override
+                            public void onSuccess(String phone_number) {
+                                loadingUtils.hideOnScreenLoading();
+                                DeviceUtils.call(SendBirdChatActivity.this, phone_number);
+                            }
+
+                            @Override
+                            public void onFailure(String error_message) {
+                                loadingUtils.hideOnScreenLoading();
+                                Toast.makeText(SendBirdChatActivity.this, error_message, Toast.LENGTH_SHORT).show();
+                            }
+                        });
+                    }
+                })
+                .setNegativeButton(R.string.ms_decline, null).show();
     }
 
     @Override
@@ -140,7 +186,7 @@ public class SendBirdChatActivity extends AppCompatActivity{
             return true;
         }
         else if (id == R.id.menu_action_call) { //Handle Call
-
+            callRequested();
         }
         return super.onOptionsItemSelected(item);
     }

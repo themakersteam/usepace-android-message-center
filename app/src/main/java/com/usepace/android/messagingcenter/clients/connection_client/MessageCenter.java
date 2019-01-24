@@ -9,6 +9,7 @@ import com.usepace.android.messagingcenter.interfaces.CloseChatViewInterface;
 import com.usepace.android.messagingcenter.interfaces.ConnectionInterface;
 import com.usepace.android.messagingcenter.interfaces.DisconnectInterface;
 import com.usepace.android.messagingcenter.interfaces.OpenChatViewInterface;
+import com.usepace.android.messagingcenter.interfaces.SdkCallbacks;
 import com.usepace.android.messagingcenter.interfaces.SdkHandleNotificationInterface;
 import com.usepace.android.messagingcenter.interfaces.UnReadMessagesInterface;
 import com.usepace.android.messagingcenter.model.ConnectionRequest;
@@ -21,6 +22,7 @@ public class MessageCenter {
     public static final String CLIENT_SENDBIRD = "sendbird";
     public static final Integer OPEN_CHAT_VIEW_REQUEST_CODE = 234;
     public static final Integer OPEN_CHAT_VIEW_RESPONSE_CODE = 232;
+    public static SdkCallbacks sdkCallbacks = null;
 
     private static Client client;
     private static String LAST_CLIENT = CLIENT_SENDBIRD;
@@ -78,8 +80,9 @@ public class MessageCenter {
      * @param theme
      * @param openChatViewInterface
      */
-    public static void openChatView(Activity context, ConnectionRequest optionalConnectionRequest, String chat_id, Theme theme, OpenChatViewInterface openChatViewInterface) {
+    public static void openChatView(Activity context, ConnectionRequest optionalConnectionRequest, String chat_id, Theme theme, OpenChatViewInterface openChatViewInterface, SdkCallbacks optionalSdkCallback) {
         try {
+            sdkCallbacks = optionalSdkCallback;
             client().getClient(LAST_CLIENT).openChatView(context, optionalConnectionRequest, chat_id, theme, openChatViewInterface);
         }
         catch (MessageCenterException e) {

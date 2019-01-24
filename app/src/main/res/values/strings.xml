@@ -18,6 +18,8 @@
     <string name="ok">Ok</string>
     <string name="storage_access_permission_needed">Storage access permissions are required to upload/download files.</string>
     <string name="camera_access_permission_needed">Camera access permissions are required to take pictures.</string>
+    <string name="ms_phone_access_permission_needed">Call access permissions are required to make call.</string>
+    <string name="ms_call_message">Are you sure you want to call the driver?</string>
     <string name="select_media">Select Media</string>
     <string name="is_typing">%1$s is typing...</string>
     <string name="two_typing">%1$s, %2$s is typing...</string>
@@ -35,6 +37,8 @@
     <string name="ms_message_failed_yes">Yes</string>
     <string name="ms_message_failed_no">No</string>
     <string name="ms_call">Call</string>
+    <string name="ms_calling">Calling...</string>
+    <string name="ms_decline">Decline</string>
 
     <!-- Global Strings -->
     <string name="message_center_toolbar_title">Message Center</string>

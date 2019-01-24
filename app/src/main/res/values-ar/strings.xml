@@ -15,6 +15,8 @@
     <string name="ok">موافق</string>
     <string name="storage_access_permission_needed">لتتمكن من ارسال/تحميل الملفات الرجاء اعطاء الصلاحية</string>
     <string name="camera_access_permission_needed">لتتمكن من ارسال الصور الرجاء اعطاء الصلاحية</string>
+    <string name="ms_phone_access_permission_needed">لتتمكن من الاتصال الرجاء اعطاء الصلاحية</string>
+    <string name="ms_call_message">هل انت متأكد انك تريد مكالمة السائق؟</string>
     <string name="select_media">اختيار الملف</string>
     <string name="is_typing">%1$s يكتب...</string>
     <string name="two_typing">%1$s, %2$s يكتب...</string>
@@ -31,7 +33,9 @@
     <string name="ms_message_file_in_progress">لم يتم إرسال الصور الخاصة بك، الاستمرار دون إرسال الصورة؟</string>
     <string name="ms_message_failed_yes">استمرار</string>
     <string name="ms_message_failed_no">الغاء</string>
-    <string name="ms_call">اتصال</string>
+    <string name="ms_call">اتصل</string>
+    <string name="ms_calling">اتصال...</string>
+    <string name="ms_decline">الغاء</string>
 
     <!-- Global Strings -->
     <string name="message_center_toolbar_title">مركز الرسائل</string>
