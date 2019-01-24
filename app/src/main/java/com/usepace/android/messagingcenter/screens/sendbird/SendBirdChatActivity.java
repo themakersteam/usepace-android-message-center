@@ -12,6 +12,7 @@ import android.widget.TextView;
 import com.sendbird.android.SendBird;
 import com.usepace.android.messagingcenter.R;
 import com.usepace.android.messagingcenter.clients.connection_client.MessageCenter;
+import com.usepace.android.messagingcenter.model.Theme;
 import com.usepace.android.messagingcenter.utils.PreferenceUtils;
 
 
@@ -21,6 +22,7 @@ public class SendBirdChatActivity extends AppCompatActivity{
     private onBackPressedListener mOnBackPressedListener;
     private Toolbar toolbar;
     private TextView toolbarSubtitle;
+    private Theme theme;
     public static String PACKAGE_NAME;
 
     @Override
@@ -31,6 +33,7 @@ public class SendBirdChatActivity extends AppCompatActivity{
     }
 
     private void init() {
+        theme = getIntent().hasExtra("THEME") ? (Theme) getIntent().getExtras().getParcelable("THEME") : null;
         SendBird.setAutoBackgroundDetection(true);
         PreferenceUtils.init(this);
         initToolBar();
@@ -60,9 +63,9 @@ public class SendBirdChatActivity extends AppCompatActivity{
         setSupportActionBar(toolbar);
         if (getSupportActionBar() != null) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-            getSupportActionBar().setTitle(getIntent().hasExtra("TITLE") ? getIntent().getStringExtra("TITLE") : getString(R.string.message_center_toolbar_title));
+            getSupportActionBar().setTitle(theme != null && theme.getToolbarTitle() != null ? theme.getToolbarTitle() : getString(R.string.message_center_toolbar_title));
         }
-        toolbarSubtitle.setText(getIntent().hasExtra("SUBTITLE") ? getIntent().getStringExtra("SUBTITLE") : "");
+        toolbarSubtitle.setText(theme != null && theme.getToolbarSubtitle() != null ? theme.getToolbarSubtitle() : "");
         PACKAGE_NAME = getIntent().getStringExtra("PACKAGE_NAME");
     }
 

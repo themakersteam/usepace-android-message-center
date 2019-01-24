@@ -131,7 +131,7 @@
     ```
  * Connection Request is optional, if you want to update your connection request values, else pass null
  * if Theme object is not provided, the app will take the defaults 
- * Theme Object for android have (```toolbar```, ```toolbar_subtitle```, ```welcome_message```) ..
+ * Theme Object for android have (```app_name```,```toolbar```, ```toolbar_subtitle```, ```welcome_message```, ```call_enabled```) ..
  * Executing this interface will open the chatting window 
  * an error callback will be triggered in case of error 
  * a viewWillStart callback will be triggered before the launch of the chat activity
