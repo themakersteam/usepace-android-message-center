@@ -260,6 +260,7 @@ public class SendBirdChatFragment extends Fragment {
         if (groupChatBox != null) {
             groupChatBox.setVisibility(View.GONE);
         }
+        ((SendBirdChatActivity)getActivity()).freeze();
     }
 
     private void openSendFileScreen(int action) {

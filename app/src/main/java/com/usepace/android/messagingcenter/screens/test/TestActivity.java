@@ -21,7 +21,7 @@ public class TestActivity extends AppCompatActivity{
         MessageCenter.connect(this, prepareCustomerRequest(), new ConnectionInterface() {
             @Override
             public void onMessageCenterConnected() {
-                MessageCenter.openChatView(TestActivity.this, null, chat_id, new Theme("Sample_app",null, null, null), new OpenChatViewInterface() {
+                MessageCenter.openChatView(TestActivity.this, null, chat_id, new Theme("Sample_app","Sample App", "#122333 🤓", "Hello and welcome 👀", true), new OpenChatViewInterface() {
                     @Override
                     public void onViewWillStart() {
 
