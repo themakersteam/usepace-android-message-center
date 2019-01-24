@@ -47,6 +47,7 @@ import com.sendbird.android.UserMessage;
 import com.usepace.android.messagingcenter.R;
 import com.usepace.android.messagingcenter.clients.connection_client.MessageCenter;
 import com.usepace.android.messagingcenter.model.SendBirdMessage;
+import com.usepace.android.messagingcenter.model.Theme;
 import com.usepace.android.messagingcenter.screens.mediaplayer.MediaPlayerActivity;
 import com.usepace.android.messagingcenter.screens.myLocation.MyLocationActivity;
 import com.usepace.android.messagingcenter.screens.photoviewer.PhotoViewerActivity;
@@ -99,6 +100,7 @@ public class SendBirdChatFragment extends Fragment {
     private TextView mCurrentEventText;
     private LinearLayout groupChatBox;
     private TextView welcomeMessage;
+    private Theme theme;
 
     private GroupChannel mChannel;
     private String mChannelUrl;
@@ -163,8 +165,11 @@ public class SendBirdChatFragment extends Fragment {
         mUploadFileButton = (RelativeLayout) rootView.findViewById(R.id.button_group_chat_upload);
         welcomeMessage = (TextView) rootView.findViewById(R.id.text_group_chat_welcome);
 
-        if (getArguments() != null && getArguments().containsKey("WELCOME_MESSAGE")) {
-            welcomeMessage.setText(getArguments().getString("WELCOME_MESSAGE"));
+        if (getArguments() != null && getArguments().containsKey("THEME")) {
+            theme = (Theme)getArguments().getParcelable("THEME");
+        }
+        if (theme != null && theme.getWelcomeMessage() != null) {
+            welcomeMessage.setText(theme.getWelcomeMessage());
         }
         else {
             welcomeMessage.setVisibility(View.GONE);

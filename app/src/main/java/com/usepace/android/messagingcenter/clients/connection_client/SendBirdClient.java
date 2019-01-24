@@ -246,15 +246,7 @@ class SendBirdClient extends ClientInterface {
         }
         Intent a1 = new Intent(activity, SendBirdChatActivity.class);
         if (theme != null) {
-            if (theme.getToolbarTitle() != null) {
-                a1.putExtra("TITLE", theme.getToolbarTitle());
-            }
-            if (theme.getToolbarSubtitle() != null) {
-                a1.putExtra("SUBTITLE", theme.getToolbarSubtitle());
-            }
-            if (theme.getWelcomeMessage() != null) {
-                a1.putExtra("WELCOME_MESSAGE", theme.getWelcomeMessage());
-            }
+            a1.putExtra("THEME", theme);
         }
         a1.putExtra("CHANNEL_URL", chat_id);
         a1.putExtra("PACKAGE_NAME", activity.getPackageName());
