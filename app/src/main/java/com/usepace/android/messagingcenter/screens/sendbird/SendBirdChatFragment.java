@@ -12,6 +12,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Vibrator;
+import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
@@ -80,6 +81,7 @@ public class SendBirdChatFragment extends Fragment {
     private static final int INTENT_REQUEST_CHOOSE_MEDIA = 301;
     private static final int PERMISSION_WRITE_EXTERNAL_STORAGE = 13;
     private static final int PERMISSION_CAMERA = 14;
+    private static final int PERMISSION_CALL = 15;
     private static final int SEND_FILE_ACTIVITY_RESULT = 101;
     private static final int OPEN_LOCATION_ACTIVITY_RESULT = 102;
 
@@ -758,6 +760,23 @@ public class SendBirdChatFragment extends Fragment {
         }
     }
 
+    public void requestCallPermissions() {
+        if (ActivityCompat.shouldShowRequestPermissionRationale(getActivity(), Manifest.permission.CALL_PHONE)) {
+            Snackbar.make(mRootLayout, getString(R.string.ms_phone_access_permission_needed),
+                    Snackbar.LENGTH_LONG)
+                    .setAction(getString(R.string.ok), new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            requestPermissions(new String[]{Manifest.permission.CALL_PHONE}, PERMISSION_CALL);
+                        }
+                    })
+                    .show();
+        } else {
+            // Permission has not been granted yet. Request it directly.
+            requestPermissions(new String[]{Manifest.permission.CALL_PHONE}, PERMISSION_CALL);
+        }
+    }
+
     private void onFileMessageClicked(FileMessage message) {
         String type = message.getType().toLowerCase();
         if (type.startsWith("image")) {
@@ -1030,14 +1049,27 @@ public class SendBirdChatFragment extends Fragment {
         catch (Exception e) {}
     }
 
+    private void showSettingsPermissionSnack(String message) {
+        Snackbar.make(mRootLayout, message, Snackbar.LENGTH_LONG).setAction(getString(R.string.ok), new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Uri uri = Uri.fromParts("package", getActivity().getPackageName(), null);
+                getActivity().startActivity(new Intent().setAction(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).setData(uri));
+            }
+        }).show();
+    }
+
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if (grantResults.length > 0 && grantResults[0] != PackageManager.PERMISSION_GRANTED && requestCode == PERMISSION_WRITE_EXTERNAL_STORAGE) {
-            Snackbar.make(mRootLayout, getString(R.string.storage_access_permission_needed), Snackbar.LENGTH_LONG).show();
+            showSettingsPermissionSnack(getString(R.string.storage_access_permission_needed));
         }
         else if (grantResults.length > 0 && grantResults[0] != PackageManager.PERMISSION_GRANTED && requestCode == PERMISSION_CAMERA) {
-            Snackbar.make(mRootLayout, getString(R.string.camera_access_permission_needed), Snackbar.LENGTH_LONG).show();
+            showSettingsPermissionSnack(getString(R.string.camera_access_permission_needed));
+        }
+        else if (grantResults.length > 0 && grantResults[0] != PackageManager.PERMISSION_GRANTED && requestCode == PERMISSION_CALL) {
+            showSettingsPermissionSnack(getString(R.string.ms_phone_access_permission_needed));
         }
     }
 }

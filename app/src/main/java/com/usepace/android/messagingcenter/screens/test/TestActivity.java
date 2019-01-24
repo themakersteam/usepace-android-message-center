@@ -1,12 +1,15 @@
 package com.usepace.android.messagingcenter.screens.test;
 
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import com.usepace.android.messagingcenter.clients.connection_client.MessageCenter;
 import com.usepace.android.messagingcenter.exceptions.MessageCenterException;
 import com.usepace.android.messagingcenter.interfaces.ConnectionInterface;
+import com.usepace.android.messagingcenter.interfaces.OnCallButtonClickedResult;
 import com.usepace.android.messagingcenter.interfaces.OpenChatViewInterface;
+import com.usepace.android.messagingcenter.interfaces.SdkCallbacks;
 import com.usepace.android.messagingcenter.model.ConnectionRequest;
 import com.usepace.android.messagingcenter.model.Theme;
 
@@ -21,7 +24,7 @@ public class TestActivity extends AppCompatActivity{
         MessageCenter.connect(this, prepareCustomerRequest(), new ConnectionInterface() {
             @Override
             public void onMessageCenterConnected() {
-                MessageCenter.openChatView(TestActivity.this, null, chat_id, new Theme("Sample_app","Sample App", "#122333 🤓", "Hello and welcome 👀", true), new OpenChatViewInterface() {
+                MessageCenter.openChatView(TestActivity.this, null, chat_id, new Theme("Sample_app", "Sample App", "#122333 🤓", "Hello and welcome 👀", true), new OpenChatViewInterface() {
                     @Override
                     public void onViewWillStart() {
 
@@ -30,6 +33,16 @@ public class TestActivity extends AppCompatActivity{
                     @Override
                     public void onError(MessageCenterException messageCenterException) {
 
+                    }
+                }, new SdkCallbacks() {
+                    @Override
+                    public void onCallButtonClicked(final OnCallButtonClickedResult onCallButtonClickedResult) {
+                        new Handler().postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                onCallButtonClickedResult.onSuccess("041222222");
+                            }
+                        }, 5000);
                     }
                 });
             }
