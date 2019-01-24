@@ -34,6 +34,7 @@
     <string name="ms_message_file_in_progress">Your image message is not sent, continue without sending?</string>
     <string name="ms_message_failed_yes">Yes</string>
     <string name="ms_message_failed_no">No</string>
+    <string name="ms_call">Call</string>
 
     <!-- Global Strings -->
     <string name="message_center_toolbar_title">Message Center</string>

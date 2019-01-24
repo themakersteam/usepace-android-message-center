@@ -5,8 +5,10 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.TextView;
 import com.sendbird.android.SendBird;
@@ -23,6 +25,7 @@ public class SendBirdChatActivity extends AppCompatActivity{
     private Toolbar toolbar;
     private TextView toolbarSubtitle;
     private Theme theme;
+    private Menu menu;
     public static String PACKAGE_NAME;
 
     @Override
@@ -73,6 +76,12 @@ public class SendBirdChatActivity extends AppCompatActivity{
         mOnBackPressedListener = listener;
     }
 
+    public void freeze() {
+        if (menu != null && menu.findItem(R.id.menu_action_call) != null && theme != null && theme.isCallEnabled()) {
+            menu.findItem(R.id.menu_action_call).setIcon(ContextCompat.getDrawable(this, R.drawable.ic_calldisabled));
+        }
+    }
+
     @Override
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
@@ -115,14 +124,24 @@ public class SendBirdChatActivity extends AppCompatActivity{
     }
 
     @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        this.menu = menu;
+        if (theme != null && theme.isCallEnabled()) {
+            getMenuInflater().inflate(R.menu.menu_with_call, menu);
+        }
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
-
         if (id == android.R.id.home) {
             onBackPressed();
             return true;
         }
+        else if (id == R.id.menu_action_call) { //Handle Call
 
+        }
         return super.onOptionsItemSelected(item);
     }
 

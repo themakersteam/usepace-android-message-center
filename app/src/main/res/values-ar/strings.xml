@@ -31,6 +31,7 @@
     <string name="ms_message_file_in_progress">لم يتم إرسال الصور الخاصة بك، الاستمرار دون إرسال الصورة؟</string>
     <string name="ms_message_failed_yes">استمرار</string>
     <string name="ms_message_failed_no">الغاء</string>
+    <string name="ms_call">اتصال</string>
 
     <!-- Global Strings -->
     <string name="message_center_toolbar_title">مركز الرسائل</string>
