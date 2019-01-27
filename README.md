@@ -137,6 +137,7 @@
  * a viewWillStart callback will be triggered before the launch of the chat activity
  * onActivityResult will be triggered on the close of the Chat View with request_code: MessageCenter.OPEN_CHAT_VIEW_REQUEST_CODE, response_code: MessageCenter.OPEN_CHAT_VIEW_RESPONSE_CODE
  * SdkCallBacks Are Optional(Null can be passed), SdkCallBacks will notify the App with any Event that happens with the sdk
+ * For event handling (GTM, Adjust, ...) There Must be a check in the app side for the app_name key
  * Available SdkCallbacks:
    ```bash
     - void onCallButtonClicked(OnCallButtonClickedResult onCallButtonClickedResult); 
