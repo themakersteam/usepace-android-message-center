@@ -100,7 +100,7 @@ class SendBirdClient extends ClientInterface {
 
     @Override
     public void getUnReadMessagesCount(Context context, final String chat_id, final UnReadMessagesInterface unReadMessagesInterface) {
-        if (unReadMessagesInterface == null || !mainConnectCalled)
+        if (unReadMessagesInterface == null || !mainConnectCalled || lastConnecitonRequest == null)
             return;
         SendBirdPlatformApi.Instance().getTotalUnReadMessageCount(lastConnecitonRequest, chat_id, new SendBirdPlatformApiCallbackInterface<Integer>() {
             @Override
