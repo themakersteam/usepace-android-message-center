@@ -12,6 +12,7 @@ import com.usepace.android.messagingcenter.interfaces.OpenChatViewInterface;
 import com.usepace.android.messagingcenter.interfaces.SdkCallbacks;
 import com.usepace.android.messagingcenter.model.ConnectionRequest;
 import com.usepace.android.messagingcenter.model.Theme;
+import java.util.Map;
 
 public class TestActivity extends AppCompatActivity{
 
@@ -43,6 +44,10 @@ public class TestActivity extends AppCompatActivity{
                                 onCallButtonClickedResult.onSuccess("041222222");
                             }
                         }, 5000);
+                    }
+                    @Override
+                    public void onEvent(String app_name, String event_key, Map<String, Object> data) {
+
                     }
                 });
             }
