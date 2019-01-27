@@ -298,23 +298,21 @@ class SendBirdChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         } else if (message.getBase() instanceof FileMessage) {
             FileMessage fileMessage = (FileMessage) message.getBase();
 
-            boolean isMine = messageIsMine(fileMessage.getSender(), currentUser);
-
             if (fileMessage.getType().toLowerCase().startsWith("image")) {
                 // If the sender is current user
-                if (isMine) {
+                if (messageIsMine(fileMessage.getSender(), currentUser)) {
                     return VIEW_TYPE_FILE_MESSAGE_IMAGE_ME;
                 } else {
                     return VIEW_TYPE_FILE_MESSAGE_IMAGE_OTHER;
                 }
             } else if (fileMessage.getType().toLowerCase().startsWith("video")) {
-                if (isMine) {
+                if (messageIsMine(fileMessage.getSender(), currentUser)) {
                     return VIEW_TYPE_FILE_MESSAGE_VIDEO_ME;
                 } else {
                     return VIEW_TYPE_FILE_MESSAGE_VIDEO_OTHER;
                 }
             } else {
-                if (isMine) {
+                if (messageIsMine(fileMessage.getSender(), currentUser)) {
                     return VIEW_TYPE_FILE_MESSAGE_ME;
                 } else {
                     return VIEW_TYPE_FILE_MESSAGE_OTHER;

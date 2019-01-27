@@ -4,8 +4,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
-
-import com.usepace.android.messagingcenter.application.SendBirdApplication;
 import com.usepace.android.messagingcenter.clients.connection_client.MessageCenter;
 import com.usepace.android.messagingcenter.exceptions.MessageCenterException;
 import com.usepace.android.messagingcenter.interfaces.ConnectionInterface;
@@ -58,7 +56,7 @@ public class TestActivity extends AppCompatActivity{
 
     private ConnectionRequest prepareCustomerRequest() {
         ConnectionRequest connectionRequest = new ConnectionRequest();
-        connectionRequest.setAppId(SendBirdApplication.APP_ID);
+        connectionRequest.setAppId("FE3AD311-7F0F-4E7E-9E22-25FF141A37C0");
         connectionRequest.setClient(MessageCenter.CLIENT_SENDBIRD);
         connectionRequest.setUserId("rider_sony");
         connectionRequest.setAccessToken("4a8f3c197450b4762cd2dcf02a130816a503f4f2");
