@@ -140,6 +140,7 @@
  * Available SdkCallbacks:
    ```bash
     - void onCallButtonClicked(OnCallButtonClickedResult onCallButtonClickedResult); 
+    - void onEvent(String app_name, String event_key, Map<String, Object> Data); //Used For Any Event Loggers
    ```
  
  #### 4.4 closeChatView()
