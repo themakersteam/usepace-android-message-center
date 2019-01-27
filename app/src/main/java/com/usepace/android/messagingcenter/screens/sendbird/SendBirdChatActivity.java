@@ -47,7 +47,6 @@ public class SendBirdChatActivity extends AppCompatActivity{
     private void init() {
         theme = getIntent().hasExtra("THEME") ? (Theme) getIntent().getExtras().getParcelable("THEME") : null;
         loadingUtils = new LoadingUtils(this);
-        SendBird.setAutoBackgroundDetection(true);
         PreferenceUtils.init(this);
         initToolBar();
         String channelUrl = getIntent().getStringExtra("CHANNEL_URL");

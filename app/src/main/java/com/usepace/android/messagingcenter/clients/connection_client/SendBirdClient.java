@@ -46,6 +46,7 @@ class SendBirdClient extends ClientInterface {
             mainConnectCalled = true;
             this.lastConnecitonRequest = connectionRequest;
             SendBird.init(connectionRequest.getAppId(), context);
+            SendBird.setAutoBackgroundDetection(true);
             SendBird.connect(connectionRequest.getUserId() != null ? connectionRequest.getUserId() : "", connectionRequest.getAccessToken(), new SendBird.ConnectHandler() {
                 @Override
                 public void onConnected(User user, final SendBirdException e) {
