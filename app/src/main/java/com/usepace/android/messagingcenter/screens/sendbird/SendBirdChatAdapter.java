@@ -22,6 +22,7 @@ import com.sendbird.android.FileMessage;
 import com.sendbird.android.GroupChannel;
 import com.sendbird.android.SendBird;
 import com.sendbird.android.SendBirdException;
+import com.sendbird.android.Sender;
 import com.sendbird.android.User;
 import com.sendbird.android.UserMessage;
 import com.usepace.android.messagingcenter.R;
@@ -283,31 +284,37 @@ class SendBirdChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     public int getItemViewType(int position) {
 
         SendBirdMessage message = mMessageList.get(position);
+        User currentUser = SendBird.getCurrentUser();
+
         if (message.getBase() instanceof UserMessage) {
             UserMessage userMessage = (UserMessage) message.getBase();
+
             // If the sender is current user
-            if (userMessage.getSender().getUserId().equals(SendBird.getCurrentUser().getUserId())) {
+            if (messageIsMine(userMessage.getSender(), currentUser)) {
                 return VIEW_TYPE_USER_MESSAGE_ME;
             } else {
                 return VIEW_TYPE_USER_MESSAGE_OTHER;
             }
         } else if (message.getBase() instanceof FileMessage) {
             FileMessage fileMessage = (FileMessage) message.getBase();
+
+            boolean isMine = messageIsMine(fileMessage.getSender(), currentUser);
+
             if (fileMessage.getType().toLowerCase().startsWith("image")) {
                 // If the sender is current user
-                if (fileMessage.getSender().getUserId().equals(SendBird.getCurrentUser().getUserId())) {
+                if (isMine) {
                     return VIEW_TYPE_FILE_MESSAGE_IMAGE_ME;
                 } else {
                     return VIEW_TYPE_FILE_MESSAGE_IMAGE_OTHER;
                 }
             } else if (fileMessage.getType().toLowerCase().startsWith("video")) {
-                if (fileMessage.getSender().getUserId().equals(SendBird.getCurrentUser().getUserId())) {
+                if (isMine) {
                     return VIEW_TYPE_FILE_MESSAGE_VIDEO_ME;
                 } else {
                     return VIEW_TYPE_FILE_MESSAGE_VIDEO_OTHER;
                 }
             } else {
-                if (fileMessage.getSender().getUserId().equals(SendBird.getCurrentUser().getUserId())) {
+                if (isMine) {
                     return VIEW_TYPE_FILE_MESSAGE_ME;
                 } else {
                     return VIEW_TYPE_FILE_MESSAGE_OTHER;
@@ -318,6 +325,10 @@ class SendBirdChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         }
 
         return -1;
+    }
+
+    private boolean messageIsMine(Sender sender, User currentUser) {
+        return (sender != null && currentUser != null) && (currentUser.getUserId() != null && sender.getUserId() != null) && sender.getUserId().equals(currentUser.getUserId());
     }
 
     @Override
@@ -386,7 +397,8 @@ class SendBirdChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
 
     private boolean removeMessageFromArrayList(BaseMessage baseMessage) {
         for (SendBirdMessage sendBirdMessage : mMessageList) {
-            if (sendBirdMessage.getBase().equals(baseMessage)) {
+            BaseMessage message = sendBirdMessage.getBase();
+            if (message != null && message.equals(baseMessage)) {
                 return mMessageList.remove(sendBirdMessage);
             }
         }
@@ -488,7 +500,7 @@ class SendBirdChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
      * @param handler
      */
     public void loadPreviousMessages(int limit, final BaseChannel.GetMessagesHandler handler) {
-        if(isMessageListLoading()) {
+        if(isMessageListLoading() || mChannel == null) {
             return;
         }
 

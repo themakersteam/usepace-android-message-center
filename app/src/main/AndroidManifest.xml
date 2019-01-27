@@ -16,6 +16,7 @@
         android:required="true" />
 
     <application
+        android:name=".application.SendBirdApplication"
         android:allowBackup="true"
         android:label="@string/app_name"
         android:supportsRtl="true">
