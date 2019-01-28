@@ -26,6 +26,7 @@ import com.usepace.android.messagingcenter.utils.DeviceUtils;
 import com.usepace.android.messagingcenter.utils.LoadingUtils;
 import com.usepace.android.messagingcenter.utils.PreferenceUtils;
 import java.util.HashMap;
+import java.util.Map;
 
 
 public class SendBirdChatActivity extends AppCompatActivity{
@@ -100,12 +101,18 @@ public class SendBirdChatActivity extends AppCompatActivity{
     }
 
     private void callRequested() {
-        MessageCenter.sdkCallbacks.onEvent(EventForApp.HungerStation.toString(), "contact_masking_service.clicked", new HashMap<String, Object>());
+        onEvent(EventForApp.HungerStation.toString(), "contact_masking_service.clicked", new HashMap<String, Object>());
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
             ((SendBirdChatFragment)getSupportFragmentManager().findFragmentById(R.id.container_group_channel)).requestCallPermissions();
         }
         else {
             showCallDialog();
+        }
+    }
+
+    private void onEvent(String app_name, String key, Map<String, Object> data) {
+        if (MessageCenter.sdkCallbacks != null) {
+            MessageCenter.sdkCallbacks.onEvent(app_name, key, data);
         }
     }
 
@@ -117,7 +124,7 @@ public class SendBirdChatActivity extends AppCompatActivity{
                     public void onClick(DialogInterface dialog, int which) {
                         if (MessageCenter.sdkCallbacks == null)
                             return;
-                        MessageCenter.sdkCallbacks.onEvent(EventForApp.HungerStation.toString(), "call_option.clicked", new HashMap<String, Object>());
+                        onEvent(EventForApp.HungerStation.toString(), "call_option.clicked", new HashMap<String, Object>());
                         loadingUtils.showOnScreenLoading();
                         MessageCenter.sdkCallbacks.onCallButtonClicked(new OnCallButtonClickedResult() {
                             @Override
@@ -137,7 +144,7 @@ public class SendBirdChatActivity extends AppCompatActivity{
                 .setNegativeButton(R.string.ms_decline, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        MessageCenter.sdkCallbacks.onEvent(EventForApp.HungerStation.toString(), "decline.clicked", new HashMap<String, Object>());
+                        onEvent(EventForApp.HungerStation.toString(), "decline.clicked", new HashMap<String, Object>());
                     }
                 }).show();
     }
