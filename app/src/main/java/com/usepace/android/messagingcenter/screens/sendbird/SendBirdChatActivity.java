@@ -101,7 +101,7 @@ public class SendBirdChatActivity extends AppCompatActivity{
     }
 
     private void callRequested() {
-        onEvent(EventForApp.HungerStation.toString(), "contact_masking_service.clicked", new HashMap<String, Object>());
+        onEvent(EventForApp.HungerStation.toString(), "call_rider.clicked", new HashMap<String, Object>());
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
             ((SendBirdChatFragment)getSupportFragmentManager().findFragmentById(R.id.container_group_channel)).requestCallPermissions();
         }
@@ -124,7 +124,7 @@ public class SendBirdChatActivity extends AppCompatActivity{
                     public void onClick(DialogInterface dialog, int which) {
                         if (MessageCenter.sdkCallbacks == null)
                             return;
-                        onEvent(EventForApp.HungerStation.toString(), "call_option.clicked", new HashMap<String, Object>());
+                        onEvent(EventForApp.HungerStation.toString(), "call_rider.submitted", new HashMap<String, Object>());
                         loadingUtils.showOnScreenLoading();
                         MessageCenter.sdkCallbacks.onCallButtonClicked(new OnCallButtonClickedResult() {
                             @Override
@@ -144,7 +144,7 @@ public class SendBirdChatActivity extends AppCompatActivity{
                 .setNegativeButton(R.string.ms_decline, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        onEvent(EventForApp.HungerStation.toString(), "decline.clicked", new HashMap<String, Object>());
+                        onEvent(EventForApp.HungerStation.toString(), "call_rider.canceled", new HashMap<String, Object>());
                     }
                 }).show();
     }
