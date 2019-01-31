@@ -54,6 +54,7 @@ class SendBirdClient extends ClientInterface {
                         public void onSuccess(String result) {
                             if (connectionInterface != null) {
                                 if (e != null) {
+                                    mainConnectCalled = false;
                                     connectionInterface.onMessageCenterConnectionError(e.getCode(), new MessageCenterException(e.getMessage()));
                                 } else {
                                     if (connectionRequest.getFcmToken() == null) return;
@@ -81,6 +82,7 @@ class SendBirdClient extends ClientInterface {
                         @Override
                         public void onError(String error) {
                             if (connectionInterface != null) {
+                                mainConnectCalled = false;
                                 connectionInterface.onMessageCenterConnectionError(102, new MessageCenterException(error));
                             }
                         }
