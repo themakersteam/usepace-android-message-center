@@ -38,6 +38,7 @@ public class SendBirdChatActivity extends AppCompatActivity{
     private Theme theme;
     private Menu menu;
     private LoadingUtils loadingUtils;
+    private boolean channel_frozen = false;
     public static String PACKAGE_NAME;
 
     @Override
@@ -97,6 +98,7 @@ public class SendBirdChatActivity extends AppCompatActivity{
     public void freeze() {
         if (menu != null && menu.findItem(R.id.menu_action_call) != null && theme != null && theme.isCallEnabled()) {
             menu.findItem(R.id.menu_action_call).setIcon(ContextCompat.getDrawable(this, R.drawable.ic_calldisabled));
+            channel_frozen = true;
         }
     }
 
@@ -206,7 +208,7 @@ public class SendBirdChatActivity extends AppCompatActivity{
             onBackPressed();
             return true;
         }
-        else if (id == R.id.menu_action_call) { //Handle Call
+        else if (id == R.id.menu_action_call && !channel_frozen) { //Handle Call
             callRequested();
         }
         return super.onOptionsItemSelected(item);
