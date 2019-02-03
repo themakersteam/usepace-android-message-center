@@ -107,7 +107,7 @@ public class SendBirdChatActivity extends AppCompatActivity{
                     }
                 }
             }
-        }, 500); // Making sure the menu is loaded
+        }, 150); // Making sure the menu is loaded
     }
 
     private void callRequested() {
