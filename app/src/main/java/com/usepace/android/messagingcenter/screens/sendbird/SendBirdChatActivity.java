@@ -5,6 +5,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -96,10 +97,17 @@ public class SendBirdChatActivity extends AppCompatActivity{
     }
 
     public void freeze() {
-        if (menu != null && menu.findItem(R.id.menu_action_call) != null && theme != null && theme.isCallEnabled()) {
-            menu.findItem(R.id.menu_action_call).setIcon(ContextCompat.getDrawable(this, R.drawable.ic_calldisabled));
-            channel_frozen = true;
-        }
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                if (!isFinishing()) {
+                    if (menu != null && menu.findItem(R.id.menu_action_call) != null && theme != null && theme.isCallEnabled()) {
+                        menu.findItem(R.id.menu_action_call).setIcon(ContextCompat.getDrawable(SendBirdChatActivity.this, R.drawable.ic_calldisabled));
+                        channel_frozen = true;
+                    }
+                }
+            }
+        }, 500); // Making sure the menu is loaded
     }
 
     private void callRequested() {
