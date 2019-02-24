@@ -1,6 +1,7 @@
 package com.usepace.android.messagingcenter.screens.sendfile;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -43,7 +44,7 @@ public class SendFileActivity extends AppCompatActivity {
         if (getIntent() != null && getIntent().hasExtra("ACTION")) {
             action = getIntent().getIntExtra("ACTION", REQUEST_IMAGE_CAPTURE);
             if (action == REQUEST_IMAGE_CAPTURE) {
-                dispatchTakePictureIntent();
+                dispatchTakePictureIntent(this);
                 SendBird.setAutoBackgroundDetection(false);
             }
             else if (action == REQUEST_GALLERY_CAPTURE) {
@@ -82,27 +83,27 @@ public class SendFileActivity extends AppCompatActivity {
         finish();
     }
 
-    private void dispatchTakePictureIntent() {
+    private void dispatchTakePictureIntent(Context context) {
         Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
+        if (context != null && takePictureIntent.resolveActivity(getPackageManager()) != null) {
             // Create the File where the photo should go
             File photoFile = null;
             try {
-                photoFile = ImageUtils.createImageFile(this);
+                photoFile = ImageUtils.createImageFile(context);
                 currentPhotoPath = photoFile.getAbsolutePath();
             } catch (IOException ex) {
                 // Error occurred while creating the File
             }
             // Continue only if the File was successfully created
             if (photoFile != null) {
-                Uri photoURI = FileProvider.getUriForFile(this,
+                Uri photoURI = FileProvider.getUriForFile(context,
                         SendBirdChatActivity.PACKAGE_NAME + ".fileprovider",
                         photoFile);
                 takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
                 startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
             }
             else {
-                Toast.makeText(this, "Camera Error ! ", Toast.LENGTH_SHORT).show();
+                Toast.makeText(context, "Camera Error ! ", Toast.LENGTH_SHORT).show();
                 finish();
             }
         }
