@@ -262,7 +262,8 @@ public class SendBirdChatFragment extends Fragment {
         if (groupChatBox != null) {
             groupChatBox.setVisibility(View.GONE);
         }
-        ((SendBirdChatActivity)getActivity()).freeze();
+        if (getActivity() != null)
+            ((SendBirdChatActivity)getActivity()).freeze();
     }
 
     private void openSendFileScreen(int action) {
@@ -826,7 +827,9 @@ public class SendBirdChatFragment extends Fragment {
                         if (e != null) {
                             // Error!
                             Log.e(LOG_TAG, e.toString());
-                            mChatAdapter.markMessageFailed(userMessage.getRequestId());
+
+                            if (userMessage != null)
+                                mChatAdapter.markMessageFailed(userMessage.getRequestId());
                             return;
                         }
 
@@ -867,7 +870,9 @@ public class SendBirdChatFragment extends Fragment {
                         if (e.getCode() == channel_frozen_key) {
                             getActivity().finish();
                         }
-                        mChatAdapter.markMessageFailed(userMessage.getRequestId());
+
+                        if (userMessage != null)
+                            mChatAdapter.markMessageFailed(userMessage.getRequestId());
                         return;
                     }
 
@@ -963,10 +968,12 @@ public class SendBirdChatFragment extends Fragment {
                 // Send image with thumbnails in the specified dimensions
                 FileMessage tempFileMessage = mChannel.sendFileMessage(file, name, mime, size, "", null, thumbnailSizes, progressHandler);
 
-                mFileProgressHandlerMap.put(progressHandler, tempFileMessage);
+                if (tempFileMessage != null) {
+                    mFileProgressHandlerMap.put(progressHandler, tempFileMessage);
 
-                mChatAdapter.addTempFileMessageInfo(tempFileMessage, uri);
-                mChatAdapter.addFirst(tempFileMessage);
+                    mChatAdapter.addTempFileMessageInfo(tempFileMessage, uri);
+                    mChatAdapter.addFirst(tempFileMessage);
+                }
             }
         }
     }
