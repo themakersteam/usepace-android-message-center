@@ -143,7 +143,16 @@ public class SendBirdChatFragment extends Fragment {
 
         // Load messages from cache.
         boolean isChannelValid = mChatAdapter.load(mChannelUrl);
-        if (!isChannelValid) {
+        if (isChannelValid) {
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    onPause();
+                    onResume();
+                }
+            }, 500);
+        }
+        else {
             freeze();
         }
     }
