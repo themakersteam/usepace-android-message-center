@@ -95,11 +95,17 @@ public class SendFileActivity extends AppCompatActivity {
             }
             // Continue only if the File was successfully created
             if (photoFile != null) {
-                Uri photoURI = FileProvider.getUriForFile(this,
-                        SendBirdChatActivity.PACKAGE_NAME + ".fileprovider",
-                        photoFile);
-                takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
-                startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
+                try {
+                    Uri photoURI = FileProvider.getUriForFile(this,
+                            SendBirdChatActivity.PACKAGE_NAME + ".fileprovider",
+                            photoFile);
+                    takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
+                    startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
+                }
+                catch (RuntimeException e) {
+                    Toast.makeText(this, "Camera Error ! ", Toast.LENGTH_SHORT).show();
+                    finish();
+                }
             }
             else {
                 Toast.makeText(this, "Camera Error ! ", Toast.LENGTH_SHORT).show();

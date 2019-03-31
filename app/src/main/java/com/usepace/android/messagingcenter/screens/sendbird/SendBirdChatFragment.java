@@ -271,7 +271,8 @@ public class SendBirdChatFragment extends Fragment {
         if (groupChatBox != null) {
             groupChatBox.setVisibility(View.GONE);
         }
-        ((SendBirdChatActivity)getActivity()).freeze();
+        if (getActivity() != null && !getActivity().isFinishing())
+            ((SendBirdChatActivity)getActivity()).freeze();
     }
 
     private void openSendFileScreen(int action) {
@@ -334,13 +335,18 @@ public class SendBirdChatFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-
-        ConnectionManager.addConnectionManagementHandler(CONNECTION_HANDLER_ID, new ConnectionManager.ConnectionManagementHandler() {
-            @Override
-            public void onConnected(boolean reconnect) {
-                refresh();
-            }
-        });
+        try {
+            ConnectionManager.addConnectionManagementHandler(CONNECTION_HANDLER_ID, new ConnectionManager.ConnectionManagementHandler() {
+                @Override
+                public void onConnected(boolean reconnect) {
+                    refresh();
+                }
+            });
+        }
+        catch (RuntimeException e) { // SendBird instance hasn't been initialized
+            Toast.makeText(getContext(), getString(R.string.ms_connection_failed), Toast.LENGTH_SHORT).show();
+            getActivity().finish();
+        }
 
         mChatAdapter.setContext(getActivity()); // Glide bug fix (java.lang.IllegalArgumentException: You cannot start a load for a destroyed activity)
 
@@ -872,11 +878,12 @@ public class SendBirdChatFragment extends Fragment {
                 public void onSent(UserMessage userMessage, SendBirdException e) {
                     if (e != null) {
                         // Error!
-                        Log.e(LOG_TAG, e.toString());
                         if (e.getCode() == channel_frozen_key) {
                             getActivity().finish();
                         }
-                        mChatAdapter.markMessageFailed(userMessage.getRequestId());
+                        if (userMessage.getRequestId() != null) {
+                            mChatAdapter.markMessageFailed(userMessage.getRequestId());
+                        }
                         return;
                     }
 

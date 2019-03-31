@@ -36,6 +36,7 @@
     <string name="ms_call">اتصل</string>
     <string name="ms_calling">اتصال...</string>
     <string name="ms_decline">الغاء</string>
+    <string name="ms_connection_failed">فشل في الاتصال</string>
 
     <!-- Global Strings -->
     <string name="message_center_toolbar_title">مركز الرسائل</string>
