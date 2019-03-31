@@ -39,6 +39,7 @@
     <string name="ms_call">Call</string>
     <string name="ms_calling">Calling...</string>
     <string name="ms_decline">Decline</string>
+    <string name="ms_connection_failed">Connection Failed</string>
 
     <!-- Global Strings -->
     <string name="message_center_toolbar_title">Message Center</string>
