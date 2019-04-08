@@ -49,8 +49,7 @@ public class ImageUtils {
      */
     public static void displayRoundImageFromUrl(final Context context, final String url, final ImageView imageView) {
         RequestOptions myOptions = new RequestOptions()
-                .centerCrop()
-                .dontAnimate();
+                .centerCrop();
 
         Glide.with(context)
                 .asBitmap()
@@ -78,7 +77,6 @@ public class ImageUtils {
     public static void displayImageFromUrl(final Context context, final String url,
                                            final ImageView imageView, Drawable placeholderDrawable, RequestListener listener) {
         RequestOptions myOptions = new RequestOptions()
-                .dontAnimate()
                 .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
                 .placeholder(placeholderDrawable);
 
@@ -112,7 +110,6 @@ public class ImageUtils {
                                                             final ImageView imageView, RequestListener listener) {
         RequestOptions myOptions = new RequestOptions()
                 .centerCrop()
-                .dontAnimate()
                 .diskCacheStrategy(DiskCacheStrategy.NONE)
                 .skipMemoryCache(true);
 
@@ -154,7 +151,6 @@ public class ImageUtils {
                                                           final ImageView imageView,
                                                           int placeholderResId) {
         RequestOptions myOptions = new RequestOptions()
-                .dontAnimate()
                 .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
                 .placeholder(placeholderResId);
 
@@ -169,7 +165,6 @@ public class ImageUtils {
      */
     public static void displayGifImageFromUrl(Context context, String url, ImageView imageView, Drawable placeholderDrawable, RequestListener listener) {
         RequestOptions myOptions = new RequestOptions()
-                .dontAnimate()
                 .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
                 .placeholder(placeholderDrawable);
 
@@ -194,7 +189,6 @@ public class ImageUtils {
      */
     public static void displayGifImageFromUrl(Context context, String url, ImageView imageView, String thumbnailUrl, Drawable placeholderDrawable) {
         RequestOptions myOptions = new RequestOptions()
-                .dontAnimate()
                 .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
                 .placeholder(placeholderDrawable);
 
