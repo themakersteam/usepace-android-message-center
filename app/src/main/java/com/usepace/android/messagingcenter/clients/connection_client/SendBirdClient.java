@@ -149,9 +149,6 @@ class SendBirdClient extends ClientInterface {
                                     connectionInterface.onMessageCenterConnectionError(e.getCode(), new MessageCenterException(e.getMessage()));
                                 } else {
 
-//                                        connectionInterface.onMessageCenterConnected();
-//                                                                didInitialConnect = true;
-
                                     if (connectionRequest.getFcmToken() == null) return;
                                     SendBird.registerPushTokenForCurrentUser(connectionRequest.getFcmToken(),
                                             new SendBird.RegisterPushTokenWithStatusHandler() {
@@ -161,20 +158,14 @@ class SendBirdClient extends ClientInterface {
                                                         connectionInterface.onMessageCenterConnectionError(e.getCode(), new MessageCenterException(e.getMessage()));
                                                     } else {
 
-//                                                        // I have changed code not disconnect the client.
+                                                        SendBird.disconnect(new SendBird.DisconnectHandler() {
+                                                            @Override
+                                                            public void onDisconnected() {
+                                                                connectionInterface.onMessageCenterConnected();
+                                                                didInitialConnect = true;
+                                                            }
+                                                        });
 
-                                                        connectionInterface.onMessageCenterConnected();
-                                                        didInitialConnect = true;
-
-//                                                        // Why it is disconnected after registeration token
-//                                                        SendBird.disconnect(new SendBird.DisconnectHandler() {
-//                                                            @Override
-//                                                            public void onDisconnected() {
-//                                                                connectionInterface.onMessageCenterConnected();
-//                                                                didInitialConnect = true;
-//                                                            }
-//                                                        });
-//
 
                                                     }
                                                 }
