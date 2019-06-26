@@ -20,6 +20,8 @@ import java.util.List;
 abstract class ClientInterface {
 
     abstract public void connect(Context context, ConnectionRequest connectionRequest, ConnectionInterface connectionInterface);
+    abstract public void reConnect();
+    abstract public void reInit(Context context);
     abstract public boolean isConnected();
     abstract public void getUnReadMessagesCount(Context context, String chat_id, UnReadMessagesInterface unReadMessagesInterface);
     abstract public void openChatView(Activity context, ConnectionRequest optionalConnectionRequest, String chat_id, Theme theme, OpenChatViewInterface openChatViewInterface);

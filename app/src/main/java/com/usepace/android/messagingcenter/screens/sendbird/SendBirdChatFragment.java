@@ -342,11 +342,13 @@ public class SendBirdChatFragment extends Fragment {
                     refresh();
                 }
             });
-        }
-        catch (RuntimeException e) { // SendBird instance hasn't been initialized
-            Toast.makeText(getContext(), getString(R.string.ms_connection_failed), Toast.LENGTH_SHORT).show();
-            getActivity().finish();
-        }
+        }catch (RuntimeException e) { // SendBird instance hasn't been initialized
+                Toast.makeText(getContext(), getString(R.string.ms_connection_failed), Toast.LENGTH_SHORT).show();
+                getActivity().finish();
+            }
+
+
+        try {
 
         mChatAdapter.setContext(getActivity()); // Glide bug fix (java.lang.IllegalArgumentException: You cannot start a load for a destroyed activity)
 
@@ -362,8 +364,7 @@ public class SendBirdChatFragment extends Fragment {
                     mChatAdapter.markAllMessagesAsRead();
                     // Add new message to view
                     mChatAdapter.addFirst(baseMessage);
-                }
-                else {
+                } else {
                     String user_name = "";
                     if (baseMessage instanceof UserMessage) {
                         user_name = ((UserMessage) baseMessage).getSender().getNickname();
@@ -415,15 +416,59 @@ public class SendBirdChatFragment extends Fragment {
                 }
             }
         }, 1700);
+
+
+    }catch (RuntimeException e) { // SendBird instance hasn't been initialized
+            Toast.makeText(getContext(), getString(R.string.ms_connection_failed), Toast.LENGTH_SHORT).show();
+            handleExpceptionHandling(e);
+        }
     }
+
+
+
+
+    private void handleExpceptionHandling(Exception exp)
+    {
+        if (exp != null && exp.getMessage() != null && exp.getMessage().equalsIgnoreCase("SendBird instance hasn't been initialized.")) {
+
+            MessageCenter.reInitClient(getActivity().getApplicationContext());
+        }else
+        {
+            MessageCenter.reConnect();
+
+        }
+    }
+
+
+
+
+
+
+
+
+
+
+
 
     @Override
     public void onPause() {
+
+        try {
         setTypingStatus(false);
+
 
         ConnectionManager.removeConnectionManagementHandler(CONNECTION_HANDLER_ID);
         SendBird.removeChannelHandler(CHANNEL_HANDLER_ID);
         super.onPause();
+
+    }catch (RuntimeException e) { // SendBird instance hasn't been initialized
+        Toast.makeText(getContext(), getString(R.string.ms_connection_failed), Toast.LENGTH_SHORT).show();
+       // SendBird.reconnect();
+            handleExpceptionHandling(e);
+
+    }
+
+
     }
 
     @Override
@@ -444,6 +489,9 @@ public class SendBirdChatFragment extends Fragment {
     public void onActivityResult(int requestCode, int resultCode, final Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
+        try {
+
+
         // Set this as true to restore background connection management.
         SendBird.setAutoBackgroundDetection(true);
         if ((requestCode == INTENT_REQUEST_CHOOSE_MEDIA || requestCode == SEND_FILE_ACTIVITY_RESULT) && resultCode == Activity.RESULT_OK) {
@@ -459,6 +507,14 @@ public class SendBirdChatFragment extends Fragment {
                 sendUserMessage("location://?lat=" + data.getDoubleExtra("lat", 0) + "&long=" + data.getDoubleExtra("lng", 0));
             }
         }
+
+        }catch (RuntimeException e) { // SendBird instance hasn't been initialized
+            Toast.makeText(getContext(), getString(R.string.ms_connection_failed), Toast.LENGTH_SHORT).show();
+            //SendBird.reconnect();
+            handleExpceptionHandling(e);
+
+        }
+
     }
 
     private void setUpRecyclerView() {
@@ -988,23 +1044,27 @@ public class SendBirdChatFragment extends Fragment {
     }
 
     private void editMessage(final BaseMessage message, String editedMessage) {
-        mChannel.updateUserMessage(message.getMessageId(), editedMessage, null, null, new BaseChannel.UpdateUserMessageHandler() {
-            @Override
-            public void onUpdated(UserMessage userMessage, SendBirdException e) {
-                if (e != null) {
-                    // Error!
-                    Toast.makeText(getActivity(), e.getMessage(), Toast.LENGTH_SHORT).show();
-                    return;
-                }
 
-                mChatAdapter.loadLatestMessages(CHANNEL_LIST_LIMIT, new BaseChannel.GetMessagesHandler() {
-                    @Override
-                    public void onResult(List<BaseMessage> list, SendBirdException e) {
-                        mChatAdapter.markAllMessagesAsRead();
+        if (mChannel != null) {
+            mChannel.updateUserMessage(message.getMessageId(), editedMessage, null, null, new BaseChannel.UpdateUserMessageHandler() {
+                @Override
+                public void onUpdated(UserMessage userMessage, SendBirdException e) {
+                    if (e != null) {
+                        // Error!
+                        Toast.makeText(getActivity(), e.getMessage(), Toast.LENGTH_SHORT).show();
+                        return;
                     }
-                });
-            }
-        });
+
+                    mChatAdapter.loadLatestMessages(CHANNEL_LIST_LIMIT, new BaseChannel.GetMessagesHandler() {
+                        @Override
+                        public void onResult(List<BaseMessage> list, SendBirdException e) {
+                            mChatAdapter.markAllMessagesAsRead();
+                        }
+                    });
+                }
+            });
+
+        }
     }
 
     /**
@@ -1014,7 +1074,9 @@ public class SendBirdChatFragment extends Fragment {
      * @param message The message to delete.
      */
     private void deleteMessage(final BaseMessage message) {
-        mChannel.deleteMessage(message, new BaseChannel.DeleteMessageHandler() {
+
+        if (mChannel != null)
+         mChannel.deleteMessage(message, new BaseChannel.DeleteMessageHandler() {
             @Override
             public void onResult(SendBirdException e) {
                 if (e != null) {
