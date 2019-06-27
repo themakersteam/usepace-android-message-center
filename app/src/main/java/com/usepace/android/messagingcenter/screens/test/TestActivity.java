@@ -4,6 +4,8 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
+
+import com.sendbird.android.SendBird;
 import com.usepace.android.messagingcenter.clients.connection_client.MessageCenter;
 import com.usepace.android.messagingcenter.exceptions.MessageCenterException;
 import com.usepace.android.messagingcenter.interfaces.ConnectionInterface;
@@ -49,6 +51,7 @@ public class TestActivity extends AppCompatActivity{
                     @Override
                     public void onEvent(String app_name, String event_key, Map<String, Object> data) {
 
+                        SendBird.reconnect();
                     }
                 });
             }
@@ -59,6 +62,9 @@ public class TestActivity extends AppCompatActivity{
             }
         });
     }
+
+
+
 
     private ConnectionRequest prepareCustomerRequest() {
         ConnectionRequest connectionRequest = new ConnectionRequest();

@@ -39,7 +39,6 @@ class SendBirdClient extends ClientInterface {
     private ConnectionInterface lastConnectionInterface;
 
 
-    @Override
     public void reConnect() {
 
         try {
@@ -58,7 +57,7 @@ class SendBirdClient extends ClientInterface {
 
 
 
-    @Override
+
     public void reInit(Context context) {
 
 

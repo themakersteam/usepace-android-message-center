@@ -47,6 +47,7 @@ import com.sendbird.android.SendBirdException;
 import com.sendbird.android.UserMessage;
 import com.usepace.android.messagingcenter.R;
 import com.usepace.android.messagingcenter.clients.connection_client.MessageCenter;
+import com.usepace.android.messagingcenter.clients.connection_client.MessageCenterExtension;
 import com.usepace.android.messagingcenter.model.SendBirdMessage;
 import com.usepace.android.messagingcenter.model.Theme;
 import com.usepace.android.messagingcenter.screens.mediaplayer.MediaPlayerActivity;
@@ -431,10 +432,11 @@ public class SendBirdChatFragment extends Fragment {
     {
         if (exp != null && exp.getMessage() != null && exp.getMessage().equalsIgnoreCase("SendBird instance hasn't been initialized.")) {
 
-            MessageCenter.reInitClient(getActivity().getApplicationContext());
+
+            MessageCenterExtension.reInitClient(getActivity().getApplicationContext());
         }else
         {
-            MessageCenter.reConnect();
+            MessageCenterExtension.reConnect();
 
         }
     }
