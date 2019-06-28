@@ -49,5 +49,6 @@
     <string name="send_current_location">ارسال الموقع الحالي</string>
     <string name="text_satellite">قمر صناعي</string>
     <string name="text_map">الخريطة</string>
+    <string name="internet_msg">الانترنت غير متصل</string>
 
 </resources>

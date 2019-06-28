@@ -4,6 +4,8 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
+
+import com.sendbird.android.SendBird;
 import com.usepace.android.messagingcenter.clients.connection_client.MessageCenter;
 import com.usepace.android.messagingcenter.exceptions.MessageCenterException;
 import com.usepace.android.messagingcenter.interfaces.ConnectionInterface;
@@ -16,7 +18,8 @@ import java.util.Map;
 
 public class TestActivity extends AppCompatActivity{
 
-    private String chat_id = "sendbird_group_channel_2456028_f4a5055d72e15074e5832cd3d60d5fa662980e84";
+    //private String chat_id = "sendbird1_group_channel_2456028_f4a5055d72e15074e5832cd3d60d5fa662980e84";
+    private String chat_id = "sendbird_group_channel_4291064_da693e243a137f2a9baaa28af64a24152d279618";
 
 
     @Override
@@ -48,6 +51,7 @@ public class TestActivity extends AppCompatActivity{
                     @Override
                     public void onEvent(String app_name, String event_key, Map<String, Object> data) {
 
+                        SendBird.reconnect();
                     }
                 });
             }
@@ -59,15 +63,33 @@ public class TestActivity extends AppCompatActivity{
         });
     }
 
+
+
+
     private ConnectionRequest prepareCustomerRequest() {
         ConnectionRequest connectionRequest = new ConnectionRequest();
         connectionRequest.setAppId("FE3AD311-7F0F-4E7E-9E22-25FF141A37C0");
         connectionRequest.setClient(MessageCenter.CLIENT_SENDBIRD);
-        connectionRequest.setUserId("rider_sony");
-        connectionRequest.setAccessToken("4a8f3c197450b4762cd2dcf02a130816a503f4f2");
+        connectionRequest.setUserId("rider_ikarma_pace");
+        connectionRequest.setAccessToken("f0adb60e5cbffdedf90f28d7e510c91111f8b82a");
         connectionRequest.setFcmToken("testo");
         return connectionRequest;
     }
+
+
+
+    private ConnectionRequest prepareCustomerRequest1() {
+        ConnectionRequest connectionRequest = new ConnectionRequest();
+        connectionRequest.setAppId("08CF9E26-0EA6-43C7-920E-2238DA08D2E1");
+        connectionRequest.setClient(MessageCenter.CLIENT_SENDBIRD);
+        connectionRequest.setUserId("rider_sony");
+        connectionRequest.setAccessToken("56baea33529cf4b380a56ae52b052e4be9c903f7");
+        connectionRequest.setFcmToken("testo");
+        return connectionRequest;
+    }
+
+
+
 
     private ConnectionRequest prepareDriverRequest() {
         ConnectionRequest connectionRequest = new ConnectionRequest();
