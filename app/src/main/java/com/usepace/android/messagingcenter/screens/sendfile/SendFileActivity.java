@@ -16,6 +16,7 @@ import android.widget.ImageView;
 import android.widget.Toast;
 import com.sendbird.android.SendBird;
 import com.usepace.android.messagingcenter.R;
+import com.usepace.android.messagingcenter.clients.connection_client.MessageCenterExtension;
 import com.usepace.android.messagingcenter.screens.sendbird.SendBirdChatActivity;
 import com.usepace.android.messagingcenter.utils.FileUtils;
 import com.usepace.android.messagingcenter.utils.ImageUtils;
@@ -44,17 +45,50 @@ public class SendFileActivity extends AppCompatActivity {
             action = getIntent().getIntExtra("ACTION", REQUEST_IMAGE_CAPTURE);
             if (action == REQUEST_IMAGE_CAPTURE) {
                 dispatchTakePictureIntent();
-                SendBird.setAutoBackgroundDetection(false);
+                try {
+
+                    SendBird.setAutoBackgroundDetection(false);
+                }catch (RuntimeException e) { // SendBird instance hasn't been initialized
+
+                    handleExpceptionHandling(e);
+
+                }
             }
             else if (action == REQUEST_GALLERY_CAPTURE) {
                 dispatchGalleryIntent();
-                SendBird.setAutoBackgroundDetection(false);
+
+                try {
+                    SendBird.setAutoBackgroundDetection(false);
+                }catch (RuntimeException e) {
+
+                    handleExpceptionHandling(e);
+
+                }
+
             }
         }
         else {
             finish();
         }
     }
+
+
+
+
+
+    private void handleExpceptionHandling(Exception exp)
+    {
+        if (exp != null && exp.getMessage() != null && exp.getMessage().equalsIgnoreCase("SendBird instance hasn't been initialized.")) {
+
+
+            MessageCenterExtension.reInitClient(this.getApplicationContext());
+        }else
+        {
+            MessageCenterExtension.reConnect();
+
+        }
+    }
+
 
     private void init() {
         toolbar = findViewById(R.id.toolbar);
@@ -130,7 +164,15 @@ public class SendFileActivity extends AppCompatActivity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        SendBird.setAutoBackgroundDetection(true);
+
+        try {
+            SendBird.setAutoBackgroundDetection(true);
+        }catch (RuntimeException e) { // SendBird instance hasn't been initialized
+
+            handleExpceptionHandling(e);
+
+        }
+
         if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
             if (currentPhotoPath != null) {
                 File file = new File(currentPhotoPath);
@@ -171,7 +213,16 @@ public class SendFileActivity extends AppCompatActivity {
     public void onBackPressed() {
         if (action == REQUEST_GALLERY_CAPTURE) {
             dispatchGalleryIntent();
+
+            try
+            {
             SendBird.setAutoBackgroundDetection(false);
+            }catch (RuntimeException e) { // SendBird instance hasn't been initialized
+
+                handleExpceptionHandling(e);
+
+            }
+
         }
         else {
             super.onBackPressed();
