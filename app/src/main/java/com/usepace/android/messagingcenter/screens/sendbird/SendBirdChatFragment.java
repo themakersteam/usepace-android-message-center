@@ -461,14 +461,18 @@ public class SendBirdChatFragment extends Fragment {
 
         ConnectionManager.removeConnectionManagementHandler(CONNECTION_HANDLER_ID);
         SendBird.removeChannelHandler(CHANNEL_HANDLER_ID);
-        super.onPause();
+       // super.onPause();
 
     }catch (RuntimeException e) { // SendBird instance hasn't been initialized
         Toast.makeText(getContext(), getString(R.string.ms_connection_failed), Toast.LENGTH_SHORT).show();
        // SendBird.reconnect();
             handleExpceptionHandling(e);
 
-    }
+    } finally {
+
+            super.onPause();
+
+        }
 
 
     }
