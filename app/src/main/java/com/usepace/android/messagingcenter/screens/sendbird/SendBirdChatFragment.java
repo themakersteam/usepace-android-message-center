@@ -455,6 +455,9 @@ public class SendBirdChatFragment extends Fragment {
     @Override
     public void onPause() {
 
+        super.onPause();
+
+
         try {
         setTypingStatus(false);
 
@@ -468,11 +471,13 @@ public class SendBirdChatFragment extends Fragment {
        // SendBird.reconnect();
             handleExpceptionHandling(e);
 
-    } finally {
+    }
 
-            super.onPause();
-
-        }
+//        finally {
+//
+//            super.onPause();
+//
+//        }
 
 
     }

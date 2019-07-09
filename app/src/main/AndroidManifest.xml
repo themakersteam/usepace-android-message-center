@@ -20,7 +20,7 @@
         android:label="@string/app_name"
         android:supportsRtl="true">
 
-        <!-- todo: Uncomment for testing -->
+         <!--todo: Uncomment for testing-->
         <!--<activity-->
            <!--android:name=".screens.test.TestActivity"-->
            <!--android:configChanges="orientation|screenSize|keyboardHidden|screenLayout"-->
@@ -28,12 +28,10 @@
            <!--android:screenOrientation="portrait"-->
            <!--android:theme="@style/Theme.AppCompat"-->
            <!--android:windowSoftInputMode="adjustNothing">-->
-
            <!--<intent-filter>-->
                <!--<action android:name="android.intent.action.MAIN" />-->
                <!--<category android:name="android.intent.category.LAUNCHER" />-->
            <!--</intent-filter>-->
-
        <!--</activity>-->
 
         <activity android:name="com.usepace.android.messagingcenter.screens.sendbird.SendBirdChatActivity"

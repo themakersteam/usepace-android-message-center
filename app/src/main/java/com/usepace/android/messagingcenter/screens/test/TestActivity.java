@@ -14,17 +14,23 @@ import com.usepace.android.messagingcenter.interfaces.OpenChatViewInterface;
 import com.usepace.android.messagingcenter.interfaces.SdkCallbacks;
 import com.usepace.android.messagingcenter.model.ConnectionRequest;
 import com.usepace.android.messagingcenter.model.Theme;
+import com.usepace.android.messagingcenter.utils.DeviceUtils;
+
 import java.util.Map;
 
 public class TestActivity extends AppCompatActivity{
 
     //private String chat_id = "sendbird1_group_channel_2456028_f4a5055d72e15074e5832cd3d60d5fa662980e84";
-    private String chat_id = "sendbird_group_channel_4291064_da693e243a137f2a9baaa28af64a24152d279618";
+    private String chat_id = "sendbird_group_channel_4291064_122f65daa2ececc00ce47561fdbc20e345f2ac54";
 
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+
+
+
         MessageCenter.connect(this, prepareCustomerRequest(), new ConnectionInterface() {
             @Override
             public void onMessageCenterConnected() {
