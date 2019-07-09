@@ -28,6 +28,7 @@ import com.sendbird.android.UserMessage;
 import com.usepace.android.messagingcenter.R;
 import com.usepace.android.messagingcenter.model.SendBirdMessage;
 import com.usepace.android.messagingcenter.utils.DateUtils;
+import com.usepace.android.messagingcenter.utils.DeviceUtils;
 import com.usepace.android.messagingcenter.utils.FileUtils;
 import com.usepace.android.messagingcenter.utils.ImageUtils;
 import com.usepace.android.messagingcenter.utils.TextUtils;
@@ -875,26 +876,6 @@ class SendBirdChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
                 });
             }
         }
-    }
-
-    private String getLocationUrl(Context context, String message) {
-        String locationUrl = "";
-        try {
-            String[] latLng = message.split("=");
-            String[] latStr = latLng[1].split("&");
-
-            double lat = Double.parseDouble(latStr[0]);
-            double lng = Double.parseDouble(latLng[2]);
-
-            locationUrl = "https://maps.googleapis.com/maps/api/staticmap?center="+lat + "," + lng
-                    +"&zoom=18&size=650x450&maptype=roadmap" + "&markers=color:red%7C"+lat + "," + lng+
-                    "&key="+context.getString(R.string.google_maps_key);
-
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
-
-        return locationUrl;
     }
 
     private class MyFileMessageHolder extends RecyclerView.ViewHolder {
