@@ -466,8 +466,8 @@ public class SendBirdChatFragment extends Fragment {
         SendBird.removeChannelHandler(CHANNEL_HANDLER_ID);
        // super.onPause();
 
-    }catch (RuntimeException e) { // SendBird instance hasn't been initialized
-        Toast.makeText(getContext(), getString(R.string.ms_connection_failed), Toast.LENGTH_SHORT).show();
+    }catch (Exception e) { // SendBird instance hasn't been initialized
+          // Toast.makeText(getContext(), getString(R.string.ms_connection_failed), Toast.LENGTH_SHORT).show();
        // SendBird.reconnect();
             handleExpceptionHandling(e);
 
