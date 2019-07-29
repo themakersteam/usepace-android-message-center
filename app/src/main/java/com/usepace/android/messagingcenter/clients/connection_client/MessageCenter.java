@@ -46,6 +46,42 @@ public class MessageCenter {
 
     /**
      *
+     * @param context
+     *
+     *
+     */
+    public static void reInitClient(Context context) {
+        try {
+            client().getClient(LAST_CLIENT).reInit(context);
+        }
+        catch (MessageCenterException e) {
+            //connectionInterface.onMessageCenterConnectionError(e.getCode(), e);
+        }
+    }
+
+
+
+
+    /**
+     *
+     *
+     *
+     *
+     */
+    public static void reConnect() {
+        try {
+            client().getClient(LAST_CLIENT).reConnect();
+        }
+        catch (MessageCenterException e) {
+            //connectionInterface.onMessageCenterConnectionError(e.getCode(), e);
+        }
+    }
+
+
+
+
+    /**
+     *
      */
     public static boolean isConnected() {
         try {
