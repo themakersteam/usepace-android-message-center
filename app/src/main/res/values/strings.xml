@@ -52,6 +52,5 @@
     <string name="send_current_location">Send current location</string>
     <string name="text_satellite">Satellite</string>
     <string name="text_map">Map</string>
-    <string name="internet_msg">Internet is not connected</string>
 
 </resources>

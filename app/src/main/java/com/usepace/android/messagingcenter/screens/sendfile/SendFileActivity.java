@@ -136,8 +136,7 @@ public class SendFileActivity extends AppCompatActivity {
                     takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
                     startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
                 }
-                //seen in fabric sometime other expceptions has been thrown.
-                catch (Exception e) {
+                catch (RuntimeException e) {
                     Toast.makeText(this, "Camera Error ! ", Toast.LENGTH_SHORT).show();
                     finish();
                 }
