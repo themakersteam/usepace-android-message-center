@@ -9,6 +9,7 @@ import com.google.firebase.messaging.RemoteMessage;
 import com.sendbird.android.SendBird;
 import com.sendbird.android.SendBirdException;
 import com.sendbird.android.User;
+import com.usepace.android.messagingcenter.R;
 import com.usepace.android.messagingcenter.exceptions.MessageCenterException;
 import com.usepace.android.messagingcenter.interfaces.AppHandleNotificationInterface;
 import com.usepace.android.messagingcenter.interfaces.CloseChatViewInterface;
@@ -22,6 +23,7 @@ import com.usepace.android.messagingcenter.model.Theme;
 import com.usepace.android.messagingcenter.network.sendbird.SendBirdPlatformApi;
 import com.usepace.android.messagingcenter.network.sendbird.SendBirdPlatformApiCallbackInterface;
 import com.usepace.android.messagingcenter.screens.sendbird.SendBirdChatActivity;
+import com.usepace.android.messagingcenter.utils.DeviceUtils;
 import com.usepace.android.messagingcenter.utils.NotificationUtil;
 import org.json.JSONObject;
 import java.util.ArrayList;
@@ -34,17 +36,106 @@ class SendBirdClient extends ClientInterface {
     private static SendBirdClient sendbirdClient;
     private boolean didInitialConnect = false;
     private boolean mainConnectCalled = false;
+    private ConnectionInterface lastConnectionInterface;
+
+
+    @Override
+    public void reConnect() {
+
+        try {
+
+            SendBird.reconnect();
+
+        }catch (Exception exp)
+        {
+
+        }
+
+
+
+    }
+
+
+
+
+    @Override
+    public void reInit(Context context) {
+
+
+        try {
+
+            if (!DeviceUtils.isConnectedToInternet(context) && lastConnectionInterface != null) {
+                lastConnectionInterface.onMessageCenterConnectionError(0, new MessageCenterException(context.getString(R.string.internet_msg)));
+                return;
+            }
+
+            if (mainConnectCalled) {
+                if (lastConnectionInterface != null) {
+                    lastConnectionInterface.onMessageCenterConnected();
+
+                }
+            } else {
+
+                SendBird.init(lastConnecitonRequest.getAppId(), context);
+                SendBird.connect(lastConnecitonRequest.getUserId() != null ? lastConnecitonRequest.getUserId() : "", lastConnecitonRequest.getAccessToken(), new SendBird.ConnectHandler() {
+                    @Override
+                    public void onConnected(User user, final SendBirdException e) {
+                        SendBirdPlatformApi.Instance().login(lastConnecitonRequest, new SendBirdPlatformApiCallbackInterface<String>() {
+                            @Override
+                            public void onSuccess(String result) {
+                                if (lastConnectionInterface != null) {
+                                    if (e != null) {
+                                        //mainConnectCalled = false;
+                                        lastConnectionInterface.onMessageCenterConnectionError(e.getCode(), new MessageCenterException(e.getMessage()));
+                                    } else {
+
+                                        //lastConnectionInterface.onMessageCenterConnected();
+                                        didInitialConnect = true;
+
+                                    }
+                                }
+                            }
+
+                            @Override
+                            public void onError(String error) {
+                                if (lastConnectionInterface != null) {
+                                    lastConnectionInterface.onMessageCenterConnectionError(102, new MessageCenterException(error));
+                                }
+                            }
+                        });
+                    }
+                });
+
+            }
+        }catch (Exception exp)
+        {
+
+        }
+    }
+
 
     @Override
     public void connect(Context context, final ConnectionRequest connectionRequest, final ConnectionInterface connectionInterface) {
+
+        try {
+
+
+        if (!DeviceUtils.isConnectedToInternet(context))
+        {
+            connectionInterface.onMessageCenterConnectionError(0,new MessageCenterException(context.getString(R.string.internet_msg)));
+            return;
+        }
+
         if (mainConnectCalled) {
             if (connectionInterface != null) {
                 connectionInterface.onMessageCenterConnected();
+
             }
         }
         else {
             mainConnectCalled = true;
             this.lastConnecitonRequest = connectionRequest;
+            this.lastConnectionInterface = connectionInterface;
             SendBird.init(connectionRequest.getAppId(), context);
             SendBird.connect(connectionRequest.getUserId() != null ? connectionRequest.getUserId() : "", connectionRequest.getAccessToken(), new SendBird.ConnectHandler() {
                 @Override
@@ -57,6 +148,10 @@ class SendBirdClient extends ClientInterface {
                                     mainConnectCalled = false;
                                     connectionInterface.onMessageCenterConnectionError(e.getCode(), new MessageCenterException(e.getMessage()));
                                 } else {
+
+//                                        connectionInterface.onMessageCenterConnected();
+//                                                                didInitialConnect = true;
+
                                     if (connectionRequest.getFcmToken() == null) return;
                                     SendBird.registerPushTokenForCurrentUser(connectionRequest.getFcmToken(),
                                             new SendBird.RegisterPushTokenWithStatusHandler() {
@@ -65,13 +160,22 @@ class SendBirdClient extends ClientInterface {
                                                     if (e != null) {    // Error.
                                                         connectionInterface.onMessageCenterConnectionError(e.getCode(), new MessageCenterException(e.getMessage()));
                                                     } else {
-                                                        SendBird.disconnect(new SendBird.DisconnectHandler() {
-                                                            @Override
-                                                            public void onDisconnected() {
-                                                                connectionInterface.onMessageCenterConnected();
-                                                                didInitialConnect = true;
-                                                            }
-                                                        });
+
+//                                                        // I have changed code not disconnect the client.
+
+                                                        connectionInterface.onMessageCenterConnected();
+                                                        didInitialConnect = true;
+
+//                                                        // Why it is disconnected after registeration token
+//                                                        SendBird.disconnect(new SendBird.DisconnectHandler() {
+//                                                            @Override
+//                                                            public void onDisconnected() {
+//                                                                connectionInterface.onMessageCenterConnected();
+//                                                                didInitialConnect = true;
+//                                                            }
+//                                                        });
+//
+
                                                     }
                                                 }
                                             });
@@ -90,18 +194,34 @@ class SendBirdClient extends ClientInterface {
                 }
             });
         }
+
+    }catch (Exception e) {
+
+        reconnectClient(e);
     }
+    }
+
 
     @Override
     public boolean isConnected() {
+     try {
+
         if (mainConnectCalled && SendBird.getConnectionState() != null) {
             return SendBird.getConnectionState().equals(SendBird.ConnectionState.OPEN) || SendBird.getConnectionState().equals(SendBird.ConnectionState.CONNECTING);
         }
+
+    }catch (Exception e) {
+
+        reconnectClient(e);
+    }
         return false;
     }
 
     @Override
     public void getUnReadMessagesCount(Context context, final String chat_id, final UnReadMessagesInterface unReadMessagesInterface) {
+
+        try {
+
         if (unReadMessagesInterface == null || !mainConnectCalled || lastConnecitonRequest == null)
             return;
         SendBirdPlatformApi.Instance().getTotalUnReadMessageCount(lastConnecitonRequest, chat_id, new SendBirdPlatformApiCallbackInterface<Integer>() {
@@ -115,10 +235,19 @@ class SendBirdClient extends ClientInterface {
                 unReadMessagesInterface.onErrorRetrievingMessages(new MessageCenterException(error));
             }
         });
+
+
+        }catch (Exception e) {
+
+        reconnectClient(e);
+        }
     }
 
     @Override
     public void openChatView(final Activity context, ConnectionRequest optionalConnectionRequest, final String chat_id, final Theme theme, final OpenChatViewInterface openChatViewInterface) {
+
+        try {
+
         if (didInitialConnect) {
             if (optionalConnectionRequest != null && optionalConnectionRequest.getAccessToken() != null) {
                 this.lastConnecitonRequest = optionalConnectionRequest;
@@ -165,7 +294,14 @@ class SendBirdClient extends ClientInterface {
                 }
             }, 500);
         }
+
+
+    }catch (Exception e) {
+
+        reconnectClient(e);
     }
+
+}
 
     @Override
     public void closeChatView(Context context, CloseChatViewInterface closeChatViewInterface) {
@@ -243,20 +379,31 @@ class SendBirdClient extends ClientInterface {
     }
 
     private void openChatView(Activity activity, Theme theme, String chat_id, OpenChatViewInterface openChatViewInterface) {
-        if (openChatViewInterface != null) {
-            openChatViewInterface.onViewWillStart();
-        }
-        Intent a1 = new Intent(activity, SendBirdChatActivity.class);
-        if (theme != null) {
-            a1.putExtra("THEME", theme);
-        }
-        a1.putExtra("CHANNEL_URL", chat_id);
-        a1.putExtra("PACKAGE_NAME", activity.getPackageName());
-        activity.startActivityForResult(a1, MessageCenter.OPEN_CHAT_VIEW_REQUEST_CODE);
-    }
+
+        //try {
+
+            if (openChatViewInterface != null) {
+                openChatViewInterface.onViewWillStart();
+            }
+            Intent a1 = new Intent(activity, SendBirdChatActivity.class);
+            if (theme != null) {
+                a1.putExtra("THEME", theme);
+            }
+            a1.putExtra("CHANNEL_URL", chat_id);
+            a1.putExtra("PACKAGE_NAME", activity.getPackageName());
+            activity.startActivityForResult(a1, MessageCenter.OPEN_CHAT_VIEW_REQUEST_CODE);
+
+
+
+
+            }
 
     private void disconnectApp(final DisconnectInterface disconnectInterface) {
+        try
+        {
+
         if (isConnected()) {
+
             SendBird.disconnect(new SendBird.DisconnectHandler() {
                 @Override
                 public void onDisconnected() {
@@ -270,7 +417,33 @@ class SendBirdClient extends ClientInterface {
                 disconnectInterface.onMessageCenterDisconnected();
             }
         }
+
+
+    }catch (Exception e) {
+
+            reconnectClient(e);
+        }
+
+}
+
+
+
+public void reconnectClient(Exception e)
+{
+
+    if (e != null && e.getMessage().equalsIgnoreCase("SendBird instance hasn't been initialized.")) {
+        //
+
+        if (lastConnectionInterface != null)
+        {
+            lastConnectionInterface.onMessageCenterConnectionError(3001,new MessageCenterException(e.getMessage()));
+        }
+        //todo
+        // we will reinitalize the sendbird client from here.
+        //SendBird.reconnect();
     }
+
+}
 
     /**
      *
