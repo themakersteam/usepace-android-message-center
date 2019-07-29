@@ -192,19 +192,12 @@ public class SendBirdChatActivity extends AppCompatActivity{
     protected void onDestroy() {
         setResult(MessageCenter.OPEN_CHAT_VIEW_RESPONSE_CODE);
         super.onDestroy();
+        SendBird.disconnect(new SendBird.DisconnectHandler() {
+            @Override
+            public void onDisconnected() {
 
-
-        // no need to call it, cos we have already exposed disconnect method in Message Center.
-//        SendBird.disconnect(new SendBird.DisconnectHandler() {
-//            @Override
-//            public void onDisconnected() {
-//
-//            }
-//        });
-
-
-
-
+            }
+        });
     }
 
     @Override
