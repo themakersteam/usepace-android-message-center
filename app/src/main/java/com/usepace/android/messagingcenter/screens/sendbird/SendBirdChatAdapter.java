@@ -12,6 +12,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
+import android.widget.SeekBar;
 import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.dinuscxj.progressbar.CircleProgressBar;
@@ -27,8 +28,8 @@ import com.sendbird.android.User;
 import com.sendbird.android.UserMessage;
 import com.usepace.android.messagingcenter.R;
 import com.usepace.android.messagingcenter.model.SendBirdMessage;
+import com.usepace.android.messagingcenter.utils.AudioPlayerUtils;
 import com.usepace.android.messagingcenter.utils.DateUtils;
-import com.usepace.android.messagingcenter.utils.DeviceUtils;
 import com.usepace.android.messagingcenter.utils.FileUtils;
 import com.usepace.android.messagingcenter.utils.ImageUtils;
 import com.usepace.android.messagingcenter.utils.TextUtils;
@@ -53,6 +54,8 @@ class SendBirdChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     private static final int VIEW_TYPE_FILE_MESSAGE_IMAGE_OTHER = 23;
     private static final int VIEW_TYPE_FILE_MESSAGE_VIDEO_ME = 24;
     private static final int VIEW_TYPE_FILE_MESSAGE_VIDEO_OTHER = 25;
+    private static final int VIEW_TYPE_FILE_MESSAGE_AUDIO_ME = 26;
+    private static final int VIEW_TYPE_FILE_MESSAGE_AUDIO_OTHER = 27;
     private static final int VIEW_TYPE_ADMIN_MESSAGE = 30;
 
     private Context mContext;
@@ -203,7 +206,14 @@ class SendBirdChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
                 View otherVideoFileMsgView = LayoutInflater.from(parent.getContext())
                         .inflate(R.layout.list_item_group_chat_file_video_other, parent, false);
                 return new OtherVideoFileMessageHolder(otherVideoFileMsgView);
-
+            case VIEW_TYPE_FILE_MESSAGE_AUDIO_OTHER:
+                View audioFileMsgView = LayoutInflater.from(parent.getContext())
+                        .inflate(R.layout.list_item_group_chat_audio_other, parent, false);
+                return new OtherAudioMessageHolder(audioFileMsgView);
+            case VIEW_TYPE_FILE_MESSAGE_AUDIO_ME:
+                View audioMyFileMsgView = LayoutInflater.from(parent.getContext())
+                        .inflate(R.layout.list_item_group_chat_audio_me, parent, false);
+                return new MyAudioMessageHolder(audioMyFileMsgView);
             default:
                 return null;
 
@@ -267,6 +277,12 @@ class SendBirdChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
             case VIEW_TYPE_FILE_MESSAGE_IMAGE_OTHER:
                 ((OtherImageFileMessageHolder) holder).bind(mContext, (FileMessage) message.getBase(), mChannel, isNewDay, isContinuous, mItemClickListener);
                 break;
+            case VIEW_TYPE_FILE_MESSAGE_AUDIO_ME:
+                ((MyAudioMessageHolder) holder).bind(mContext, (FileMessage) message.getBase(), mChannel, isNewDay, isTempMessage, isFailedMessage, isContinuous, tempFileMessageUri, mItemClickListener);
+                break;
+            case VIEW_TYPE_FILE_MESSAGE_AUDIO_OTHER:
+                ((OtherAudioMessageHolder) holder).bind(mContext, (FileMessage) message.getBase(), mChannel, isNewDay, isTempMessage, isFailedMessage, isContinuous, tempFileMessageUri, mItemClickListener);
+                break;
             case VIEW_TYPE_FILE_MESSAGE_VIDEO_ME:
                 ((MyVideoFileMessageHolder) holder).bind(mContext, (FileMessage) message.getBase(), mChannel, isNewDay, isTempMessage, isFailedMessage,isContinuous, tempFileMessageUri, mItemClickListener);
                 break;
@@ -305,6 +321,12 @@ class SendBirdChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
                     return VIEW_TYPE_FILE_MESSAGE_IMAGE_ME;
                 } else {
                     return VIEW_TYPE_FILE_MESSAGE_IMAGE_OTHER;
+                }
+            } else if (fileMessage.getName().endsWith(".wav") || fileMessage.getName().endsWith(".mp3")) {
+                if (messageIsMine(fileMessage.getSender(), currentUser)) {
+                    return VIEW_TYPE_FILE_MESSAGE_AUDIO_ME;
+                } else {
+                    return VIEW_TYPE_FILE_MESSAGE_AUDIO_OTHER;
                 }
             } else if (fileMessage.getType().toLowerCase().startsWith("video")) {
                 if (messageIsMine(fileMessage.getSender(), currentUser)) {
@@ -939,6 +961,64 @@ class SendBirdChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
             }
         }
     }
+
+    private class MyAudioMessageHolder extends RecyclerView.ViewHolder {
+        RelativeLayout mainLayout;
+        TextView timer;
+        CircleProgressBar circleProgressBar;
+        ImageView readReceipt;
+        ImageView mediaButton;
+        TextView timeText;
+        SeekBar seekBar;
+
+        public MyAudioMessageHolder(View itemView) {
+            super(itemView);
+            mainLayout = (RelativeLayout) itemView.findViewById(R.id.main_parent);
+            timer = (TextView) itemView.findViewById(R.id.tvTimer);
+            mediaButton = (ImageView) itemView.findViewById(R.id.ivMedia);
+            seekBar = (SeekBar) itemView.findViewById(R.id.seek);
+            circleProgressBar = (CircleProgressBar) itemView.findViewById(R.id.circle_progress);
+            readReceipt = (ImageView) itemView.findViewById(R.id.img_group_chat_read_receipt);
+            timeText = (TextView) itemView.findViewById(R.id.text_group_chat_time);
+        }
+
+        void bind(final Context context, final FileMessage message, GroupChannel channel, boolean isNewDay, boolean isTempMessage, boolean isFailedMessage, boolean isContinuous, Uri tempFileMessageUri, final OnItemClickListener listener) {
+            marginTopFirstMessage(mainLayout, isContinuous);
+            timeText.setText(DateUtils.formatTime(message.getCreatedAt()));
+            timeText.setTextColor(Color.parseColor("#9b9b9b"));
+            processReadReceiptForFile(circleProgressBar, readReceipt, timeText, isFailedMessage, isTempMessage, channel, message);
+            mediaButton.setTag(message.getUrl());
+            seekBar.setEnabled(false);
+            AudioPlayerUtils.setup(context, mediaButton, timer, seekBar,  message);
+        }
+    }
+
+    private class OtherAudioMessageHolder extends RecyclerView.ViewHolder {
+        RelativeLayout mainLayout;
+        TextView timer;
+        ImageView mediaButton;
+        TextView timeText;
+        SeekBar seekBar;
+
+        public OtherAudioMessageHolder(View itemView) {
+            super(itemView);
+            mainLayout = (RelativeLayout) itemView.findViewById(R.id.main_parent);
+            timer = (TextView) itemView.findViewById(R.id.tvTimer);
+            mediaButton = (ImageView) itemView.findViewById(R.id.ivMedia);
+            seekBar = (SeekBar) itemView.findViewById(R.id.seek);
+            timeText = (TextView) itemView.findViewById(R.id.text_group_chat_time);
+        }
+
+        void bind(Context context, final FileMessage message, GroupChannel channel, boolean isNewDay, boolean isTempMessage, boolean isFailedMessage, boolean isContinuous, Uri tempFileMessageUri, final OnItemClickListener listener) {
+            marginTopFirstMessage(mainLayout, isContinuous);
+            timeText.setText(DateUtils.formatTime(message.getCreatedAt()));
+            timeText.setTextColor(Color.parseColor("#9b9b9b"));
+            mediaButton.setTag(message.getUrl());
+            seekBar.setEnabled(false);
+            AudioPlayerUtils.setup(context, mediaButton, timer, seekBar,  message);
+        }
+    }
+
 
     /**
      * A ViewHolder for file messages that are images.

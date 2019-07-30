@@ -23,6 +23,15 @@ public class DateUtils {
         return dateFormat.format(timeInMillis);
     }
 
+    /**
+     * Gets timestamp in millis and converts it to mm:ss (e.g. 16:44).
+     */
+    public static String formatMediaTime(long timeInMillis) {
+        SimpleDateFormat dateFormat = new SimpleDateFormat("mm:ss", Locale.ENGLISH);
+        return dateFormat.format(timeInMillis);
+    }
+
+
     public static String formatTimeWithMarker(long timeInMillis) {
         SimpleDateFormat dateFormat = new SimpleDateFormat("h:mm a", Locale.getDefault());
         return dateFormat.format(timeInMillis);

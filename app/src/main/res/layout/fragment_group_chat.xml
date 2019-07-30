@@ -20,6 +20,7 @@
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:background="#FFFFFF"
+        android:layoutDirection="ltr"
         android:orientation="vertical">
 
         <LinearLayout
@@ -63,6 +64,7 @@
 
 
                 <LinearLayout
+                    android:id="@+id/editTextContainer"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:background="@drawable/send_message_edit_text_design"
@@ -102,6 +104,17 @@
                         android:tint="@color/message_center_primary_dark"
                         android:layout_gravity="center_vertical" />
 
+                    <com.devlomi.record_view.RecordButton
+                        android:id="@+id/record_button"
+                        android:clickable="true"
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:layout_marginEnd="10dp"
+                        android:layout_marginRight="10dp"
+                        android:tint="@color/message_center_primary_dark"
+                        android:layout_gravity="center_vertical"
+                        app:mic_icon="@drawable/recv_ic_mic_white" />
+
                 </LinearLayout>
 
                 <ImageView
@@ -128,6 +141,21 @@
         </LinearLayout>
 
     </LinearLayout>
+
+
+    <com.devlomi.record_view.RecordView
+        android:id="@+id/record_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        app:slide_to_cancel_arrow="@drawable/recv_ic_arrow"
+        app:slide_to_cancel_arrow_color="#000000"
+        app:slide_to_cancel_bounds="8dp"
+        app:slide_to_cancel_margin_right="40dp"
+        app:slide_to_cancel_text="@string/ms_slide_to_cancel"
+        app:counter_time_color="#ff0000"
+        />
+
 
     <View
         android:layout_above="@id/layout_group_chat_chatbox"

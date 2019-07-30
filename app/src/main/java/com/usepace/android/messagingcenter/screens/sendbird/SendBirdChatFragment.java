@@ -36,6 +36,10 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 import com.androidadvance.topsnackbar.TSnackbar;
+import com.devlomi.record_view.OnBasketAnimationEnd;
+import com.devlomi.record_view.OnRecordListener;
+import com.devlomi.record_view.RecordButton;
+import com.devlomi.record_view.RecordView;
 import com.sendbird.android.AdminMessage;
 import com.sendbird.android.BaseChannel;
 import com.sendbird.android.BaseMessage;
@@ -53,6 +57,8 @@ import com.usepace.android.messagingcenter.screens.mediaplayer.MediaPlayerActivi
 import com.usepace.android.messagingcenter.screens.myLocation.MyLocationActivity;
 import com.usepace.android.messagingcenter.screens.photoviewer.PhotoViewerActivity;
 import com.usepace.android.messagingcenter.screens.sendfile.SendFileActivity;
+import com.usepace.android.messagingcenter.utils.AudioPlayerUtils;
+import com.usepace.android.messagingcenter.utils.AudioRecorderUtil;
 import com.usepace.android.messagingcenter.utils.ConnectionManager;
 import com.usepace.android.messagingcenter.utils.FileUtils;
 import com.usepace.android.messagingcenter.utils.TextUtils;
@@ -81,6 +87,7 @@ public class SendBirdChatFragment extends Fragment {
     private static final int INTENT_REQUEST_CHOOSE_MEDIA = 301;
     private static final int PERMISSION_WRITE_EXTERNAL_STORAGE = 13;
     private static final int PERMISSION_CAMERA = 14;
+    private static final int PERMISSION_RECORD_AUDIO = 16;
     private static final int PERMISSION_CALL = 15;
     private static final int SEND_FILE_ACTIVITY_RESULT = 101;
     private static final int OPEN_LOCATION_ACTIVITY_RESULT = 102;
@@ -97,6 +104,9 @@ public class SendBirdChatFragment extends Fragment {
     private EditText mMessageEditText;
     private ImageView mMessageSendButton;
     private ImageView mMessageCameraButton;
+    private RecordButton mRecordButton;
+    private RecordView mRecordView;
+    private LinearLayout mEditTextContainer;
     private RelativeLayout mUploadFileButton;
     private View mCurrentEventLayout;
     private TextView mCurrentEventText;
@@ -173,6 +183,10 @@ public class SendBirdChatFragment extends Fragment {
         mMessageEditText = (EditText) rootView.findViewById(R.id.edittext_group_chat_message);
         mMessageSendButton = (ImageView) rootView.findViewById(R.id.button_group_chat_send);
         mMessageCameraButton = (ImageView)rootView.findViewById(R.id.button_camera_send);
+        mEditTextContainer = rootView.findViewById(R.id.editTextContainer);
+        mRecordButton = rootView.findViewById(R.id.record_button);
+        mRecordView = rootView.findViewById(R.id.record_view);
+        mRecordButton.setRecordView(mRecordView);
         mUploadFileButton = (RelativeLayout) rootView.findViewById(R.id.button_group_chat_upload);
         welcomeMessage = (TextView) rootView.findViewById(R.id.text_group_chat_welcome);
 
@@ -202,6 +216,7 @@ public class SendBirdChatFragment extends Fragment {
             public void afterTextChanged(Editable s) {
                 mMessageSendButton.setVisibility(s.toString().replaceAll(" ", "").replaceAll("\n", "").length() > 0 ? View.VISIBLE : View.GONE);
                 mMessageCameraButton.setVisibility(s.toString().replaceAll(" ", "").replaceAll("\n", "").length() > 0 ? View.GONE : View.VISIBLE);
+                mRecordButton.setVisibility(s.toString().replaceAll(" ", "").replaceAll("\n", "").length() > 0 ? View.GONE : View.VISIBLE);
             }
         });
 
@@ -261,10 +276,58 @@ public class SendBirdChatFragment extends Fragment {
             }
         });
 
+        mRecordView.setOnRecordListener(new OnRecordListener() {
+            @Override
+            public void onStart() {
+                onRecording(true);
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        requestAudioRecord();
+                    }
+                }, 500);
+            }
+
+            @Override
+            public void onCancel() {
+                AudioRecorderUtil.instance().cancelRecording();
+            }
+
+            @Override
+            public void onFinish(long recordTime) {
+                onRecording(false);
+                String fileName = AudioRecorderUtil.instance().stopRecording();
+                if (fileName != null) {
+                    sendFileWithThumbnail(Uri.fromFile(new File(fileName)), null);
+                }
+            }
+
+            @Override
+            public void onLessThanSecond() {
+                onRecording(false);
+                AudioRecorderUtil.instance().cancelRecording();
+            }
+        });
+
+
+        mRecordView.setOnBasketAnimationEndListener(new OnBasketAnimationEnd() {
+            @Override
+            public void onAnimationEnd() {
+                onRecording(false);
+            }
+        });
+
         setUpRecyclerView();
         setHasOptionsMenu(true);
 
         return rootView;
+    }
+
+    private void onRecording(boolean on) {
+        mMessageCameraButton.setVisibility(on ? View.INVISIBLE : View.VISIBLE);
+        mUploadFileButton.setVisibility(on ? View.INVISIBLE : View.VISIBLE);
+        mMessageEditText.setVisibility(on ? View.INVISIBLE : View.VISIBLE);
+        mEditTextContainer.setBackgroundResource(on ? 0 : R.drawable.send_message_edit_text_design);
     }
 
     private void freeze() {
@@ -430,6 +493,7 @@ public class SendBirdChatFragment extends Fragment {
     public void onDestroy() {
         // Save messages to cache.
         mChatAdapter.save();
+        AudioPlayerUtils.destroy();
         super.onDestroy();
     }
 
@@ -732,6 +796,21 @@ public class SendBirdChatFragment extends Fragment {
         }
     }
 
+    private void requestAudioRecord() {
+        if (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                != PackageManager.PERMISSION_GRANTED) {
+            requestStoragePermissions();
+        }
+        else if (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.RECORD_AUDIO)
+                        != PackageManager.PERMISSION_GRANTED) {
+            requestAudioRecordPermissions();
+        }
+        else {
+            AudioPlayerUtils.destroy();
+            AudioRecorderUtil.instance().startRecording(getContext());
+        }
+    }
+
     private void requestStoragePermissions() {
         if (ActivityCompat.shouldShowRequestPermissionRationale(getActivity(),
                 Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
@@ -775,6 +854,27 @@ public class SendBirdChatFragment extends Fragment {
         }
     }
 
+    private void requestAudioRecordPermissions() {
+        if (ActivityCompat.shouldShowRequestPermissionRationale(getActivity(), Manifest.permission.RECORD_AUDIO)) {
+            Snackbar.make(mRootLayout, getString(R.string.audio_access_permission_needed),
+                    Snackbar.LENGTH_LONG)
+                    .setAction(getString(R.string.ok), new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            requestPermissions(new String[]{Manifest.permission.RECORD_AUDIO, Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                                    PERMISSION_RECORD_AUDIO);
+                        }
+                    })
+                    .show();
+        }
+        else {
+            // Permission has not been granted yet. Request it directly.
+            requestPermissions(new String[]{Manifest.permission.RECORD_AUDIO, Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                    PERMISSION_RECORD_AUDIO);
+        }
+    }
+
+
     public void requestCallPermissions() {
         if (ActivityCompat.shouldShowRequestPermissionRationale(getActivity(), Manifest.permission.CALL_PHONE)) {
             Snackbar.make(mRootLayout, getString(R.string.ms_phone_access_permission_needed),
@@ -803,7 +903,10 @@ public class SendBirdChatFragment extends Fragment {
             Intent intent = new Intent(getActivity(), MediaPlayerActivity.class);
             intent.putExtra("url", message.getUrl());
             startActivity(intent);
-        } else {
+        }
+        else if (message.getName().endsWith(".wav") || message.getName().endsWith(".mp3")) {
+        }
+        else {
             showDownloadConfirmDialog(message);
         }
     }
@@ -972,6 +1075,7 @@ public class SendBirdChatFragment extends Fragment {
                         }
                         mChatAdapter.markMessageSent(new SendBirdMessage(fileMessage));
                     }
+                    mChatAdapter.notifyDataSetChanged();
                 }
             };
 
@@ -1083,6 +1187,9 @@ public class SendBirdChatFragment extends Fragment {
         }
         else if (grantResults.length > 0 && grantResults[0] != PackageManager.PERMISSION_GRANTED && requestCode == PERMISSION_CAMERA) {
             showSettingsPermissionSnack(getString(R.string.camera_access_permission_needed));
+        }
+        else if (grantResults.length > 0 && grantResults[0] != PackageManager.PERMISSION_GRANTED && requestCode == PERMISSION_RECORD_AUDIO) {
+            showSettingsPermissionSnack(getString(R.string.audio_access_permission_needed));
         }
         else if (grantResults.length > 0 && grantResults[0] != PackageManager.PERMISSION_GRANTED && requestCode == PERMISSION_CALL) {
             showSettingsPermissionSnack(getString(R.string.ms_phone_access_permission_needed));
